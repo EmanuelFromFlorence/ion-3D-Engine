@@ -6,7 +6,7 @@ module.exports = {
   
   output: {
     path: path.join(__dirname, 'build'),
-    filename: "metazand.js",
+    filename: "gltf-engine.js",
     library: "mz",
     libraryTarget: "umd",
     // libraryExport: 'default'
