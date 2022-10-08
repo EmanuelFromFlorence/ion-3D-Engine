@@ -39,6 +39,9 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "file-loader": "^6.2.0",
+    "style-loader": "^3.3.1",
+    "three": "^0.145.0",
     "ts-loader": "^9.3.1"
   }
 }
