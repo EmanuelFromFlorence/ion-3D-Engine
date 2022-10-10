@@ -1,9 +1,9 @@
-// import * as mz from '../../build/gltf-engine.js';
-// import '../../build/gltf-engine.js';
-// import {ttest} from '../../build/gltf-engine.js';
+// import * as mz from '../../build/3d-node-engine.js';
+// import '../../build/3d-node-engine.js';
+// import {ttest} from '../../build/3d-node-engine.js';
 
 // This works:
-import mz from '../../build/gltf-engine.js';
+import mz from '../../build/3d-node-engine.js';
 console.log(mz.ttest);
 // with webpack config:
 // const path = require('path');
@@ -14,7 +14,7 @@ console.log(mz.ttest);
   
 //   output: {
 //     path: path.join(__dirname, 'build'),
-//     filename: "gltf-engine.js",
+//     filename: "3d-node-engine.js",
 //     library: "mz",
 //     libraryTarget: "umd",
 //     // libraryExport: 'default'

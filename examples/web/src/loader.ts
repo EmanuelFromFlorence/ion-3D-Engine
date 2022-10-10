@@ -49,6 +49,7 @@ export const loadGLTF = (url, scene) => {
                 console.log(`meshName: ${meshName}`);
 
             });
+            // procedural geometry engine
     
             
             console.log('GLTF loaded...');
@@ -65,5 +66,3 @@ export const loadGLTF = (url, scene) => {
         }
     );
 }
-
-

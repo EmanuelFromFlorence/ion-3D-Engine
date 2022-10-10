@@ -6,7 +6,7 @@ module.exports = {
   
   output: {
     path: path.join(__dirname, 'build'),
-    filename: "gltf-engine.js",
+    filename: "3d-node-engine.js",
     library: "mz",
     libraryTarget: "umd",
     // libraryExport: 'default'
