@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js --mode development",
-    "start": "webpack-dev-server --mode development --hot --https --config webpack.config.js",
+    "start": "webpack-dev-server --mode development --https --config webpack.config.js",
     
     "test": "echo \"Error: no test specified\" && exit 1"
   },

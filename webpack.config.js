@@ -9,7 +9,7 @@ const OUTPUT_PATH = path.join(__dirname, 'build'); // this is the output path fo
 
 const htmlPlugin = new HtmlWebPackPlugin({
   template: path.join(PUBLIC_PATH, 'index.html'),
-  filename: path.join(OUTPUT_PATH, 'index.html')
+  filename: './index.html' //path.join(OUTPUT_PATH, 'index.html')
 });
 
 
@@ -17,16 +17,16 @@ module.exports = {
   entry: {
     // main: './src/main.ts', // 3D-Node-Engine entry
     // web: path.join(WEB_EXAMPLE, 'src', 'index.js'), // also building react web example
-    '3d-node-engine': { import: './src/3d-node-engine.ts', filename: '[name].js'}, // the filename is the relative output path (inside dist in the top level dir)
-    'main': { import: path.join(WEB_EXAMPLE, 'src', 'index.js'), filename: '[name].js'},
-
+    // '3d-node-engine': { import: './src/3d-node-engine.ts', filename: '[name].js'}, // the filename is the relative output path (inside dist in the top level dir)
+    // 'main': { import: path.join(WEB_EXAMPLE, 'src', 'index.js'), filename: '[name].js'},
+    main: path.join(WEB_EXAMPLE, 'src', 'index.js'),
   },
   
   output: {
     path: OUTPUT_PATH, // PUBLIC_PATH // this is the actual path that it puts everything in (only js files defined in entry)
     // assetModuleFilename: 'assets/[name][ext]',
-    // publicPath: PUBLIC_PATH,
-    // filename: "[name].js" //
+    // publicPath: PUBLIC_PATH, 
+    filename: "[name].js",
   },
 
   devServer: {

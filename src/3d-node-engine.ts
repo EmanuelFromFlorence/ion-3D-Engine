@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { SpaceControls } from './control';
 // import { loadGLTF } from './io/loader';
-import { run } from './nodes/nodes';
+import { runEngine } from './nodes/nodes';
 
 
 let scene;
@@ -56,7 +56,7 @@ const initGraphics = () => {
     renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
     // this.renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio( window.devicePixelRatio ); 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( window.innerWidth/3, window.innerHeight/3 );
     // renderer.xr.enabled = true;
     
     // Shadows: https://www.youtube.com/watch?v=AUF15I3sy6s
@@ -114,40 +114,45 @@ function init(){
 
 
 
-
-
-
-
-window.onload = async () => {
+export function run(){
     init();
     animating();
 
-    // loadGLTF('Box.glft', scene);
-    // loadGLTF('../public/Box.glft', scene);
-    // loadGLTF('../resources/Box.glft', scene);
-
-
-    // loadGLTF('resources/Box.gltf', scene);
-    
-    
-    run();
-
-
-
-    // await Promise.resolve(setTimeout(() => {        
-        
-    //     console.log(scene.getObjectByName( "Mesh" ));
-        
-
-
-
-    //     // scene.traverse((child) => {
-    //     //     let meshName = child.userData.name;
-    //     //     console.log(`child:`);
-    //     //     console.log(child);
-    //     // });
-
-    // }, 1000));
-
-    
+    runEngine();
 }
+
+
+
+// window.onload = async () => {
+//     init();
+//     animating();
+
+//     // loadGLTF('Box.glft', scene);
+//     // loadGLTF('../public/Box.glft', scene);
+//     // loadGLTF('../resources/Box.glft', scene);
+
+
+//     // loadGLTF('resources/Box.gltf', scene);
+    
+    
+//     run();
+
+
+
+//     // await Promise.resolve(setTimeout(() => {        
+        
+//     //     console.log(scene.getObjectByName( "Mesh" ));
+        
+
+
+
+//     //     // scene.traverse((child) => {
+//     //     //     let meshName = child.userData.name;
+//     //     //     console.log(`child:`);
+//     //     //     console.log(child);
+//     //     // });
+
+//     // }, 1000));
+
+    
+// }

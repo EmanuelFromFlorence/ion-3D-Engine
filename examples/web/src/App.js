@@ -1,9 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
+import {run} from '../../../src/3d-node-engine'
 
 function App() {
-  throw new Error('eeerr');
-  
+  // throw new Error('eeerr');
+
   return (
     <div className="App">
       <header className="App-header">
@@ -23,5 +24,8 @@ function App() {
     </div>
   );
 }
+
+// This runs after before rendering react components 
+run();
 
 export default App;

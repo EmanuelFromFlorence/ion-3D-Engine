@@ -268,7 +268,7 @@ class TransformNode extends AbstractNode{
 
 
 
-export function run(){
+export function runEngine(){
 
     let nodeEngine = new NodeEngine();
 
