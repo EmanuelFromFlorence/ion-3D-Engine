@@ -9,6 +9,7 @@ let camera;
 let renderer;
 let myControls;
 let backgroundTexture;
+let htmlPlane;
 
 
 const initCamera = () => {
@@ -110,6 +111,105 @@ const initGraphics = () => {
 }
 
 
+const raycasterOrigin = new THREE.Vector3(0, 0, 0);
+const raycasterDirection = new THREE.Vector3(0, - 2, 0);
+const near = 0;
+const far = 40;
+const aimRaycaster = new THREE.Raycaster(raycasterOrigin, raycasterDirection, near, far);
+
+const updateAim = () => {
+    let cameraDirection = new THREE.Vector3();
+    cameraDirection = camera.getWorldDirection(cameraDirection);
+    cameraDirection.normalize();
+    aimRaycaster.ray.origin.copy( camera.position );
+    aimRaycaster.ray.direction.copy( cameraDirection ); 
+
+    if (!htmlPlane) return; 
+    const intersections = aimRaycaster.intersectObjects([htmlPlane], false);
+    if (typeof intersections != 'undefined' && intersections.length > 0){
+        intersections[0].face
+        intersections[0].faceIndex
+        intersections[0].object.isMesh
+        intersections[0].object.scale
+        intersections[0].uv // THREE.Vector2
+        // if(typeof intersections[0].object.name != 'undefined'){
+        //     // if (intersections[0].object.name.includes('twitter')){}
+        // }
+
+
+        let node = document.getElementsByClassName('App-header')[0];
+        let pointerVector2 = intersections[0].uv;
+        // console.log(node.scrollWidth * pointerVector2.x, node.scrollHeight * pointerVector2.y);
+        
+        
+        
+
+        // let node = document.getElementsByClassName('App-header')[0];
+        // let nodeAPP = document.getElementsByClassName('App')[0];
+        // let pointerVector2 = intersections[0].uv;
+        // const mouseEvent = new MouseEvent("mouseover", {
+        //     view: window,
+        //     bubbles: true,
+        //     cancelable: true,
+        //     offsetX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     offsetY: node.scrollHeight * pointerVector2.y,
+
+        //     clientX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     clientY: node.scrollHeight * pointerVector2.y,
+
+        //     screenX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     screenY: node.scrollHeight * pointerVector2.y,
+
+        //     pageX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     pageY: node.scrollHeight * pointerVector2.y,
+        // });
+        // console.log(node.scrollWidth * pointerVector2.x);
+        
+        // nodeAPP.dispatchEvent(mouseEvent);
+        // node.dispatchEvent(mouseEvent);
+        // window.document.dispatchEvent(mouseEvent);
+
+        // const mouseEvent1 = new MouseEvent("mousemove", {
+        //     view: window,
+        //     bubbles: true,
+        //     cancelable: true,
+        //     offsetX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     offsetY: node.scrollHeight * pointerVector2.y,
+
+        //     clientX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     clientY: node.scrollHeight * pointerVector2.y,
+
+        //     screenX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     screenY: node.scrollHeight * pointerVector2.y,
+
+        //     pageX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+        //     pageY: node.scrollHeight * pointerVector2.y,
+        // });
+        
+        // nodeAPP.dispatchEvent(mouseEvent1);
+        // node.dispatchEvent(mouseEvent1);
+        // window.document.dispatchEvent(mouseEvent1);
+        
+        
+
+        
+
+
+
+        // document.body.addEventListener('click', () => console.log('clicked'))
+        //     const evt = new MouseEvent("click", {
+        //     view: window,
+        //     bubbles: true,
+        //     cancelable: true,
+        //     clientX: 20,
+        // });
+        // document.body.dispatchEvent(evt);
+
+    }
+
+}
+
+
 const animating = () => {
     let prevTime = performance.now();
     const animate = () => {
@@ -126,7 +226,11 @@ const animating = () => {
         myControls.updateControl(delta);
 
         /* Updates */
-        
+        updateAim();
+
+        renderHTML();
+
+
 
         prevTime = time;
     }
@@ -154,6 +258,365 @@ import * as htmlToImage from 'html-to-image';
 // import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 
 
+let planeGeometry;
+
+
+const HTMLPlane = () => {
+    planeGeometry = new THREE.PlaneGeometry( 20, 20 );
+
+    let planeMaterial = new THREE.MeshPhongMaterial({color: '#cccccc', side: THREE.DoubleSide});
+    planeMaterial.needsUpdate = true;
+
+    htmlPlane = new THREE.Mesh( planeGeometry, planeMaterial );
+
+    scene.add( htmlPlane );
+}
+
+
+const renderHTML = () => {
+
+    const node = document.getElementById('root');
+    htmlToImage.toPng(node)
+        .then(function (dataUrl) {
+            var img = new Image();
+            img.src = dataUrl;
+            
+            let width = node.scrollWidth;
+            let height = node.scrollHeight;
+
+            const texture = new THREE.Texture( img );
+            texture.needsUpdate = true;
+            let planeMaterial = new THREE.MeshPhongMaterial({map: texture, side: THREE.DoubleSide});
+            planeMaterial.needsUpdate = true;
+
+            htmlPlane.material = planeMaterial;
+
+        }).catch(function (error) {
+            console.error('oops, something went wrong!');
+            console.log(error);
+            
+        });
+
+}
+
+
+
+
+
+export function run(){
+    init();
+
+
+    
+    
+    // const node = document.getElementById('root');
+    // const containerElm = document.createElement('div');
+    
+
+
+    
+
+
+
+    // var node = document.getElementsByClassName('App-header')[0];
+    // node.addEventListener('mouseover', async (event) => {
+    //     event.target.style.backgroundColor = '#fb61a9';    
+    //     console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++ onmouseover Fired');
+
+    //     // simulateCssEvent('hover');
+
+    //     // let styler = new PseudoStyler();
+    //     // await styler.loadDocumentStyles();
+    //     // document.getElementById('button').addEventListener('click', () => {
+    //     //     const element = document.getElementById('test')
+    //     //     styler.toggleStyle(element, ':hover');
+    //     // })
+    // });
+
+
+    // // https://stackoverflow.com/questions/902713/how-do-i-programmatically-click-a-link-with-javascript
+
+    // var node = document.getElementsByClassName('App-header')[0];
+    // let nodeAPP = document.getElementsByClassName('App')[0];
+
+    // var event = document.createEvent("MouseEvents");
+    // event.initMouseEvent("mouseenter", true, true, window,
+    //     1, 1, 1, 1, 1,
+    //     false, false, false, false,
+    //     0, null);
+    //     node.dispatchEvent(event);
+    //     nodeAPP.dispatchEvent(event);
+    //     window.document.dispatchEvent(event);
+
+
+    
+    // var event2 = document.createEvent("MouseEvents");
+    // event2.initMouseEvent("mouseover", true, true, window,
+    //     1, 1, 1, 1, 1,
+    //     false, false, false, false,
+    //     0, null);
+    //     node.dispatchEvent(event2);
+    //     nodeAPP.dispatchEvent(event2);
+    //     window.document.dispatchEvent(event2);
+
+
+
+    
+    // // let node = document.getElementsByClassName('App-header')[0];
+    // let nodeAPP = document.getElementsByClassName('App')[0];
+    // let pointerVector2 = new THREE.Vector2(0.5, 0.5);
+    // const mouseEvent = new MouseEvent("mouseenter", { //mouseover
+    //     view: window,
+    //     bubbles: true,
+    //     cancelable: true,
+    //     offsetX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     offsetY: node.scrollHeight * pointerVector2.y,
+
+    //     clientX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     clientY: node.scrollHeight * pointerVector2.y,
+
+    //     screenX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     screenY: node.scrollHeight * pointerVector2.y,
+
+    //     pageX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     pageY: node.scrollHeight * pointerVector2.y,
+    // });
+    // console.log(node.scrollWidth * pointerVector2.x);
+    
+    // nodeAPP.dispatchEvent(mouseEvent);
+    // node.dispatchEvent(mouseEvent);
+    // window.document.dispatchEvent(mouseEvent);
+
+    // const mouseEvent1 = new MouseEvent("mouseover", { //mousemove
+    //     view: window,
+    //     bubbles: true,
+    //     cancelable: true,
+    //     offsetX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     offsetY: node.scrollHeight * pointerVector2.y,
+
+    //     clientX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     clientY: node.scrollHeight * pointerVector2.y,
+
+    //     screenX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     screenY: node.scrollHeight * pointerVector2.y,
+
+    //     pageX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
+    //     pageY: node.scrollHeight * pointerVector2.y,
+    // });
+    
+    // nodeAPP.dispatchEvent(mouseEvent1);
+    // node.dispatchEvent(mouseEvent1);
+    // window.document.dispatchEvent(mouseEvent1);
+    
+
+
+
+
+
+ 
+
+    
+
+
+
+    // runEngine();
+
+    window.onload = () => {
+        // renderImage();
+
+
+        HTMLPlane();
+        animating();
+
+
+        
+
+    };
+
+    
+    
+}
+
+
+
+
+
+
+function simulateCssEvent (type){
+    var id = 'simulatedStyle';
+
+    var generateEvent = function(selector){
+        var style = "";
+        for (var i in document.styleSheets) {
+            var rules = document.styleSheets[i].cssRules;
+            for (var r in rules) {
+                // console.log('Rules::');
+                // console.log(rules);
+                if(rules[r].cssText && rules[r].selectorText){
+                    if(rules[r].selectorText.indexOf(selector) > -1){
+                        var regex = new RegExp(selector,"g")
+                        var text = rules[r].cssText.replace(regex,"");
+                        style += text+"\n";
+                    }
+                }
+            }
+        }
+
+        document.head.append("<style id="+id+">"+style+"</style>");
+        // $("head").append("<style id="+id+">"+style+"</style>");
+    };
+
+    var stopEvent = function(){
+        document.getElementById("#"+id).remove();
+    };
+
+    switch(type) {
+        case "hover":
+            return generateEvent(":hover");
+        case "stop":
+            return stopEvent();
+    }
+}
+
+
+
+
+
+
+
+// class PseudoStyler {
+//     styles: any[];
+//     registered: WeakMap<object, any>;
+//     uniqueID: number;
+//     style: any;
+//     constructor() {
+//       this.styles = [];
+//       this.registered = new WeakMap();
+//       this.uniqueID = 0;
+//     }
+  
+//     async loadDocumentStyles() {
+//       let count = document.styleSheets.length;
+//       for (let i = 0; i < count; i++) {
+//         let sheet = document.styleSheets[i];
+//         if (sheet.href) {
+//           await this.addLink(sheet.href);
+//         } else {
+//           if (sheet.ownerNode && sheet.ownerNode.nodeName &&
+//             sheet.ownerNode.nodeName === "STYLE" && sheet.ownerNode.firstChild) {
+//             this.addCSS(sheet.ownerNode.firstChild.textContent);
+//           }
+//         }
+//       }
+//     }
+  
+//     addCSS(text) {
+//       let copySheet = document.createElement('style');
+//       copySheet.type = 'text/css';
+//       copySheet.textContent = text;
+//       document.head.appendChild(copySheet);
+//       for (let i = 0; i < copySheet.sheet.cssRules.length; i++) {
+//         if (copySheet.sheet.cssRules[i].selectorText && copySheet.sheet.cssRules[i].selectorText.includes(':')) {
+//           this.styles.push(copySheet.sheet.cssRules[i]);
+//         }
+//       }
+//       document.head.removeChild(copySheet);
+//     }
+  
+//     async addLink(url) {
+//       const self = this;
+//       await new Promise((resolve, reject) => {
+//         fetch(url)
+//           .then(res => res.text())
+//           .then(res => {
+//             self.addCSS(res);
+//             resolve(self.styles);
+//           })
+//           .catch(err => reject(err));
+//       });
+//     }
+  
+//     matches(element, selector, pseudoClass) {
+//       selector = selector.replace(new RegExp(pseudoClass, 'g'), '');
+//       for (let part of selector.split(/ +/)) {
+//         try {
+//           if (element.matches(part)) {
+//             return true;
+//           }
+//         } catch (ignored) {
+//           // reached a non-selector part such as '>'
+//         }
+//       }
+//       return false;
+//     }
+  
+//     register(element, pseudoclass) {
+//       let uuid = this.uniqueID++;
+//       let customClasses = {};
+//       for (let style of this.styles) {
+//         if (style.selectorText.includes(pseudoclass)) {
+//           style.selectorText.split(/\s*,\s*/g)
+//             .filter(selector => this.matches(element, selector, pseudoclass))
+//             .forEach(selector => {
+//               let newSelector = this._getCustomSelector(selector, pseudoclass, uuid);
+//               customClasses[newSelector] = style.style.cssText.split(/\s*;\s*/).join(';');
+//             });
+//         }
+//       }
+  
+//       if (!this.style) {
+//         this._createStyleElement();
+//       }
+//       for (let selector in customClasses) {
+//         let cssClass = selector + ' { ' + customClasses[selector] + ' }';
+//         this.style.sheet.insertRule(cssClass);
+//       }
+//       this.registered.get(element).set(pseudoclass, uuid);
+//     }
+  
+//     deregister(element, pseudoClass) {
+//       if (this.registered.has(element) && this.registered.get(element).has(pseudoClass)) {
+//         let uuid = this.registered.get(element).get(pseudoClass);
+//         let className = this._getMimicClassName(pseudoClass, uuid);
+//         let regex = new RegExp(className + '($|\\W)');
+//         for (let i = 0; i < this.style.sheet.cssRules.length; i++) {
+//           if (regex.test(this.style.sheet.cssRules[i].selectorText)) {
+//             this.style.sheet.deleteRule(i);
+//           }
+//         }
+//         this.registered.get(element).delete(pseudoClass);
+//         element.classList.remove(className.substr(1));
+//       }
+//     }
+  
+//     toggleStyle(element, pseudoclass, force) {
+//       if (!this.registered.has(element)) {
+//         this.registered.set(element, new Map());
+//       }
+//       if (!this.registered.get(element).has(pseudoclass)) {
+//         this.register(element, pseudoclass);
+//       }
+//       let uuid = this.registered.get(element).get(pseudoclass);
+//       element.classList.toggle(this._getMimicClassName(pseudoclass, uuid).substr(1), force);
+//     }
+  
+//     _getMimicClassName(pseudoClass, uuid) {
+//       return pseudoClass.replace(':', '.') + '-pseudostyler-' + uuid;
+//     }
+  
+//     _getCustomSelector(selectorText, pseudoClass, uuid) {
+//       return selectorText.replace(new RegExp(pseudoClass, 'g'), this._getMimicClassName(pseudoClass, uuid));
+//     }
+  
+//     _createStyleElement() {
+//       let style = document.createElement('style');
+//       style.type = 'text/css';
+//       document.head.appendChild(style);
+//       this.style = style;
+//     }
+//   }
+
+
 const renderImage = () => {
 
     // this was giving error because the element was an empty div::::::: should handle...
@@ -161,24 +624,8 @@ const renderImage = () => {
 
 
 
-    // function filter (node) {return (node.tagName !== 'i');}
-    // htmlToImage.toSvg(document.getElementById('root'), {  }) // filter: filter
-    //     .then(function (dataUrl) {
-    //         /* do something */
-    //         console.log('dataUrl:');
-    //         console.log(dataUrl);
-    //         console.log(window.atob(dataUrl));
-    //     });
 
-    
-    // htmlToImage.toPng(document.getElementById('root'))
-    //     .then(function (dataUrl) {
-    //         // download(dataUrl, 'my-node.png');
-
-    //     });
-    
-
-    
+    /* ------- toPixelData solution ------- */
 
     // // const node = document.getElementById('root');
     // let node = document.getElementsByClassName('App-link')[0];
@@ -236,10 +683,8 @@ const renderImage = () => {
             // link.href = dataUrl;
             // link.click();
 
-
             let width = node.scrollWidth;
             let height = node.scrollHeight;
-
 
             const planeGeometry = new THREE.PlaneGeometry( 20, 20 );
 
@@ -250,16 +695,16 @@ const renderImage = () => {
             planeMaterial.needsUpdate = true;
 
 
-            const plane = new THREE.Mesh( planeGeometry, planeMaterial );
+            htmlPlane = new THREE.Mesh( planeGeometry, planeMaterial );
             // plane.position.y = + 10;
             // plane.receiveShadow = true;
-            scene.add( plane );
+            scene.add( htmlPlane );
 
 
 
             
 
-            /* Below works using our own canvas:::: */
+            /* ------- Below works using our own canvas ------- */
 
             // const planeGeometry = new THREE.PlaneGeometry( 20, 20 );
             // // // planeGeometry.rotateX( - Math.PI / 2 );
@@ -268,8 +713,6 @@ const renderImage = () => {
             // // // https://threejs.org/docs/#api/en/textures/DataTexture
             // // const texture = new THREE.DataTexture( pixels, width, height );
             // // texture.needsUpdate = true;
-
-        
 
             // convertURIToImageData(dataUrl).then(function(imageData: any) {
             //     // Here you can use imageData
@@ -293,7 +736,6 @@ const renderImage = () => {
             //     // let planeMaterial = new THREE.MeshPhongMaterial({map: texture});
             //     // planeMaterial.needsUpdate = true;
 
-
             //     // const plane = new THREE.Mesh( planeGeometry, planeMaterial );
             //     // // plane.position.y = + 10;
             //     // plane.receiveShadow = true;
@@ -302,17 +744,14 @@ const renderImage = () => {
 
 
             
-
-
-
-            
         }).catch(function (error) {
             console.error('oops, something went wrong!');
             console.log(error);
             
-          });;
+        });;
 
 }
+
 
 
 // https://stackoverflow.com/questions/17591148/converting-data-uri-to-image-data
@@ -339,55 +778,6 @@ function convertURIToImageData(URI) {
 
 
 
-export function run(){
-    init();
-    animating();
-
-    // runEngine();
-
-    window.onload = () => {
-        renderImage();
-        // Promise.resolve(setTimeout(() => {        
-        //     renderImage();
-        // }, 1000));
-    };
-
-    
-    
-}
 
 
 
-// window.onload = async () => {
-//     init();
-//     animating();
-
-//     // loadGLTF('Box.glft', scene);
-//     // loadGLTF('../public/Box.glft', scene);
-//     // loadGLTF('../resources/Box.glft', scene);
-
-
-//     // loadGLTF('resources/Box.gltf', scene);
-    
-    
-//     run();
-
-
-
-//     // await Promise.resolve(setTimeout(() => {        
-        
-//     //     console.log(scene.getObjectByName( "Mesh" ));
-        
-
-
-
-//     //     // scene.traverse((child) => {
-//     //     //     let meshName = child.userData.name;
-//     //     //     console.log(`child:`);
-//     //     //     console.log(child);
-//     //     // });
-
-//     // }, 1000));
-
-    
-// }

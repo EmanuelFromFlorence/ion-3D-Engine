@@ -1,3 +1,39 @@
+#node-container-1{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -10000;
+}
+
+.outer {
+  width: 1000px;
+  height: 200px;
+  background-color: red;
+}
+
+.inner {
+  position: relative;
+  width: 500px;
+  height: 150px;
+  top: 25px;
+  left: 100px;
+  background-color: blue;
+  color: white;
+  cursor: crosshair;
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+}
+
+.log {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+
 .App {
   text-align: center;
 }
@@ -26,6 +62,20 @@
 
 .App-link {
   color: #61dafb;
+  width: 700px !important;
+  height: 500px !important;
+}
+
+.App-link:hover {
+  color: #fb61a9
+}
+
+.App:hover {
+  color: #fb61a9
+}
+
+.App-header:hover {
+  background-color: #fb61a9 !important;
 }
 
 @keyframes App-logo-spin {
