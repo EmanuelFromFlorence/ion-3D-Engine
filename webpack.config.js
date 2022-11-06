@@ -15,9 +15,9 @@ const htmlPlugin = new HtmlWebPackPlugin({
 
 module.exports = {
   entry: {
-    // main: './src/main.ts', // 3D-Node-Engine entry
+    // main: './src/main.ts', // ion-3D-Engine entry
     // web: path.join(WEB_EXAMPLE, 'src', 'index.js'), // also building react web example
-    // '3d-node-engine': { import: './src/3d-node-engine.ts', filename: '[name].js'}, // the filename is the relative output path (inside dist in the top level dir)
+    // 'ion-3d-engine': { import: './src/ion-3d-engine.ts', filename: '[name].js'}, // the filename is the relative output path (inside dist in the top level dir)
     // 'main': { import: path.join(WEB_EXAMPLE, 'src', 'index.js'), filename: '[name].js'},
     main: path.join(WEB_EXAMPLE, 'src', 'index.js'),
   },
@@ -127,7 +127,7 @@ module.exports = {
   
 //   output: {
 //     path: path.join(__dirname, 'build'),
-//     filename: "3d-node-engine.js",
+//     filename: "ion-3d-engine.js",
 //     library: "mz",
 //     libraryTarget: "umd",
 //     // libraryExport: 'default'

@@ -1,13 +1,25 @@
 // import logo from './logo.svg'; // svg image not working
 import './App.css';
-import {run} from '../../../src/3d-node-engine'
-import { useEffect } from 'react';
+import * as ION from '../../../src/ion-3d-engine'
+import { useEffect, useRef } from 'react';
 
 function App() {
-  // throw new Error('eeerr');
+  const useEffectOnceRef = useRef(false);
 
   useEffect(() => {
-    run();
+    if (useEffectOnceRef.current) return; // running useEffect only once
+    useEffectOnceRef.current = true;
+
+    let canvasElement = document.getElementById('viewport');
+    let templateScene = new ION.TemplateScene({canvas: canvasElement});
+
+    let ionGUI = new ION.GUI();
+
+
+
+
+
+    // run();
 
     // var node = document.getElementsByClassName('App-header')[0];
 
