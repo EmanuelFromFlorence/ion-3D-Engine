@@ -10,10 +10,10 @@ function App() {
     if (useEffectOnceRef.current) return; // running useEffect only once
     useEffectOnceRef.current = true;
 
-    let canvasElement = document.getElementById('viewport');
-    let templateScene = new ION.TemplateScene({canvas: canvasElement});
+    // let canvasElement = document.getElementById('viewport');
+    // let templateScene = new ION.TemplateScene({canvas: canvasElement});
 
-    let ionGUI = new ION.GUI();
+    // let ionGUI = new ION.GUI();
 
 
 

@@ -1,3 +1,3 @@
 
-export { GUI } from './gui/gui';
+export { createGUIEngine } from './gui/utils';
 export { TemplateScene } from './core/scene';

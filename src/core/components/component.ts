@@ -11,7 +11,7 @@ interface NamedParameters {
 }
 
 
-export class Component extends THREE.Object3D{
+export abstract class Component extends THREE.Object3D{
     type: string;
     state: any; // additional to Object3D props
 
@@ -20,12 +20,17 @@ export class Component extends THREE.Object3D{
         super();
 
         this.type = type;
+        this.state = {};
     }
     
-    
-    public setState = (state: any): any => {
-        this.state = state;
-    }
+
+    abstract initState (props: any): void;
+
+
+    // Not using this and trying to mutate state directly to update references to state values without writing logic to set them...
+    // public setState = (newState: any): any => {
+    //     this.state = {...this.state, ...newState}; // second one overwrites...
+    // }
 }
 
 

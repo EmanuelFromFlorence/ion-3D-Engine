@@ -8,11 +8,11 @@ interface NamedParameters {
 
 
 export class Entity{
-    components: Component[];
+    components: Map<string, Component>;
     id: any;
     name: string;
     
-    
+
     constructor({name=null}: NamedParameters){
         this.id = THREE.MathUtils.generateUUID();
         this.name = name;
@@ -20,7 +20,11 @@ export class Entity{
     
 
     public addComponent = (component: Component): any => {
-        this.components.push(component);
+        this.components.set(component.type, component);
+    }
+
+    public getComponent = (type: string): Component => {
+        return this.components.get(type);
     }
 
 }

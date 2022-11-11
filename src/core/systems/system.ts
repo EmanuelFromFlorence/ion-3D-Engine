@@ -1,11 +1,10 @@
 
 
-
 interface NamedParameters {
 }
 
 
-export class System{
+export abstract class System{
 
     
     constructor({}: NamedParameters){
@@ -13,10 +12,6 @@ export class System{
     }
     
 
-    execute = () => {
-        
-    }
+    public abstract execute: (entityRegistry: any) => void;
 
 }
-
-
