@@ -7,7 +7,7 @@ interface NamedParameters {
 export abstract class System{
 
     
-    constructor({}: NamedParameters){
+    constructor(){ //{}: NamedParameters
         
     }
     

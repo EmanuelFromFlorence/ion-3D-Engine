@@ -40,7 +40,7 @@
 
 .App-logo {
   height: 40vmin;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -62,8 +62,8 @@
 
 .App-link {
   color: #61dafb;
-  width: 700px !important;
-  height: 500px !important;
+  /* width: 700px !important;
+  height: 500px !important; */
 }
 
 .App-link:hover {
@@ -88,7 +88,7 @@
 }
 
 .aim{
-  position: absolute;
+  position: fixed;
   /* display: flex; */
 
   margin: auto;

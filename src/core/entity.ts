@@ -3,7 +3,7 @@ import * as THREE from 'three';
 
 
 interface NamedParameters {
-    name: string;
+    // name: string;
 }
 
 
@@ -13,9 +13,10 @@ export class Entity{
     name: string;
     
 
-    constructor({name=null}: NamedParameters){
+    constructor(){ // {}: NamedParameters
         this.id = THREE.MathUtils.generateUUID();
-        this.name = name;
+        this.components = new Map();
+        // this.name = name;
     }
     
 

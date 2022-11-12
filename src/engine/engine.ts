@@ -18,6 +18,7 @@ export class Engine{
     
     constructor(canvas: HTMLCanvasElement, scene: THREE.Scene = null, control: any = null, graphics = null){
         this.entityRegistry = {};
+        this.systemRegistry = [];
         if (!graphics) {
             this.initGraphics(canvas);
         }
@@ -26,7 +27,7 @@ export class Engine{
     }
 
 
-    public registerEntity = (entity: Entity): any => {
+    public addEntity = (entity: Entity): any => {
         for (let compType of entity.components.keys()){
             if (!this.entityRegistry.hasOwnProperty(compType)) {
                 this.entityRegistry[compType] = {};
@@ -36,7 +37,7 @@ export class Engine{
     }
 
 
-    public registerSystem = (system: System): any => {
+    public addSystem = (system: System): any => {
         this.systemRegistry.push(system);
     }
 
@@ -49,23 +50,21 @@ export class Engine{
 
 
     public start = (): any => {
-        
+        this.runEngine();
     }
 
 
-    private runEngine = (): any => {
+    protected runEngine = (): any => {
         let prevTime = performance.now();
         const animate = () => {
-            // requestAnimationFrame( animate );
+            requestAnimationFrame( animate );
             const time = performance.now();
             const delta = ( time - prevTime ) / 1000;
 
             // TODO::
             this.scene.updateMatrixWorld();
 
-
-            this.executeSystems();
-
+            // this.executeSystems();
 
             /* Rendering */
             this.renderer.render( this.scene, this.camera );
@@ -79,8 +78,8 @@ export class Engine{
             
             prevTime = time;
         }
-        // animate();
-        this.renderer.setAnimationLoop( animate );
+        animate();
+        // this.renderer.setAnimationLoop( animate );
     }
 
 
@@ -122,15 +121,17 @@ export class Engine{
             control = this.createControl();
         }
         this.control = control;
+        if (!this.scene) throw new Error('Scene must be initialized before setting control.');         
+        
+        this.camera = this.control.controls.getObject();
+        this.scene.add(this.camera);
     }
 
 
-    public createControl = (): any => {
+    public createControl = (): any => {        
         const control = new SpaceControls(this.camera, this.renderer);
         control.setKeyEvents();
         control.setLockEvents();
-        if (!this.scene) throw new Error('Scene must be initialized before setting control.'); 
-        this.scene.add(control.controls.getObject());
         return control;
     }
 

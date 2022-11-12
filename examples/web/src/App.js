@@ -4,21 +4,69 @@ import * as ION from '../../../src/ion-3d-engine'
 import { useEffect, useRef } from 'react';
 
 function App() {
-  const useEffectOnceRef = useRef(false);
+  // const useEffectOnceRef = useRef(false);
 
-  useEffect(() => {
-    if (useEffectOnceRef.current) return; // running useEffect only once
-    useEffectOnceRef.current = true;
+  // useEffect(() => {
+  //   if (useEffectOnceRef.current) return; // running useEffect only once
+  //   useEffectOnceRef.current = true;
+  
+  // }, []);
 
+
+    // let flag = true;
+
+    // if (flag) {
+
+    // }
+
+    // const canvas = document.getElementById('viewport');
+    // canvas.style.zIndex = 1000000;
+    // canvas.style.display = 'fixed';
+    // canvas.style.width = `${window.innerWidth}px`;
+    // canvas.style.height = `${window.innerHeight}px`; // clientHeight
+    // const engine = new ION.Engine(canvas);
+
+    // let guiScene = ION.createGUIScene();
+    // engine.setScene(guiScene);
+
+
+
+    // const htmlElement = document.getElementById('root');
+    // const guiComponent = new ION.GUIComponent({
+    //   htmlElement: htmlElement,
+    // });
+    // const guiSystem = new ION.GUISystem();
+    
+    // engine.addSystem(guiSystem);
+    
+    // let guiEntity = new ION.Entity();
+    // guiEntity.addComponent(guiComponent);
+
+    // engine.addEntity(guiEntity);
+
+    // engine.start();
+
+    // window.addEventListener('load', () => {
+    //   // engine.start();
+    // });
+    
+
+    // let id = setTimeout(() => {
+
+
+    // }, 1500);
 
 
     
 
 
+    // return () => {
+    //   // flag = false;
 
+    //   // clearTimeout(id);
+    // };
 
-
-    // let canvasElement = document.getElementById('viewport');
+    
     // let templateScene = new ION.TemplateScene({canvas: canvasElement});
 
     // let ionGUI = new ION.GUI();
@@ -41,9 +89,9 @@ function App() {
 
 
 
-    let id = setTimeout(() => {
-      var node = document.getElementsByClassName('App-header')[0];
-      let linkie = document.getElementsByClassName('App-link')[0];
+    // let id = setTimeout(() => {
+    //   var node = document.getElementsByClassName('App-header')[0];
+    //   let linkie = document.getElementsByClassName('App-link')[0];
       // var rect = linkie.getBoundingClientRect();
       // console.log(rect.top, rect.right, rect.bottom, rect.left);
       // console.log(linkie.offsetLeft, linkie.offsetTop);
@@ -195,20 +243,20 @@ function App() {
 
 
       
-      let elements = document.elementsFromPoint(30, 20);
-      console.log(elements);
+    //   let elements = document.elementsFromPoint(30, 20);
+    //   console.log(elements);
 
 
 
-      return clearTimeout(id);
-    }, 1000);
+    //   return clearTimeout(id);
+    // }, 1000);
 
 
 
 
 
 
-  }, []);
+  // }, []);
 
 
 

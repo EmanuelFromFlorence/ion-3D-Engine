@@ -12,13 +12,13 @@ interface NamedParameters {
 export class GUISystem extends System{
 
 
-    constructor({}: NamedParameters){
-        super({});
+    constructor(){ // {}: NamedParameters
+        super();
     }
 
 
     public execute = (entityRegistry: any) => {
-        for (let [entityId, entity] of Object.entries(entityRegistry['gui'])) { // {entityId: String, entity: Entity}
+        for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
             let comp = entity.getComponent(GUI_COMPONENT_TYPE);
 
             htmlToImage.toSvg(comp.state.htmlElement, { filter: comp.state.htmlFilter })

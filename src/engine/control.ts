@@ -24,7 +24,8 @@ export class SpaceControls {
 
     constructor(camera, renderer){
         this.camera = camera;
-        this.renderer = renderer;        
+        this.renderer = renderer;
+        
         this.controls = new PointerLockControls( this.camera, document.body );
 
         // API
@@ -45,7 +46,7 @@ export class SpaceControls {
     }
 
 
-	updateControl = ( delta ) => {
+	updateControl = ( delta ) => {        
         const moveMult = delta * this.movementSpeed;
         const rotMult = delta * this.rollSpeed;
 
@@ -78,7 +79,7 @@ export class SpaceControls {
         this.rotationVector.y = ( - this.moveState.yawRight + this.moveState.yawLeft );
         this.rotationVector.z = ( - this.moveState.rollRight + this.moveState.rollLeft );
         // Like rotating left is: [0, 0, 1] and right: [0, 0, -1]
-        // console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+        // console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );        
 	}
 
 
@@ -110,9 +111,11 @@ export class SpaceControls {
     }
 
 
-    setKeyEvents = () => {
+    setKeyEvents = () => {        
 
         const onKeyDown = ( event ) => {
+            console.log('onKeyDown');
+            
             if ( event.altKey ) {
 				return;
 			}
