@@ -30,7 +30,7 @@ export function createGUIScene(): THREE.Scene{
   // scene.add( plane );
 
   const helper = new THREE.GridHelper( 200, 100 );
-  helper.position.y = - 10;
+  helper.position.y = 0;
   helper.material.opacity = 0.55;
   helper.material.transparent = true;
   scene.add( helper );

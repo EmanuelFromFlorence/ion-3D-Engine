@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Component } from '../core/components/component';
+import { MeshComponent } from '../core/components/mesh_component';
 import { GUI_COMPONENT_TYPE } from './utils';
 
 
@@ -11,7 +11,7 @@ interface NamedParameters {
 }
 
 
-export class GUIComponent extends Component{
+export class GUIComponent extends MeshComponent{
 
 
     constructor({
@@ -33,7 +33,7 @@ export class GUIComponent extends Component{
 
         if (!MaterialType) MaterialType = THREE.MeshBasicMaterial;
         
-        this.initState({
+        this.initComponent({
             htmlElement,
             scale,
             htmlFilter,
@@ -42,17 +42,23 @@ export class GUIComponent extends Component{
     }
 
 
-    public initState = (props: any): void => {
+    public initComponent = (props: any): void => {
         const state = {...props};
-        state.planeMesh = this.genPlaneMesh(state.MaterialType);
-        // init texture:
+        this.genPlaneMesh(state.MaterialType);
+
+        // init texture (GUISystem later assigns this to material):
         // example setting props: https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
         state.texture = new THREE.Texture();
         state.texture.needsUpdate = true;
         state.texture.generateMipmaps = false;
 
-        // this.setState(state);
         this.state = state;
+    }
+
+
+    public registerComponent({scene}: any): void {
+        // scene.add(this.state.planeMesh);
+        scene.add(this);
     }
 
 
@@ -60,10 +66,23 @@ export class GUIComponent extends Component{
         const planeGeometry = new THREE.PlaneGeometry( 9, 9 );
         const planeMaterial = new MaterialType({color: '#282c34', side: THREE.DoubleSide}); // THREE.FrontSide
         planeMaterial.needsUpdate = true;
-        const planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
-        // planeMesh.receiveShadow = true;
 
-        return planeMesh;      
+        super.setGeometry(planeGeometry);
+        super.setMeterial(planeMaterial);
+        // or:
+        // Reflect.set(THREE.Mesh.prototype, "geometry", planeGeometry, this);
+        // Reflect.set(THREE.Mesh.prototype, "material", planeMaterial, this);
+
+        super.updateTheMorph();
+        
+        // this.receiveShadow = true;
     }
+
+
+    // // Later set the getter and setter for x, y, z
+    // public setPosition = (x: number, y: number, z: number): void => {
+    //     this.state.planeMesh.x = x;
+    // }
+
 
 }

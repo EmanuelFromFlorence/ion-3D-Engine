@@ -24,8 +24,10 @@ export abstract class Component extends THREE.Object3D{
     }
     
 
-    abstract initState (props: any): void;
+    abstract initComponent (props: any): void;
 
+
+    abstract registerComponent (props: any): void;
 
     // Not using this and trying to mutate state directly to update references to state values without writing logic to set them...
     // public setState = (newState: any): any => {

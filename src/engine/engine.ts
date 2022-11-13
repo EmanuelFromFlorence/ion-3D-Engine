@@ -28,11 +28,13 @@ export class Engine{
 
 
     public addEntity = (entity: Entity): any => {
-        for (let compType of entity.components.keys()){
-            if (!this.entityRegistry.hasOwnProperty(compType)) {
-                this.entityRegistry[compType] = {};
+        for (let [type, component] of entity.components.entries()){
+            component.registerComponent({scene: this.scene});
+
+            if (!this.entityRegistry.hasOwnProperty(type)) {
+                this.entityRegistry[type] = {};
             }
-            this.entityRegistry[compType][entity.id] = entity; // overwriting if exists!!
+            this.entityRegistry[type][entity.id] = entity; // overwriting if exists!!
         }
     }
 
@@ -57,29 +59,35 @@ export class Engine{
     protected runEngine = (): any => {
         let prevTime = performance.now();
         const animate = () => {
-            requestAnimationFrame( animate );
-            const time = performance.now();
-            const delta = ( time - prevTime ) / 1000;
-
-            // TODO::
-            this.scene.updateMatrixWorld();
-
-            // this.executeSystems();
-
-            /* Rendering */
-            this.renderer.render( this.scene, this.camera );
-            // TODO:
-            // this.renderer.clearDepth(); // important!
-            
-            
-            /* Controls */
-            this.control.updateControl(delta);
-
-            
-            prevTime = time;
+            try{
+                // requestAnimationFrame( animate );
+                const time = performance.now();
+                const delta = ( time - prevTime ) / 1000;
+    
+                // TODO::
+                this.scene.updateMatrixWorld();
+    
+                this.executeSystems();
+    
+                /* Rendering */
+                this.renderer.render( this.scene, this.camera );
+                // TODO:
+                // this.renderer.clearDepth(); // important!
+                
+                
+                /* Controls */
+                this.control.updateControl(delta);
+    
+                
+                prevTime = time;
+            }catch (err){
+                this.renderer.setAnimationLoop( null );
+                console.error('Engine Stopped.');
+                console.error(err);
+            }
         }
-        animate();
-        // this.renderer.setAnimationLoop( animate );
+        // animate();
+        this.renderer.setAnimationLoop( animate );
     }
 
 

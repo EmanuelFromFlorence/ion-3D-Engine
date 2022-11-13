@@ -29,7 +29,7 @@ export const createWebGLRenderer = (canvas: HTMLCanvasElement) => {
 export const getCamera = (aspect = null, fov = 60, near = 0.1, far = 10000): THREE.PerspectiveCamera => { 
     // aspect = canvas.clientWidth / canvas.clientHeight // window.innerWidth / window.innerHeight; // 1920 / 1080;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far); // OrthographicCamera
-    camera.position.set(0, 10, 2);
+    camera.position.set(0, 4, 10);
     // camera.lookAt(new THREE.Vector3(1,0,0));
     return camera;
 }

@@ -41,6 +41,7 @@ window.addEventListener('load', () => {
   const guiComponent = new ION.GUIComponent({
     htmlElement: htmlElement,
   });
+  guiComponent.position.y = 5;
 
   /* Entity */
   let guiEntity = new ION.Entity();

@@ -19,15 +19,22 @@ export class GUISystem extends System{
 
     public execute = (entityRegistry: any) => {
         for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
-            let comp = entity.getComponent(GUI_COMPONENT_TYPE);
+            let component = entity.getComponent(GUI_COMPONENT_TYPE);
 
-            htmlToImage.toSvg(comp.state.htmlElement, { filter: comp.state.htmlFilter })
+            htmlToImage.toSvg(component.state.htmlElement, { filter: component.state.htmlFilter })
             .then(async (svgDataUrl) => {
                 const img = await createImage(svgDataUrl);
 
                 // https://github.com/mrdoob/three.js/blob/master/src/textures/Texture.js
-                // comp.state.texture.source = new THREE.Source( img );
-                comp.state.texture.image = img;
+                // component.state.texture.source = new THREE.Source( img );
+                component.state.texture.image = img;
+                
+
+                // only this worked:
+                component.state.texture.needsUpdate = true;
+                component.material.needsUpdate = true;
+
+
 
                 // Example of creating texture and setting texture props:::
                 // https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
@@ -38,9 +45,12 @@ export class GUISystem extends System{
                 // const texture = new THREE.TextureLoader().load( img );
                 // texture.needsUpdate = true;
                 
-                if (!comp.state.planeMesh.material.map) {
+                if (!component.material.map) {
                     console.warn('Should happen once initially!!!');
-                    comp.state.planeMesh.material.map = comp.state.texture;
+                    component.material.map = component.state.texture;
+
+
+                    console.log(component);
                 }
                 
             });

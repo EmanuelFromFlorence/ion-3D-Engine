@@ -114,7 +114,6 @@ export class SpaceControls {
     setKeyEvents = () => {        
 
         const onKeyDown = ( event ) => {
-            console.log('onKeyDown');
             
             if ( event.altKey ) {
 				return;
