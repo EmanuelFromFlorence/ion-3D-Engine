@@ -6,18 +6,23 @@ import { GUI_COMPONENT_TYPE } from './utils';
 interface NamedParameters {
     htmlElement: HTMLElement;
     htmlFilter: Function;
-    scale: number;
+    ratio: number;
     MaterialType: THREE.Material;
 }
 
 
 export class GUIComponent extends MeshComponent{
+    htmlElement: any;
+    htmlTexture: any;
+    ratio: number;
+    MaterialType: any;
+    htmlFilter: any;
 
 
     constructor({
         htmlElement,
         htmlFilter,
-        scale = 1,
+        ratio = 1,
         MaterialType = null,
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
@@ -35,7 +40,7 @@ export class GUIComponent extends MeshComponent{
         
         this.initComponent({
             htmlElement,
-            scale,
+            ratio,
             htmlFilter,
             MaterialType,
         });
@@ -43,16 +48,19 @@ export class GUIComponent extends MeshComponent{
 
 
     public initComponent = (props: any): void => {
-        const state = {...props};
-        this.genPlaneMesh(state.MaterialType);
+        this.htmlElement = props.htmlElement;
+        this.htmlFilter = props.htmlFilter;
+        this.MaterialType = props.MaterialType;
+        this.ratio = props.ratio;
+        
+        this.initHTMLElement();
+        this.genPlaneMesh();
 
         // init texture (GUISystem later assigns this to material):
         // example setting props: https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
-        state.texture = new THREE.Texture();
-        state.texture.needsUpdate = true;
-        state.texture.generateMipmaps = false;
-
-        this.state = state;
+        this.htmlTexture = new THREE.Texture();
+        this.htmlTexture.needsUpdate = true;
+        this.htmlTexture.generateMipmaps = false;
     }
 
 
@@ -62,9 +70,10 @@ export class GUIComponent extends MeshComponent{
     }
 
 
-    protected genPlaneMesh = (MaterialType: THREE.Material): THREE.Mesh => {
-        const planeGeometry = new THREE.PlaneGeometry( 9, 9 );
-        const planeMaterial = new MaterialType({color: '#282c34', side: THREE.DoubleSide}); // THREE.FrontSide
+    protected genPlaneMesh = (): THREE.Mesh => { // htmlElement, MaterialType: THREE.Material
+        let [widthInWorldUnit, heightInWorldUnit] = this.get2DSizeInWorldUnit();
+        const planeGeometry = new THREE.PlaneGeometry( widthInWorldUnit, heightInWorldUnit );
+        const planeMaterial = new this.MaterialType({color: '#282c34', side: THREE.DoubleSide}); // THREE.FrontSide
         planeMaterial.needsUpdate = true;
 
         super.setGeometry(planeGeometry);
@@ -76,6 +85,30 @@ export class GUIComponent extends MeshComponent{
         super.updateTheMorph();
         
         // this.receiveShadow = true;
+    }
+
+
+    public get2DSizeInWorldUnit(): any {
+        // ratio:
+        let unitPX = 100;
+        unitPX = unitPX / this.ratio;
+        
+        // htmlElement Dimensions: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+        let rect = this.htmlElement.getBoundingClientRect();
+        let widthInWorldUnit = rect.width / unitPX;
+        let heightInWorldUnit = rect.height / unitPX;
+
+        return [widthInWorldUnit, heightInWorldUnit];
+    }
+
+
+    public initHTMLElement(): any {
+        this.htmlElement.style.position = 'fixed';
+        this.htmlElement.style.left = '0';
+        this.htmlElement.style.top = '0';
+        this.htmlElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
+        // htmlElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
+        this.htmlElement.style.margin = '0 auto';
     }
 
 

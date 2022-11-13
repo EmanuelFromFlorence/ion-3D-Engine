@@ -13,14 +13,12 @@ interface NamedParameters {
 
 export abstract class Component extends THREE.Object3D{
     type: string;
-    state: any; // additional to Object3D props
 
 
     constructor({type=null}: NamedParameters){
         super();
 
         this.type = type;
-        this.state = {};
     }
     
 

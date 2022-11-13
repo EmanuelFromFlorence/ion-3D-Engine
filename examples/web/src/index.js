@@ -22,26 +22,42 @@ root.render(
 
 console.log('In index.js....');
 
+
+
 window.addEventListener('load', () => {
+  // const htmlElement = document.getElementById('container');
+  // htmlElement.style.position = 'fixed';
+  // htmlElement.style.left = '0';
+  // htmlElement.style.top = '0';
 
   /* Engine */
   const canvas = document.getElementById('viewport');
   canvas.style.zIndex = 100000;
   canvas.style.position = 'fixed';
   canvas.style.display = 'block';
-  canvas.style.width = `${window.innerWidth}px`;
-  canvas.style.height = `${window.innerHeight}px`; // clientHeight
+  canvas.style.width = '100%'; // `${window.innerWidth}px`;
+  canvas.style.height = '100%'; //`${window.innerHeight}px`; // clientHeight
   let guiScene = ION.createGUIScene();
   const engine = new ION.Engine(canvas, guiScene);
 
-  /* Component */
-  const htmlElement = document.getElementById('root');
-  // canvas.style.zIndex = 1000000;
-  // canvas.style.display = 'fixed';
+  // /* Component */
+  // const htmlElement = document.getElementById('root');
+  // // should do these in GUIComponent init step:
+  // htmlElement.style.position = 'fixed';
+  // htmlElement.style.width = `512px`;
+  // htmlElement.style.height = `512px`;
+  // htmlElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
+  // // htmlElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
+  // htmlElement.style.margin = '0 auto';
+
+  const htmlElement = document.getElementById('container');
+
   const guiComponent = new ION.GUIComponent({
     htmlElement: htmlElement,
+    ratio: 1,
   });
   guiComponent.position.y = 5;
+  // guiComponent.position.z = -10;
 
   /* Entity */
   let guiEntity = new ION.Entity();

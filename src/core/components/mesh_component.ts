@@ -8,7 +8,6 @@ interface NamedParameters {
 
 export abstract class MeshComponent extends THREE.Mesh{
     type: string;
-    state: any;
 
 
     constructor({type=null}: NamedParameters){
@@ -20,7 +19,6 @@ export abstract class MeshComponent extends THREE.Mesh{
         super(geometry, material);
 
         this.type = type;
-        this.state = {};
     }
     
 

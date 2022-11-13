@@ -104,8 +104,8 @@ export class Engine{
     
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/resize_event
         // Only handlers registered on the window object will receive resize events.
-        // window.addEventListener( 'resize', onWindowResize );
         this.renderer.domElement.addEventListener( 'resize', onWindowResize );
+        // window.addEventListener( 'resize', onWindowResize );
     }
 
 

@@ -21,21 +21,22 @@ export class GUISystem extends System{
         for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
             let component = entity.getComponent(GUI_COMPONENT_TYPE);
 
-            htmlToImage.toSvg(component.state.htmlElement, { filter: component.state.htmlFilter })
+            // Only this worked, should later set these in guiComponent if possible:
+            if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
+                component.htmlTexture.needsUpdate = true;
+                component.material.needsUpdate = true;
+            }
+
+
+            // More options:: https://github.com/bubkoo/html-to-image
+            htmlToImage.toSvg(component.htmlElement, { filter: component.htmlFilter })
             .then(async (svgDataUrl) => {
                 const img = await createImage(svgDataUrl);
 
                 // https://github.com/mrdoob/three.js/blob/master/src/textures/Texture.js
-                // component.state.texture.source = new THREE.Source( img );
-                component.state.texture.image = img;
+                // component.htmlTexture.source = new THREE.Source( img );
+                component.htmlTexture.image = img;
                 
-
-                // only this worked:
-                component.state.texture.needsUpdate = true;
-                component.material.needsUpdate = true;
-
-
-
                 // Example of creating texture and setting texture props:::
                 // https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
 
@@ -47,10 +48,7 @@ export class GUISystem extends System{
                 
                 if (!component.material.map) {
                     console.warn('Should happen once initially!!!');
-                    component.material.map = component.state.texture;
-
-
-                    console.log(component);
+                    component.material.map = component.htmlTexture;
                 }
                 
             });

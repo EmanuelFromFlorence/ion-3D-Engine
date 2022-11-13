@@ -6,7 +6,7 @@ export const createWebGLRenderer = (canvas: HTMLCanvasElement) => {
     // renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio( window.devicePixelRatio ); 
     renderer.setSize( canvas.clientWidth, canvas.clientHeight );
-    // renderer.xr.enabled = true;
+    // renderer.xr.enabled = true; // will do that in engine or sth...
     
     // Shadows: https://www.youtube.com/watch?v=AUF15I3sy6s
     // Remember this makes it super slow!!!!!!!!!!!!
