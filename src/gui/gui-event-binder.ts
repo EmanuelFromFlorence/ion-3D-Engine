@@ -188,3 +188,41 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
     // }, 1000);
 
 }
+
+
+export function dispatchMouseEvent(element, event, clientX, clientY) {
+    const mouseEvent = new MouseEvent(event, {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        // https://stackoverflow.com/a/63611994
+        clientX,
+        clientY,
+    });
+    element.dispatchEvent(mouseEvent);
+}
+
+
+// export function bindClickEvents() {
+//     document.addEventListener( 'click', onKeyDown );
+
+//     // const onKeyDown = ( event ) => {
+//     //     console.log(event.code);
+        
+
+//     //     if ( event.altKey ) return;
+
+//     //     switch ( event.code ) {
+//     //         case 'ShiftLeft':
+//     //         case 'ShiftRight': this.movementSpeedMultiplier = .1; break;
+//     //     }
+//     // }
+
+//     // const onKeyUp = ( event ) => {
+//     //     switch ( event.code ) {
+//     //     }
+//     // }
+
+//     // document.addEventListener( 'click', onKeyDown );
+
+// }

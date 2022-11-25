@@ -3,7 +3,7 @@ import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
 import { createImage, GUI_COMPONENT_TYPE } from './utils';
 import { Entity } from '../core/entity';
-import { bindCSSEvents } from './gui-event-binder';
+import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 
 
@@ -13,10 +13,20 @@ interface NamedParameters {
 
 export class GUISystem extends System{
     aimRaycaster: any;
+    engine: Engine;
+    aimingGuiComponent: any;
+    aimX: number;
+    aimY: number;
+    aimingHTMLElement: any;
 
     constructor(){ // {}: NamedParameters
         super();
 
+        this.engine = null;
+        this.aimingGuiComponent = null;
+        this.aimX = null;
+        this.aimY = null;
+        this.aimingHTMLElement = null;
         this.initUIEvents();
         this.initRaycaster();
     }
@@ -33,10 +43,13 @@ export class GUISystem extends System{
     
     public initUIEvents = () => {
         bindCSSEvents();
+        this.bindClickEvents();
     }
 
 
     public execute = (engine: Engine, entityRegistry: any) => {
+        this.engine = engine;
+        
         let meshesToIntersect = [];
 
         for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
@@ -86,7 +99,6 @@ export class GUISystem extends System{
         }
 
         this.updateAim(engine, meshesToIntersect);
-
     }
     
 
@@ -100,101 +112,52 @@ export class GUISystem extends System{
         const intersections = this.aimRaycaster.intersectObjects(meshesToIntersect, false);
 
         if (typeof intersections != 'undefined' && intersections.length > 0){
-            intersections[0].object // intersect returns the same gui component mesh
-            intersections[0].object.isMesh
-            intersections[0].object.scale
-            intersections[0].face
-            intersections[0].faceIndex
-            intersections[0].uv // THREE.Vector2
-            // if(typeof intersections[0].object.name != 'undefined'){
-            //     // if (intersections[0].object.name.includes('twitter')){}
-            // }
+            // intersections[0].object.scale
+            // intersections[0].face
+            // intersections[0].faceIndex
 
-            // console.log(intersections[0].object);
-            
-
+            this.aimingGuiComponent = intersections[0].object;
             let pointerVector2 = intersections[0].uv;
+            this.aimX = pointerVector2.x * this.aimingGuiComponent.rootElement.offsetWidth;
+            this.aimY = (1 - pointerVector2.y) * this.aimingGuiComponent.rootElement.offsetHeight;
 
-            let aimingElm = this.getAimingElement(pointerVector2, intersections[0].object, engine.canvas);
-            // console.log(aimingElm); // container
+            let newAimingHTMLElement = this.getAimingElement(this.aimX, this.aimY, engine.canvas);
+            if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement && !newAimingHTMLElement.isSameNode(this.aimingHTMLElement)) {
+                dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+            }
+
+            this.aimingHTMLElement = newAimingHTMLElement;
             
+            dispatchMouseEvent(this.aimingHTMLElement, 'mouseover', this.aimX, this.aimY);
 
-            
-            // let node = document.getElementById('btn_1');
-            
-
-            const mouseEvent = new MouseEvent("mouseover", {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-                offsetX: aimingElm.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-                offsetY: aimingElm.scrollHeight * pointerVector2.y,
-
-                clientX: aimingElm.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-                clientY: aimingElm.scrollHeight * pointerVector2.y,
-
-                screenX: aimingElm.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-                screenY: aimingElm.scrollHeight * pointerVector2.y,
-
-                pageX: aimingElm.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-                pageY: aimingElm.scrollHeight * pointerVector2.y,
-            });
-            // console.log(node.scrollWidth * pointerVector2.x);
-            // console.log(node);
-            
-            // aimingElm.dispatchEvent(mouseEvent);
-            
-            
-            // var event2 = document.createEvent("MouseEvents");
-            // event2.initMouseEvent("mouseover", true, true, window,
-            // 1, 1, 1, 1, 1,
-            // false, false, false, false,
-            // 0, null);
-            // node.dispatchEvent(event2);
-
+        }else {
+            if (this.aimingHTMLElement) dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+            this.aimingGuiComponent = null;
+            this.aimX = null;
+            this.aimY = null;
+            this.aimingHTMLElement = null;
         }
-
-
     }
 
-    // https://gist.github.com/oslego/7265412
-    public getAimingElement = (pointerVector2, guiComponent, canvas) => {
-        let x = pointerVector2.x;
-        let y = pointerVector2.y;
+
+    // A elementsFromPoint shim: https://gist.github.com/oslego/7265412
+    public getAimingElement = (x, y, canvas) => {
         let aimingElm = null;
-                
         canvas.style.setProperty('pointer-events', 'none', 'important'); 
         aimingElm = document.elementFromPoint(x, y);
         canvas.style.setProperty('pointer-events', 'initial', 'important'); 
-        
         return aimingElm;
     }
 
 
-    // public elementssssFromPoint = (x, y) => {
-    //     var elements = [], previousPointerEvents = [], current, i, d;
-    //     // get all elements via elementFromPoint, and remove them from hit-testing in order
-    //     while ((current = document.elementFromPoint(x,y)) && elements.indexOf(current)===-1 && current != null) {
-              
-    //         // push the element and its current style
-    //         elements.push(current);
-    //         previousPointerEvents.push({
-    //                 value: current.style.getPropertyValue('pointer-events'),
-    //                 priority: current.style.getPropertyPriority('pointer-events')
-    //             });
-              
-    //         // add "pointer-events: none", to get to the underlying element
-    //         current.style.setProperty('pointer-events', 'none', 'important'); 
-    //     }
-    
-    //     // restore the previous pointer-events values
-    //     for(i = previousPointerEvents.length; d=previousPointerEvents[--i]; ) {
-    //         elements[i].style.setProperty('pointer-events', d.value?d.value:'', d.priority); 
-    //     }
-          
-    //     // return our results
-    //     return elements;
-    // }
-
+    public bindClickEvents = () => {
+        document.addEventListener( 'click', (e) => {
+            if (this.engine && this.engine.control.controls.isLocked) { // click not captured until gui system executed
+                if(this.aimingHTMLElement && this.aimingHTMLElement.isSameNode(e.target)) { // to also prevent infinite
+                    dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
+                }
+            }
+        });
+    }
 
 }
