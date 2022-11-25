@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+// import { bindCSSEvents } from '../../../src/gui/gui-event-binder';
 
 import * as ION from '../../../src/ion-3d-engine'
 
@@ -25,10 +26,10 @@ console.log('In index.js....');
 
 
 window.addEventListener('load', () => {
-  // const htmlElement = document.getElementById('container');
-  // htmlElement.style.position = 'fixed';
-  // htmlElement.style.left = '0';
-  // htmlElement.style.top = '0';
+  // const rootElement = document.getElementById('container');
+  // rootElement.style.position = 'fixed';
+  // rootElement.style.left = '0';
+  // rootElement.style.top = '0';
 
   /* Engine */
   const canvas = document.getElementById('viewport');
@@ -41,19 +42,19 @@ window.addEventListener('load', () => {
   const engine = new ION.Engine(canvas, guiScene);
 
   // /* Component */
-  // const htmlElement = document.getElementById('root');
+  // const rootElement = document.getElementById('root');
   // // should do these in GUIComponent init step:
-  // htmlElement.style.position = 'fixed';
-  // htmlElement.style.width = `512px`;
-  // htmlElement.style.height = `512px`;
-  // htmlElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
-  // // htmlElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
-  // htmlElement.style.margin = '0 auto';
+  // rootElement.style.position = 'fixed';
+  // rootElement.style.width = `512px`;
+  // rootElement.style.height = `512px`;
+  // rootElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
+  // // rootElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
+  // rootElement.style.margin = '0 auto';
 
-  const htmlElement = document.getElementById('container');
+  const rootElement = document.getElementById('container');
 
   const guiComponent = new ION.GUIComponent({
-    htmlElement: htmlElement,
+    rootElement: rootElement,
     ratio: 1,
   });
   guiComponent.position.y = 5;

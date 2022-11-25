@@ -14,11 +14,13 @@ export class Engine{
     camera: any;
     scene: THREE.Scene;
     control: any;
+    canvas: HTMLCanvasElement;
 
     
     constructor(canvas: HTMLCanvasElement, scene: THREE.Scene = null, control: any = null, graphics = null){
         this.entityRegistry = {};
         this.systemRegistry = [];
+        this.canvas = canvas;
         if (!graphics) {
             this.initGraphics(canvas);
         }
@@ -46,7 +48,7 @@ export class Engine{
 
     protected executeSystems = (): any => {
         for (let system of this.systemRegistry) {
-            system.execute(this.entityRegistry);
+            system.execute(this, this.entityRegistry);
         }
     }
 

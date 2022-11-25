@@ -1,3 +1,4 @@
+import { Engine } from "../../ion-3d-engine";
 
 
 interface NamedParameters {
@@ -12,6 +13,6 @@ export abstract class System{
     }
     
 
-    public abstract execute: (entityRegistry: any) => void;
+    public abstract execute: (engine: Engine, entityRegistry: any) => void;
 
 }

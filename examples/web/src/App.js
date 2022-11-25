@@ -31,9 +31,9 @@ function App() {
 
 
 
-    // const htmlElement = document.getElementById('root');
+    // const rootElement = document.getElementById('root');
     // const guiComponent = new ION.GUIComponent({
-    //   htmlElement: htmlElement,
+    //   rootElement: rootElement,
     // });
     // const guiSystem = new ION.GUISystem();
     

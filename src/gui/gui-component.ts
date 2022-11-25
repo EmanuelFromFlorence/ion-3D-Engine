@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { MeshComponent } from '../core/components/mesh_component';
+import { MeshComponent } from '../core/components/mesh-component';
 import { GUI_COMPONENT_TYPE } from './utils';
 
 
 interface NamedParameters {
-    htmlElement: HTMLElement;
+    rootElement: HTMLElement;
     htmlFilter: Function;
     ratio: number;
     MaterialType: THREE.Material;
@@ -12,7 +12,7 @@ interface NamedParameters {
 
 
 export class GUIComponent extends MeshComponent{
-    htmlElement: any;
+    rootElement: any;
     htmlTexture: any;
     ratio: number;
     MaterialType: any;
@@ -20,14 +20,14 @@ export class GUIComponent extends MeshComponent{
 
 
     constructor({
-        htmlElement,
+        rootElement,
         htmlFilter,
         ratio = 1,
         MaterialType = null,
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
-        if (!htmlElement) throw new TypeError('Invalid htmlElement is passed!');
+        if (!rootElement) throw new TypeError('Invalid rootElement is passed!');
 
         if (!htmlFilter || typeof htmlFilter !== 'function') {
             htmlFilter = (node) => {
@@ -39,7 +39,7 @@ export class GUIComponent extends MeshComponent{
         if (!MaterialType) MaterialType = THREE.MeshBasicMaterial;
         
         this.initComponent({
-            htmlElement,
+            rootElement,
             ratio,
             htmlFilter,
             MaterialType,
@@ -48,12 +48,12 @@ export class GUIComponent extends MeshComponent{
 
 
     public initComponent = (props: any): void => {
-        this.htmlElement = props.htmlElement;
+        this.rootElement = props.rootElement;
         this.htmlFilter = props.htmlFilter;
         this.MaterialType = props.MaterialType;
         this.ratio = props.ratio;
         
-        this.initHTMLElement();
+        this.initRootElement();
         this.genPlaneMesh();
 
         // init texture (GUISystem later assigns this to material):
@@ -70,7 +70,7 @@ export class GUIComponent extends MeshComponent{
     }
 
 
-    protected genPlaneMesh = (): THREE.Mesh => { // htmlElement, MaterialType: THREE.Material
+    protected genPlaneMesh = (): THREE.Mesh => { // rootElement, MaterialType: THREE.Material
         let [widthInWorldUnit, heightInWorldUnit] = this.get2DSizeInWorldUnit();
         const planeGeometry = new THREE.PlaneGeometry( widthInWorldUnit, heightInWorldUnit );
         const planeMaterial = new this.MaterialType({color: '#282c34', side: THREE.DoubleSide}); // THREE.FrontSide
@@ -93,8 +93,8 @@ export class GUIComponent extends MeshComponent{
         let unitPX = 100;
         unitPX = unitPX / this.ratio;
         
-        // htmlElement Dimensions: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
-        let rect = this.htmlElement.getBoundingClientRect();
+        // rootElement Dimensions: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+        let rect = this.rootElement.getBoundingClientRect();
         let widthInWorldUnit = rect.width / unitPX;
         let heightInWorldUnit = rect.height / unitPX;
 
@@ -102,13 +102,13 @@ export class GUIComponent extends MeshComponent{
     }
 
 
-    public initHTMLElement(): any {
-        this.htmlElement.style.position = 'fixed';
-        this.htmlElement.style.left = '0';
-        this.htmlElement.style.top = '0';
-        this.htmlElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
-        // htmlElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
-        this.htmlElement.style.margin = '0 auto';
+    public initRootElement(): any {
+        this.rootElement.style.position = 'fixed';
+        this.rootElement.style.left = '0';
+        this.rootElement.style.top = '0';
+        this.rootElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
+        // rootElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
+        this.rootElement.style.margin = '0 auto';
     }
 
 
