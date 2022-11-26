@@ -4,6 +4,8 @@ import { getRandomInt } from "../core/utils/utils";
 
 const HOVER_REGXP = /.*:.*hover/;
 const ACTIVE_REGXP = /.*:.*active/;
+const VISITED_REGXP = /.*:.*visited/;
+const LINK_REGXP = /.*:.*link/;
 const FOCUS_REGXP = /.*:.*focus/;
 const CHECKED_REGXP = /.*:.*checked/;
 const ENABLED_REGXP = /.*:.*enabled/;
@@ -106,6 +108,20 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     bindToggleEvents(originalSelector, ionClass, 'mousedown', 'mouseup');
                     break;
                 
+                case cssRule instanceof CSSStyleRule && VISITED_REGXP.test(cssRule.selectorText):
+                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'visited');
+                    newCSSRules.push(newRule);
+                    // Custom events:
+                    bindToggleEvents(originalSelector, ionClass, 'visited', 'undovisited');
+                    break;
+                
+                case cssRule instanceof CSSStyleRule && LINK_REGXP.test(cssRule.selectorText):
+                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'link');
+                    newCSSRules.push(newRule);
+                    // Custom events:
+                    bindToggleEvents(originalSelector, ionClass, 'link', 'unlink');
+                    break;
+                
                 case cssRule instanceof CSSStyleRule && FOCUS_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'focus');
                     newCSSRules.push(newRule);
@@ -123,7 +139,7 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                 case cssRule instanceof CSSStyleRule && ENABLED_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'enabled');
                     newCSSRules.push(newRule);
-                    // Custom events:
+                    // Custom events for users to send these in case want to enable or disable input element:
                     bindToggleEvents(originalSelector, ionClass, 'enabled', 'disabled');
                     break;
                 
@@ -205,11 +221,20 @@ export function dispatchMouseEvent(element, event, clientX, clientY) {
 
 
 export function isTextBox(element) {
-    var tagName = element.tagName.toLowerCase();
+    let tagName = element.tagName.toLowerCase();
     if (tagName === 'textarea') return true;
     if (tagName !== 'input') return false;
-    var type = element.getAttribute('type').toLowerCase(),
-        // if any of these input types is not supported by a browser, it will behave as input type text.
-        inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week']
+    let type = element.getAttribute('type').toLowerCase();
+    // if any of these input types is not supported by a browser, it will behave as input type text.
+    let inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
+    return inputTypes.indexOf(type) >= 0;
+}
+
+
+export function isRadioCheckBox(element) {
+    let tagName = element.tagName.toLowerCase();
+    if (tagName !== 'input') return false;
+    let type = element.getAttribute('type').toLowerCase();
+    let inputTypes = ['checkbox', 'radio'];
     return inputTypes.indexOf(type) >= 0;
 }

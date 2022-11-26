@@ -3,7 +3,7 @@ import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
 import { createImage, GUI_COMPONENT_TYPE } from './utils';
 import { Entity } from '../core/entity';
-import { bindCSSEvents, dispatchMouseEvent, isTextBox } from './gui-event-binder';
+import { bindCSSEvents, dispatchMouseEvent, isRadioCheckBox, isTextBox } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 
 
@@ -196,6 +196,8 @@ export class GUISystem extends System{
                 
                 dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
                 // this.aimingHTMLElement.click(); // no need for this
+                
+                this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
             }
         });
     }

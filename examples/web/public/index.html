@@ -45,6 +45,9 @@
   <div id ="container">
     <!-- <div id ="animate"></div> -->
     <h2>Push Button</h2>
+    
+    <a id="link_test" href="https://www.w3schools.com">W3schools.com</a><br><br>
+
     <form>
         Username: <input type="text" name="name" 
             placeholder="Enter Username" size="20">
@@ -52,10 +55,30 @@
   
         Password: <input type="password" 
             name="password" size="20"><br><br>
-              
+        
+        
+        <input type="radio" id="html" name="fav_language" value="HTML">
+        <label for="fav_language"> HTML</label><br><br>
+
+        <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+        <label for="vehicle1"> vehicle1</label><br><br>
+
+        <label for="birthday">Birthday:</label>
+        <input type="date" id="birthday" name="birthday"><br><br>
+
+        <input type="image" src="img_submit.gif" alt="Submit" width="48" height="48"><br><br>
+
+
+        <input type="range" id="vol" name="vol" min="0" max="50"><br><br>
+
+        <input type="time" id="appt" name="appt"><br><br>
+
+
         <!-- <input type="submit" name="submit" value="Submit"> -->
         <input id="btn_1" type="reset" name="reset" value="Reset" click="btnClicked(this)">
         <!-- <button name="click">Click Me</button> -->
+
+        <input id="submit_btn" type="submit" value="Submit">
     </form>
 
   </div>
@@ -87,6 +110,9 @@
       border: 10px solid #4CAF50;
     }
     
+    #link_test:active {
+      background-color: red;
+    }
 
     /* #animate {
       width: 50px;
@@ -103,6 +129,24 @@
       function btnClicked(e){
         console.log('btn_1 is clicked!');
       }
+
+      document.getElementById('link_test').addEventListener( 'mousedown', (e) => {
+          console.log('link_test  mousedownmousedownmousedown');
+      });
+      document.getElementById('link_test').addEventListener( 'mouseup', (e) => {
+          console.log('link_test  mouseupmouseupmouseupmouseup');
+      });
+      document.getElementById('link_test').addEventListener( 'click', (e) => {
+          console.log('link_test  clickclickclickclickclick');
+      });
+      document.getElementById('link_test').addEventListener( 'focus', (e) => {
+          console.log('link_test  focusfocusfocusfocusfocus');
+      });
+      // document.getElementById('link_test').addEventListener( 'active', (e) => {
+      //     console.log('link_test  activeactiveactiveactive');
+      // });
+
+
 
       document.getElementById('btn_1').addEventListener( 'mousedown', (e) => {
           console.log('mousedownmousedownmousedown');
