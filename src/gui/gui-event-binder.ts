@@ -109,7 +109,8 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                 case cssRule instanceof CSSStyleRule && FOCUS_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'focus');
                     newCSSRules.push(newRule);
-                    bindDOMCaptureToggleEvents(originalSelector, ionClass, 'focus', 'blur');
+                    bindToggleEvents(originalSelector, ionClass, 'focus', 'blur');
+                    // bindDOMCaptureToggleEvents(originalSelector, ionClass, 'focus', 'blur');
                     break;
                                 
                 case cssRule instanceof CSSStyleRule && CHECKED_REGXP.test(cssRule.selectorText):
@@ -203,26 +204,12 @@ export function dispatchMouseEvent(element, event, clientX, clientY) {
 }
 
 
-// export function bindClickEvents() {
-//     document.addEventListener( 'click', onKeyDown );
-
-//     // const onKeyDown = ( event ) => {
-//     //     console.log(event.code);
-        
-
-//     //     if ( event.altKey ) return;
-
-//     //     switch ( event.code ) {
-//     //         case 'ShiftLeft':
-//     //         case 'ShiftRight': this.movementSpeedMultiplier = .1; break;
-//     //     }
-//     // }
-
-//     // const onKeyUp = ( event ) => {
-//     //     switch ( event.code ) {
-//     //     }
-//     // }
-
-//     // document.addEventListener( 'click', onKeyDown );
-
-// }
+export function isTextBox(element) {
+    var tagName = element.tagName.toLowerCase();
+    if (tagName === 'textarea') return true;
+    if (tagName !== 'input') return false;
+    var type = element.getAttribute('type').toLowerCase(),
+        // if any of these input types is not supported by a browser, it will behave as input type text.
+        inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week']
+    return inputTypes.indexOf(type) >= 0;
+}

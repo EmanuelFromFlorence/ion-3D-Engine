@@ -3,7 +3,7 @@ import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
 import { createImage, GUI_COMPONENT_TYPE } from './utils';
 import { Entity } from '../core/entity';
-import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
+import { bindCSSEvents, dispatchMouseEvent, isTextBox } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 
 
@@ -18,6 +18,10 @@ export class GUISystem extends System{
     aimX: number;
     aimY: number;
     aimingHTMLElement: any;
+    downEventHandled: boolean;
+    upEventSent: boolean;
+    clickEventHandled: boolean;
+    focusedElement: any;
 
     constructor(){ // {}: NamedParameters
         super();
@@ -151,11 +155,47 @@ export class GUISystem extends System{
 
 
     public bindClickEvents = () => {
-        document.addEventListener( 'click', (e) => {
-            if (this.engine && this.engine.control.controls.isLocked) { // click not captured until gui system executed
-                if(this.aimingHTMLElement && this.aimingHTMLElement.isSameNode(e.target)) { // to also prevent infinite
-                    dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
+        // this is both for click and css active pseudoclasses (also in general dispatching mouse down and up...)
+        this.downEventHandled = false;
+        this.upEventSent = false;
+        this.focusedElement = null; // previous one
+
+        document.addEventListener( 'mousedown', (e) => {
+            if (this.downEventHandled){ // to also prevent infinite
+                this.downEventHandled = false;
+                return;
+            }
+            if (this.engine && this.engine.control.controls.isLocked && this.aimingHTMLElement) { // click not captured until gui system executed
+                this.downEventHandled = true;
+                dispatchMouseEvent(this.aimingHTMLElement, 'mousedown', this.aimX, this.aimY);
+                
+                dispatchMouseEvent(this.aimingHTMLElement, 'focus', this.aimX, this.aimY);
+                this.aimingHTMLElement.focus(); // only this focuses on element
+                if (this.focusedElement && !this.focusedElement.isSameNode(this.aimingHTMLElement)) {
+                    dispatchMouseEvent(this.focusedElement, 'blur', this.aimX, this.aimY);
                 }
+
+                this.focusedElement = this.aimingHTMLElement;
+
+                if (isTextBox(this.focusedElement)) {
+                    this.engine.control.typingMode = true;
+                }else {
+                    this.engine.control.typingMode = false;
+                }
+            }
+        });
+
+        document.addEventListener( 'mouseup', (e) => {
+            if (this.upEventSent){ // to also prevent infinite
+                this.upEventSent = false;
+                return;
+            }
+            if (this.engine && this.engine.control.controls.isLocked && this.aimingHTMLElement) { // click not captured until gui system executed
+                this.upEventSent = true;
+                dispatchMouseEvent(this.aimingHTMLElement, 'mouseup', this.aimX, this.aimY);
+                
+                dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
+                // this.aimingHTMLElement.click(); // no need for this
             }
         });
     }

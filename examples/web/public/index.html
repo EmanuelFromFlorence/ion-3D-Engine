@@ -54,7 +54,7 @@
             name="password" size="20"><br><br>
               
         <!-- <input type="submit" name="submit" value="Submit"> -->
-        <input id="btn_1" type="reset" name="reset" value="Reset">
+        <input id="btn_1" type="reset" name="reset" value="Reset" click="btnClicked(this)">
         <!-- <button name="click">Click Me</button> -->
     </form>
 
@@ -97,6 +97,29 @@
   </style>
 
   <script>
+
+
+   window.addEventListener('load', () => {
+      function btnClicked(e){
+        console.log('btn_1 is clicked!');
+      }
+
+      document.getElementById('btn_1').addEventListener( 'mousedown', (e) => {
+          console.log('mousedownmousedownmousedown');
+      });
+      document.getElementById('btn_1').addEventListener( 'mouseup', (e) => {
+          console.log('mouseupmouseupmouseupmouseup');
+      });
+      document.getElementById('btn_1').addEventListener( 'click', (e) => {
+          console.log('clickclickclickclickclick');
+      });
+      document.getElementById('btn_1').addEventListener( 'focus', (e) => {
+          console.log('focusfocusfocusfocusfocus');
+      });
+
+
+   });
+
 
 
     // function myMove() {

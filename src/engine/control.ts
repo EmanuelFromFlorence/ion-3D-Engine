@@ -21,10 +21,13 @@ export class SpaceControls {
     moveVector: THREE.Vector3;
     rotationVector: THREE.Vector3;
     movementSpeedMultiplier: number;
+    typingMode: boolean;
 
     constructor(camera, renderer){
         this.camera = camera;
         this.renderer = renderer;
+
+        this.typingMode = false;
         
         this.controls = new PointerLockControls( this.camera, document.body );
 
@@ -114,6 +117,9 @@ export class SpaceControls {
     setKeyEvents = () => {        
 
         const onKeyDown = ( event ) => {
+            if (this.typingMode) {
+                return;
+            }
             
             if ( event.altKey ) {
 				return;
