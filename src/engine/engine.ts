@@ -84,7 +84,7 @@ export class Engine{
                 prevTime = time;
             }catch (err){
                 this.renderer.setAnimationLoop( null );
-                console.error('Engine Stopped.');
+                console.error('ION Engine Stopped.');
                 console.error(err);
             }
         }

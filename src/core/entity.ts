@@ -23,6 +23,7 @@ export class Entity{
     public addComponent = (component: Component): any => {
         this.components.set(component.type, component);
     }
+    
 
     public getComponent = (type: string): Component => {
         return this.components.get(type);

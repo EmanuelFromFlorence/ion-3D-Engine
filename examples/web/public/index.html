@@ -66,7 +66,7 @@
         <label for="birthday">Birthday:</label>
         <input type="date" id="birthday" name="birthday"><br><br>
 
-        <input type="image" src="img_submit.gif" alt="Submit" width="48" height="48"><br><br>
+        <input type="image" src="" alt="Submit" width="48" height="48"><br><br>
 
 
         <input type="range" id="vol" name="vol" min="0" max="50"><br><br>
@@ -74,8 +74,18 @@
         <input type="time" id="appt" name="appt"><br><br>
 
 
+        <label for="cars">Choose a car:</label>
+        <select name="cars" id="cars" multiple>
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="opel">Opel</option>
+          <option value="audi">Audi</option>
+        </select>
+        <br><br>
+
+
         <!-- <input type="submit" name="submit" value="Submit"> -->
-        <input id="btn_1" type="reset" name="reset" value="Reset" click="btnClicked(this)">
+        <input id="btn_1" type="reset" name="reset" value="Reset">
         <!-- <button name="click">Click Me</button> -->
 
         <input id="submit_btn" type="submit" value="Submit">
@@ -84,8 +94,8 @@
   </div>
   <style>
     #container {
-      width: 400px;
-      height: 400px;
+      width: auto;
+      height: auto;
       position: relative;
       background: yellow;
     }
@@ -126,41 +136,36 @@
 
 
    window.addEventListener('load', () => {
-      function btnClicked(e){
-        console.log('btn_1 is clicked!');
-      }
 
-      document.getElementById('link_test').addEventListener( 'mousedown', (e) => {
-          console.log('link_test  mousedownmousedownmousedown');
-      });
-      document.getElementById('link_test').addEventListener( 'mouseup', (e) => {
-          console.log('link_test  mouseupmouseupmouseupmouseup');
-      });
-      document.getElementById('link_test').addEventListener( 'click', (e) => {
-          console.log('link_test  clickclickclickclickclick');
-      });
-      document.getElementById('link_test').addEventListener( 'focus', (e) => {
-          console.log('link_test  focusfocusfocusfocusfocus');
-      });
-      // document.getElementById('link_test').addEventListener( 'active', (e) => {
-      //     console.log('link_test  activeactiveactiveactive');
+      // document.getElementById('link_test').addEventListener( 'mousedown', (e) => {
+      //     console.log('link_test  mousedownmousedownmousedown');
       // });
+      // document.getElementById('link_test').addEventListener( 'mouseup', (e) => {
+      //     console.log('link_test  mouseupmouseupmouseupmouseup');
+      // });
+      // document.getElementById('link_test').addEventListener( 'click', (e) => {
+      //     console.log('link_test  clickclickclickclickclick');
+      // });
+      // document.getElementById('link_test').addEventListener( 'focus', (e) => {
+      //     console.log('link_test  focusfocusfocusfocusfocus');
+      // });
+      // // document.getElementById('link_test').addEventListener( 'active', (e) => {
+      // //     console.log('link_test  activeactiveactiveactive');
+      // // });
 
 
-
-      document.getElementById('btn_1').addEventListener( 'mousedown', (e) => {
-          console.log('mousedownmousedownmousedown');
-      });
-      document.getElementById('btn_1').addEventListener( 'mouseup', (e) => {
-          console.log('mouseupmouseupmouseupmouseup');
-      });
-      document.getElementById('btn_1').addEventListener( 'click', (e) => {
-          console.log('clickclickclickclickclick');
-      });
-      document.getElementById('btn_1').addEventListener( 'focus', (e) => {
-          console.log('focusfocusfocusfocusfocus');
-      });
-
+      // document.getElementById('btn_1').addEventListener( 'mousedown', (e) => {
+      //     console.log('mousedownmousedownmousedown');
+      // });
+      // document.getElementById('btn_1').addEventListener( 'mouseup', (e) => {
+      //     console.log('mouseupmouseupmouseupmouseup');
+      // });
+      // document.getElementById('btn_1').addEventListener( 'click', (e) => {
+      //     console.log('clickclickclickclickclick');
+      // });
+      // document.getElementById('btn_1').addEventListener( 'focus', (e) => {
+      //     console.log('focusfocusfocusfocusfocus');
+      // });
 
    });
 

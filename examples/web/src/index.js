@@ -52,7 +52,6 @@ window.addEventListener('load', () => {
   // rootElement.style.margin = '0 auto';
 
   const rootElement = document.getElementById('container');
-
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 1,
@@ -64,6 +63,24 @@ window.addEventListener('load', () => {
   let guiEntity = new ION.Entity();
   guiEntity.addComponent(guiComponent);
   engine.addEntity(guiEntity);
+
+
+
+  const rootElement2 = document.getElementById('root');
+  const guiComponent2 = new ION.GUIComponent({
+    rootElement: rootElement2,
+    ratio: 1,
+  });
+  guiComponent2.position.y = 5;
+  guiComponent2.position.x = 8;
+  guiComponent2.rotateY(-0.3);
+
+  /* Entity */
+  let guiEntity2 = new ION.Entity();
+  guiEntity2.addComponent(guiComponent2);
+  engine.addEntity(guiEntity2);
+
+
 
   /* System */
   const guiSystem = new ION.GUISystem();

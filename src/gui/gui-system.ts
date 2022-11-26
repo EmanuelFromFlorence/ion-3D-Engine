@@ -121,18 +121,21 @@ export class GUISystem extends System{
             // intersections[0].faceIndex
 
             this.aimingGuiComponent = intersections[0].object;
+
             let pointerVector2 = intersections[0].uv;
             this.aimX = pointerVector2.x * this.aimingGuiComponent.rootElement.offsetWidth;
             this.aimY = (1 - pointerVector2.y) * this.aimingGuiComponent.rootElement.offsetHeight;
 
-            let newAimingHTMLElement = this.getAimingElement(this.aimX, this.aimY, engine.canvas);
+            let newAimingHTMLElement = this.getAimingElement(this.aimX, this.aimY, engine.canvas, meshesToIntersect, this.aimingGuiComponent);
             if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement && !newAimingHTMLElement.isSameNode(this.aimingHTMLElement)) {
                 dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
             }
 
             this.aimingHTMLElement = newAimingHTMLElement;
             
-            dispatchMouseEvent(this.aimingHTMLElement, 'mouseover', this.aimX, this.aimY);
+            if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement){
+                dispatchMouseEvent(this.aimingHTMLElement, 'mouseover', this.aimX, this.aimY);
+            }
 
         }else {
             if (this.aimingHTMLElement) dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
@@ -145,11 +148,15 @@ export class GUISystem extends System{
 
 
     // A elementsFromPoint shim: https://gist.github.com/oslego/7265412
-    public getAimingElement = (x, y, canvas) => {
+    public getAimingElement = (x, y, canvas, meshesToIntersect, aimingGuiComponent) => {
         let aimingElm = null;
-        canvas.style.setProperty('pointer-events', 'none', 'important'); 
+        canvas.style.setProperty('pointer-events', 'none', 'important');
+        meshesToIntersect.forEach((mesh) => {
+            mesh.rootElement.style.setProperty('pointer-events', 'none', 'important');
+        });
+        aimingGuiComponent.rootElement.style.setProperty('pointer-events', 'initial', 'important');
         aimingElm = document.elementFromPoint(x, y);
-        canvas.style.setProperty('pointer-events', 'initial', 'important'); 
+        canvas.style.setProperty('pointer-events', 'initial', 'important');
         return aimingElm;
     }
 
@@ -197,7 +204,7 @@ export class GUISystem extends System{
                 dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
                 // this.aimingHTMLElement.click(); // no need for this
                 
-                this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
+                // this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
             }
         });
     }
