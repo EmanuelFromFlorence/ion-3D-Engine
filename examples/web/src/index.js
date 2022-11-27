@@ -21,25 +21,24 @@ root.render(
 // reportWebVitals();
 
 
-console.log('In index.js....');
-
-
-
 window.addEventListener('load', () => {
-  // const rootElement = document.getElementById('container');
-  // rootElement.style.position = 'fixed';
-  // rootElement.style.left = '0';
-  // rootElement.style.top = '0';
+  
 
   /* Engine */
   const canvas = document.getElementById('viewport');
-  canvas.style.zIndex = 100000;
-  canvas.style.position = 'fixed';
-  canvas.style.display = 'block';
-  canvas.style.width = '100%'; // `${window.innerWidth}px`;
-  canvas.style.height = '100%'; //`${window.innerHeight}px`; // clientHeight
-  let guiScene = ION.createGUIScene();
-  const engine = new ION.Engine(canvas, guiScene);
+  
+  
+
+  let guiScene = ION.createGUITemplateScene({
+    lights: false,
+    fog: true,
+  });
+
+  const engine = new ION.Engine({
+    canvas: canvas, 
+    scene: guiScene, 
+    fullScreen: true,
+  });
 
   // /* Component */
   // const rootElement = document.getElementById('root');
@@ -57,7 +56,9 @@ window.addEventListener('load', () => {
     ratio: 1,
   });
   guiComponent.position.y = 5;
-  // guiComponent.position.z = -10;
+  guiComponent.position.z = -2;
+  guiComponent.position.x = -4;
+  guiComponent.rotateY(0.2);
 
   /* Entity */
   let guiEntity = new ION.Entity();
@@ -72,7 +73,7 @@ window.addEventListener('load', () => {
     ratio: 1,
   });
   guiComponent2.position.y = 5;
-  guiComponent2.position.x = 8;
+  guiComponent2.position.x = 4;
   guiComponent2.rotateY(-0.3);
 
   /* Entity */

@@ -150,7 +150,7 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     break;
 
                 default:
-                    console.warn('DEFAULT in bindCSSEvents!!');
+                    console.debug('DEFAULT in bindCSSEvents!!');
                     // console.log(cssRule);
                     break;
             };

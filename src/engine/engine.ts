@@ -17,12 +17,12 @@ export class Engine{
     canvas: HTMLCanvasElement;
 
     
-    constructor(canvas: HTMLCanvasElement, scene: THREE.Scene = null, control: any = null, graphics = null){
+    constructor({canvas = null, scene = null, control = null, graphics = null, fullScreen = false} = {}){
         this.entityRegistry = {};
         this.systemRegistry = [];
         this.canvas = canvas;
         if (!graphics) {
-            this.initGraphics(canvas);
+            this.initGraphics(canvas, fullScreen);
         }
         this.setScene(scene);
         this.setControl(control);
@@ -30,7 +30,7 @@ export class Engine{
 
 
     public addEntity = (entity: Entity): any => {
-        for (let [type, component] of entity.components.entries()){
+        for (let [type, component] of Object.entries(entity.components)){
             component.registerComponent({scene: this.scene});
 
             if (!this.entityRegistry.hasOwnProperty(type)) {
@@ -93,21 +93,46 @@ export class Engine{
     }
 
 
-    public initGraphics = (canvas: HTMLCanvasElement): any => {
-        this.renderer = createWebGLRenderer(canvas);
-        this.camera = getCamera(canvas.clientWidth / canvas.clientHeight);
+    public initGraphics = (canvas: HTMLCanvasElement, fullScreen: boolean): any => {
         
-        const onWindowResize = () => {
-            const canvas = this.renderer.domElement;
-            this.camera.aspect =  canvas.clientWidth / canvas.clientHeight; // window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize( canvas.clientWidth, canvas.clientHeight );
-        }
+
+        this.renderer = createWebGLRenderer(canvas);
+        this.camera = getCamera(canvas.offsetWidth / canvas.offsetHeight);
+        
+        // const onCanvasResize = () => {
+        //     console.log('In onCanvasResize');
+            
+        //     const canvas = this.renderer.domElement;
+        //     let width = canvas.getBoundingClientRect().width;
+        //     let height = canvas.getBoundingClientRect().height;
+            
+        //     this.camera.aspect =  width / height; // window.innerWidth / window.innerHeight;
+        //     this.camera.updateProjectionMatrix();
+        //     this.renderer.setSize( width, height );
+        // }
     
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/resize_event
         // Only handlers registered on the window object will receive resize events.
-        this.renderer.domElement.addEventListener( 'resize', onWindowResize );
-        // window.addEventListener( 'resize', onWindowResize );
+        // this.renderer.domElement.addEventListener( 'resize', onCanvasResize );
+        // This one for later: new ResizeObserver(onCanvasResize).observe(canvas);
+        
+        if (fullScreen) {
+            canvas.style.zIndex = '100000';
+            canvas.style.position = 'fixed';
+            canvas.style.display = 'block';
+            canvas.style.width = `${window.innerWidth}px`; // '100%';
+            canvas.style.height = `${window.innerHeight}px`; // '100%';
+            canvas.style.minHeight = '100%'; 
+            canvas.style.minWidth = '100%'; 
+            canvas.style.margin = '0';
+            const onWindowResize = () => {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize( window.innerWidth, window.innerHeight );
+            }
+            window.addEventListener( 'resize', onWindowResize );
+            onWindowResize();
+        }
     }
 
 

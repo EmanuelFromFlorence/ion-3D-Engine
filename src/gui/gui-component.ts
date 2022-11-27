@@ -7,7 +7,7 @@ interface NamedParameters {
     rootElement: HTMLElement;
     htmlFilter: Function;
     ratio: number;
-    MaterialType: THREE.Material;
+    material: THREE.Material;
 }
 
 
@@ -15,15 +15,16 @@ export class GUIComponent extends MeshComponent{
     rootElement: any;
     htmlTexture: any;
     ratio: number;
-    MaterialType: any;
+    material: any;
     htmlFilter: any;
+    counter: number;
 
 
     constructor({
         rootElement,
         htmlFilter,
         ratio = 1,
-        MaterialType = null,
+        material = null,
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
@@ -36,13 +37,16 @@ export class GUIComponent extends MeshComponent{
             }
         }
 
-        if (!MaterialType) MaterialType = THREE.MeshBasicMaterial;
+        if (!material) material = new THREE.MeshBasicMaterial({
+            // color: '#ffffff', // no need
+            side: THREE.DoubleSide
+        }); // #282c34
         
         this.initComponent({
             rootElement,
             ratio,
             htmlFilter,
-            MaterialType,
+            material,
         });
     }
 
@@ -50,7 +54,7 @@ export class GUIComponent extends MeshComponent{
     public initComponent = (props: any): void => {
         this.rootElement = props.rootElement;
         this.htmlFilter = props.htmlFilter;
-        this.MaterialType = props.MaterialType;
+        this.material = props.material;
         this.ratio = props.ratio;
         
         this.initRootElement();
@@ -58,9 +62,10 @@ export class GUIComponent extends MeshComponent{
 
         // init texture (GUISystem later assigns this to material):
         // example setting props: https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
-        this.htmlTexture = new THREE.Texture();
-        this.htmlTexture.needsUpdate = true;
-        this.htmlTexture.generateMipmaps = false;
+        this.htmlTexture = new THREE.Texture(); // Just setting this here later in it is actually set GUI system
+        // this.htmlTexture.needsUpdate = true; // Error: Texture marked for update but no image data found.
+        // this.htmlTexture.generateMipmaps = true; // false
+        // this.material.map = this.htmlTexture;
     }
 
 
@@ -73,7 +78,7 @@ export class GUIComponent extends MeshComponent{
     protected genPlaneMesh = (): THREE.Mesh => { // rootElement, MaterialType: THREE.Material
         let [widthInWorldUnit, heightInWorldUnit] = this.get2DSizeInWorldUnit();
         const planeGeometry = new THREE.PlaneGeometry( widthInWorldUnit, heightInWorldUnit );
-        const planeMaterial = new this.MaterialType({color: '#282c34', side: THREE.DoubleSide}); // THREE.FrontSide
+        const planeMaterial = this.material;
         planeMaterial.needsUpdate = true;
 
         super.setGeometry(planeGeometry);

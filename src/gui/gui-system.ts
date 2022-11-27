@@ -40,7 +40,7 @@ export class GUISystem extends System{
         const raycasterOrigin = new THREE.Vector3(0, 0, 0);
         const raycasterDirection = new THREE.Vector3(0, - 2, 0);
         const near = 0;
-        const far = 40;
+        const far = 200;
         this.aimRaycaster = new THREE.Raycaster(raycasterOrigin, raycasterDirection, near, far);
     }
 
@@ -59,11 +59,6 @@ export class GUISystem extends System{
         for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
             let component = entity.getComponent(GUI_COMPONENT_TYPE);
 
-            // Only this worked, should later set these in guiComponent if possible:
-            if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
-                component.htmlTexture.needsUpdate = true;
-                component.material.needsUpdate = true;
-            }
 
 
             // More options:: https://github.com/bubkoo/html-to-image
@@ -71,23 +66,36 @@ export class GUISystem extends System{
             .then(async (svgDataUrl) => {
                 const img = await createImage(svgDataUrl);
 
-                // https://github.com/mrdoob/three.js/blob/master/src/textures/Texture.js
-                // component.htmlTexture.source = new THREE.Source( img );
+
+                component.htmlTexture.dispose();
+                // component.material.map.dispose();
+
+                component.htmlTexture = new THREE.Texture();
+                component.htmlTexture.needsUpdate = true;
+                // component.htmlTexture.generateMipmaps = false;
+
                 component.htmlTexture.image = img;
-                
+
+                // needsUpdate should be set after setting the image -> Error: Texture marked for update but no image data found.
+                // Only this worked, needsUpdate values are getting overwritten
+                if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
+                    component.htmlTexture.needsUpdate = true;
+                    component.material.needsUpdate = true;
+                }
+
+                component.material.map = component.htmlTexture;
+
                 // Example of creating texture and setting texture props:::
                 // https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
 
                 // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed. Instead, 
                 // call .dispose() on the texture and instantiate a new one.
+                // There is material.dispose() too...
+
 
                 // const texture = new THREE.TextureLoader().load( img );
                 // texture.needsUpdate = true;
                 
-                if (!component.material.map) {
-                    console.warn('Should happen once initially!!!');
-                    component.material.map = component.htmlTexture;
-                }
                 
             });
                 
