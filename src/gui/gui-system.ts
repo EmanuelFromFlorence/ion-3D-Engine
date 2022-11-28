@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
-import { createImage, GUI_COMPONENT_TYPE } from './utils';
+import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox } from './utils';
 import { Entity } from '../core/entity';
-import { bindCSSEvents, dispatchMouseEvent, isRadioCheckBox, isTextBox } from './gui-event-binder';
+import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 
 

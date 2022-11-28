@@ -11,23 +11,6 @@ const CHECKED_REGXP = /.*:.*checked/;
 const ENABLED_REGXP = /.*:.*enabled/;
 
 
-// export function bindEvents(rootElement: any){ // <T extends HTMLElement>
-
-//     for (let child of rootElement.children) { // rootElement.childNodes
-//         // child is Element type now
-
-//         // https://stackoverflow.com/questions/11495535/why-doesnt-getcomputedstyle-work-with-pseudo-classes-like-hover
-
-//         if(child.id == 'btn_1'){
-//             // Not possible to get pseudo class: https://stackoverflow.com/questions/11495535/why-doesnt-getcomputedstyle-work-with-pseudo-classes-like-hover
-//             // console.log(window.getComputedStyle(child, ':hover'));
-//         }
-        
-//         bindEvents(child);
-//     }
-// }
-
-
 function convertPseudoCSSStyleRule(cssRule: any, pseudoClass: string): any{
     let originalSelector = cssRule.selectorText.split(':')[0];
     let newRule = '';
@@ -37,45 +20,70 @@ function convertPseudoCSSStyleRule(cssRule: any, pseudoClass: string): any{
 }
 
 
-function bindToggleEvents(originalSelector: string, ionClass: string, onEvent: string, offEvent: string): void{
-    let elements = document.querySelectorAll(originalSelector);
-    for (let element of elements) {
-        element.addEventListener(onEvent, (e: any) => {
-            element.classList.add(ionClass);
-        });
-        element.addEventListener(offEvent, (e: any) => {
-            element.classList.remove(ionClass);
-        });
+function copyStyleObject(style: CSSStyleDeclaration) {
+    let styleCopy = {};
+    for (let i = 0; i<style.length; i++) {
+        let propName = style.item(i);
+        let propValue = style.getPropertyValue(propName);
+        let propPriority = style.getPropertyPriority(propName);
+        styleCopy[propName] = {propValue, propPriority};
+    }
+    
+    return styleCopy;
+}
+
+
+function getNewStyleMap(newStyle: CSSStyleDeclaration) {
+    let newStyleMap = {};
+    // only considering the mutating style props (deltas):
+    for (let i = 0; i<newStyle.length; i++) {
+        let propName = newStyle.item(i);
+        let propValue = newStyle.getPropertyValue(propName);
+        let propPriority = newStyle.getPropertyPriority(propName);
+        // let oldPropValue = oldStyle.getPropertyValue(propName);
+        // let oldPropPriority = oldStyle.getPropertyPriority(propName);
+        newStyleMap[propName] = {propValue, propPriority}; // , oldPropValue, oldPropPriority
+    }
+    return newStyleMap;
+}
+
+
+function getOldStyleMap(newStyleMap: any, oldStyle: CSSStyleDeclaration) {
+    let oldStyleMap = {};
+    for (let propName of Object.keys(newStyleMap)) {
+        let propValue = oldStyle.getPropertyValue(propName);
+        let propPriority = oldStyle.getPropertyPriority(propName);
+        oldStyleMap[propName] = {propValue, propPriority};
+    }
+    return oldStyleMap;
+}
+
+
+function setStylesOneByOne(element, style: any) {
+    for (let [propName, values] of Object.entries(style)) {   
+        element.style.setProperty(propName, values.propValue, values.propPriority);
     }
 }
 
 
-// Should finish and test in the future::
-function bindDOMCaptureToggleEvents(originalSelector: string, ionClass: string, onEvent: string, offEvent: string): void{
+function bindToggleEvents(originalSelector: string, ionClass: string, cssRule: CSSStyleRule, onEvent: string, offEvent: string): void{
     let elements = document.querySelectorAll(originalSelector);
-    // let totalClassList = [];
-    let focusedElm = null;
-    for (let element of elements) {
-        // totalClassList = totalClassList.concat(Array.from(element.classList));
+    // saving original values for each element:
+    let oldStyleMapList = [[...Array(elements.length).keys()].map(() => null)];
+    let newStyleMap = getNewStyleMap(cssRule.style);
+
+    for (let [i, element] of elements.entries()) {
+        oldStyleMapList[i] = getOldStyleMap(newStyleMap, element.style); // window.getComputedStyle(element)
+
         element.addEventListener(onEvent, (e: any) => {
-            if(focusedElm === null || !e.target.isSameNode(focusedElm)) {
-                focusedElm.classList.remove(ionClass);
-            }
+            setStylesOneByOne(element, newStyleMap);
             element.classList.add(ionClass);
-            focusedElm = element;
+        });
+        element.addEventListener(offEvent, (e: any) => {
+            setStylesOneByOne(element, oldStyleMapList[i]);
+            element.classList.remove(ionClass);
         });
     }
-
-    // // focus changes only when other elements are focused
-    // // Capturing events up in parent (event delegation)
-    // // remove the ion focus class of all elements except the one event is dispatched on
-    // rootElement.addEventListener(onEvent, (e: any) => {
-    //     elements.forEach((element) => {
-    //         if(!e.target.isSameNode(element)) {
-    //             element.classList.remove(ionClass);
-    //         }
-    //     });
-    // });
 }
 
 
@@ -98,34 +106,34 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     let [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'hover');
                     newCSSRules.push(newRule);
                     // (mouseenter/mouseleave) = (mouseover/mouseout)
-                    bindToggleEvents(originalSelector, ionClass, 'mouseover', 'mouseout');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'mouseover', 'mouseout');
                     break;
 
                 case cssRule instanceof CSSStyleRule && ACTIVE_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'active');
                     newCSSRules.push(newRule);
                     // DOMActivate which is Deprecated in favor of click
-                    bindToggleEvents(originalSelector, ionClass, 'mousedown', 'mouseup');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'mousedown', 'mouseup');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && VISITED_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'visited');
                     newCSSRules.push(newRule);
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, 'visited', 'undovisited');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'visited', 'undovisited');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && LINK_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'link');
                     newCSSRules.push(newRule);
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, 'link', 'unlink');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'link', 'unlink');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && FOCUS_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'focus');
                     newCSSRules.push(newRule);
-                    bindToggleEvents(originalSelector, ionClass, 'focus', 'blur');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'focus', 'blur');
                     // bindDOMCaptureToggleEvents(originalSelector, ionClass, 'focus', 'blur');
                     break;
                                 
@@ -133,14 +141,14 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'checked');
                     newCSSRules.push(newRule);
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, 'checked', 'unchecked');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'checked', 'unchecked');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && ENABLED_REGXP.test(cssRule.selectorText):
                     [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'enabled');
                     newCSSRules.push(newRule);
                     // Custom events for users to send these in case want to enable or disable input element:
-                    bindToggleEvents(originalSelector, ionClass, 'enabled', 'disabled');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'enabled', 'disabled');
                     break;
                 
                 // All CSSRule types: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule
@@ -159,51 +167,6 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
             stylesheet.insertRule(newRule);
         });
     }
-    
-
-    // setTimeout(() => {
-        
-    //     // let node = document.getElementsByClassName('App-header')[0];
-    //     let node = document.getElementById('btn_1');
-    //     let pointerVector2 = new THREE.Vector2(0.5, 0.5);
-
-    //     const mouseEvent = new MouseEvent("mouseover", {
-    //         view: window,
-    //         bubbles: true,
-    //         cancelable: true,
-    //         offsetX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-    //         offsetY: node.scrollHeight * pointerVector2.y,
-
-    //         clientX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-    //         clientY: node.scrollHeight * pointerVector2.y,
-
-    //         screenX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-    //         screenY: node.scrollHeight * pointerVector2.y,
-
-    //         pageX: node.scrollWidth * pointerVector2.x, // node.scrollWidth mnot what we want ultimately because of scrolling and overflow...
-    //         pageY: node.scrollHeight * pointerVector2.y,
-    //     });
-    //     // console.log(node.scrollWidth * pointerVector2.x);
-
-    //     console.log(node);
-        
-        
-    //     // for (let i=0;i<10000;i++){
-    //     //     node.dispatchEvent(mouseEvent);
-    //     // }
-        
-    //     node.dispatchEvent(mouseEvent);
-        
-        
-    //     // var event2 = document.createEvent("MouseEvents");
-    //     // event2.initMouseEvent("mouseover", true, true, window,
-    //     // 1, 1, 1, 1, 1,
-    //     // false, false, false, false,
-    //     // 0, null);
-    //     // node.dispatchEvent(event2);
-
-    // }, 1000);
-
 }
 
 
@@ -219,22 +182,3 @@ export function dispatchMouseEvent(element, event, clientX, clientY) {
     element.dispatchEvent(mouseEvent);
 }
 
-
-export function isTextBox(element) {
-    let tagName = element.tagName.toLowerCase();
-    if (tagName === 'textarea') return true;
-    if (tagName !== 'input') return false;
-    let type = element.getAttribute('type').toLowerCase();
-    // if any of these input types is not supported by a browser, it will behave as input type text.
-    let inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
-    return inputTypes.indexOf(type) >= 0;
-}
-
-
-export function isRadioCheckBox(element) {
-    let tagName = element.tagName.toLowerCase();
-    if (tagName !== 'input') return false;
-    let type = element.getAttribute('type').toLowerCase();
-    let inputTypes = ['checkbox', 'radio'];
-    return inputTypes.indexOf(type) >= 0;
-}
