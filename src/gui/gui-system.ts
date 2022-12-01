@@ -82,6 +82,7 @@ export class GUISystem extends System{
                 }
 
                 component.material.map = component.htmlTexture;
+                component.material.alphaMap = component.htmlTexture;
 
                 // Example of creating texture and setting texture props:::
                 // https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
@@ -205,7 +206,7 @@ export class GUISystem extends System{
                 dispatchMouseEvent(this.aimingHTMLElement, 'click', this.aimX, this.aimY);
                 // this.aimingHTMLElement.click(); // no need for this
                 
-                // this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
+                this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
             }
         });
     }

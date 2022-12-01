@@ -8,6 +8,7 @@ interface NamedParameters {
     htmlFilter: Function;
     ratio: number;
     material: THREE.Material;
+    transparent: boolean;
 }
 
 
@@ -25,6 +26,7 @@ export class GUIComponent extends MeshComponent{
         htmlFilter,
         ratio = 1,
         material = null,
+        transparent = false,
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
@@ -39,7 +41,8 @@ export class GUIComponent extends MeshComponent{
 
         if (!material) material = new THREE.MeshBasicMaterial({
             // color: '#ffffff', // no need
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            transparent: transparent,
         }); // #282c34
         
         this.initComponent({

@@ -27,7 +27,6 @@ window.addEventListener('load', () => {
   /* Engine */
   const canvas = document.getElementById('viewport');
   
-  
 
   let guiScene = ION.createGUITemplateScene({
     lights: true,
@@ -54,6 +53,7 @@ window.addEventListener('load', () => {
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 1,
+    transparent: true,
   });
   guiComponent.position.y = 5;
   guiComponent.position.z = -2;
