@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { Component } from '../core/components/component';
 import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
-import { SpaceControls } from './control';
+import { getFirstPersonControl, getSpaceControl, SpaceControls } from './control';
 import { createWebGLRenderer, getCamera } from './graphics'
 import Stats from 'three/examples/jsm/libs/stats.module'
+import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, TransformControl } from '../core/constants';
 
 
 export class Engine{
@@ -86,7 +87,7 @@ export class Engine{
                 /* Controls */
                 this.control.updateControl(delta);
 
-                
+
                 this.stats.update();
     
                 
@@ -161,22 +162,30 @@ export class Engine{
 
 
     public setControl = (control: any): any => {
-        if (!control) {
-            control = this.createControl();
-        }
-        this.control = control;
-        if (!this.scene) throw new Error('Scene must be initialized before setting control.');         
-        
+        if (!this.scene) throw new Error('Scene must be initialized before setting control.');
+        switch(control) {
+            case SpaceControl:
+                this.control = getSpaceControl(this.camera, this.renderer);
+                break;
+            case FirstPersonControl:
+                this.control = getFirstPersonControl(this.camera, this.renderer);
+                break;
+            case ArcBallControl:
+                break;
+            case TransformControl:
+                break;
+            case FlyControl:
+                break;
+            default:
+                if (control) {
+                    this.control = control;
+                    break;
+                }
+                this.control = getSpaceControl(this.camera, this.renderer);
+                break;
+        };
         this.camera = this.control.controls.getObject();
         this.scene.add(this.camera);
-    }
-
-
-    public createControl = (): any => {        
-        const control = new SpaceControls(this.camera, this.renderer);
-        control.setKeyEvents();
-        control.setLockEvents();
-        return control;
     }
 
 }

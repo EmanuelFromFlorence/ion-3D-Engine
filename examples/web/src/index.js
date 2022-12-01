@@ -37,6 +37,7 @@ window.addEventListener('load', () => {
     canvas: canvas, 
     scene: guiScene, 
     fullScreen: true,
+    control: ION.SpaceControl,
   });
 
   // /* Component */
@@ -50,10 +51,11 @@ window.addEventListener('load', () => {
   // rootElement.style.margin = '0 auto';
 
   const rootElement = document.getElementById('container');
+  // rootElement.style.background = '#000000';
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 1,
-    transparent: true,
+    transparent: false,
   });
   guiComponent.position.y = 5;
   guiComponent.position.z = -2;

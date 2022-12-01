@@ -2,6 +2,22 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 
+export function getSpaceControl(camera: any, renderer: any){
+    const control = new SpaceControls(camera, renderer);
+    control.setKeyEvents();
+    control.setLockEvents();
+    return control;
+}
+
+
+export function getFirstPersonControl(camera: any, renderer: any){
+    const control = new FirstPersonControls(camera, renderer);
+    control.setKeyEvents();
+    control.setLockEvents();
+    return control;
+}
+
+
 /* Integrated the FlyControls code with PointerLockControls */
 // https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/FlyControls.js'
 
@@ -188,5 +204,325 @@ export class SpaceControls {
         document.addEventListener( 'keydown', onKeyDown );
         document.addEventListener( 'keyup', onKeyUp );
     }
+}
+
+
+export class FirstPersonControls {
+    camera: any;
+    scene: any;
+    controls: any;
+    moveForward: boolean;
+    moveBackward: boolean;
+    moveLeft: boolean;
+    moveRight: boolean;
+    canJump: boolean;
+    velocity: any;
+    direction: any;
+    personHeight: number;
+    speed: number;
+    boundaryLimit: number;
+    sceneMeshes: any[];
+    sceneMeshesSet: Set<unknown>;
+    raycaster: any;
+
+
+    constructor(camera, scene){
+        this.camera = camera;
+        this.scene = scene;
+        this.controls = new PointerLockControls( this.camera, document.body );
+
+        this.moveForward = false;
+        this.moveBackward = false;
+        this.moveLeft = false;
+        this.moveRight = false;
+        this.canJump = false;
+
+        this.velocity = new THREE.Vector3();
+        this.direction = new THREE.Vector3();
+
+        this.personHeight = 1.9;
+        this.speed = 0.2;
+        this.boundaryLimit = 2.5;
+
+        this.sceneMeshes = [];
+        this.sceneMeshesSet = new Set();
+
+        const raycasterOrigin = this.camera.position;
+        const raycasterDirection = new THREE.Vector3(0, - 1, 0);
+        const near = 0;
+        const far = 10;
+        this.raycaster = new THREE.Raycaster(raycasterOrigin, raycasterDirection, near, far);
+    }
+
+
+    updateControl = (delta) => {
+        let boundaryRaycaster = new THREE.Raycaster(this.camera.position, new THREE.Vector3(), 0.001, 10); //////
+        
+        if ( this.controls.isLocked === true ) {
+            this.getSceneMeshes();
+            
+
+            /* x, z */
+            // if you don't set this it will speedup indifinitely as the key is pressed....
+            // this.velocity.x -= this.velocity.x * 100.0 * delta;
+            // this.velocity.z -= this.velocity.z * 100.0 * delta;
+            
+            this.direction.z = Number( this.moveForward ) - Number( this.moveBackward );
+            this.direction.x = Number( this.moveRight ) - Number( this.moveLeft );
+            this.direction.normalize(); // this ensures consistent movements in all directions
+
+
+
+            if ( this.moveForward){
+                this.velocity.z = this.speed;
+            
+            } else if ( this.moveBackward){
+                this.velocity.z = -this.speed;
+            } else{
+                this.velocity.z = 0;
+            }
+
+            if ( this.moveRight){
+                this.velocity.x = this.speed * 0.6;
+            
+            } else if ( this.moveLeft){
+                this.velocity.x = -this.speed * 0.6;
+            } else{
+                this.velocity.x = 0;
+            }
+
     
+            // if ( this.moveForward || this.moveBackward ) {
+            //     this.velocity.z -= this.direction.z * 620.0 * delta;
+            // }else {
+            //     this.velocity.z = 0;
+            // }
+
+            // if ( this.moveLeft || this.moveRight ) {
+            //     this.velocity.x -= this.direction.x * 620.0 * delta;
+            // }else {
+            //     this.velocity.x = 0;
+            // }
+
+            
+
+            // this.controls.moveRight( - this.velocity.x * delta );
+            // this.controls.moveForward( - this.velocity.z * delta );
+
+            /////////// Bounding box solution:::::
+            // https://stackoverflow.com/questions/35843564/prevent-objects-from-moving-outside-room-in-three-js
+
+
+            let cameraDirection = new THREE.Vector3();
+            cameraDirection = this.camera.getWorldDirection(cameraDirection);
+            cameraDirection.normalize();
+            cameraDirection.y = 0;
+
+            
+            let finalDirection = new THREE.Vector3(cameraDirection.x, cameraDirection.y-0.2, cameraDirection.z);  
+            // console.log(this.direction);
+            let x = this.direction.x;
+            let y = this.direction.y;
+            let z = this.direction.z;
+
+            const quaternion = new THREE.Quaternion();
+
+            if(x == 0 && z == 1){
+                // no change just forward... finalDirection
+            }else if(x == 0 && z == -1){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), Math.PI ) );
+            }else if(x == 1 && z == 0){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), -Math.PI/2 ) );
+            }else if(x == -1 && z == 0){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), Math.PI/2 ) );
+            }else if(Math.round(x*10) == 7 && Math.round(z*10) == 7){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), - Math.PI/4 ) );
+            }else if(Math.round(x*10) == 7 && Math.round(z*10) == -7){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), - 3*Math.PI/4 ) );
+            }else if(Math.round(x*10) == -7 && Math.round(z*10) == 7){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), Math.PI/4 ) );
+            }else if(Math.round(x*10) == -7 && Math.round(z*10) == -7){
+                finalDirection.applyQuaternion( quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), 3*Math.PI/4 ) );
+            }
+
+
+            //////////////////////////////// Ring glow mesh is very large and if you should exclude it as a boundary to not cause problems
+            this.toMoveOrNotToMove(delta, finalDirection, boundaryRaycaster, this.sceneMeshes);
+
+
+            /* y */
+            
+            // this.raycaster.ray.origin.copy( this.controls.getObject().position );
+            // this.raycaster.ray.origin.y -= this.personHeight;
+            this.raycaster.ray.origin.copy( this.camera.position );
+    
+
+            // Intersections are returned sorted by distance, closest first.
+            const intersections = this.raycaster.intersectObjects(this.sceneMeshes, false);
+            if (typeof intersections != 'undefined' && intersections.length > 0){
+                // console.log(intersections[0].point.y);
+                this.controls.getObject().position.y = intersections[0].point.y + this.personHeight;
+            }else{
+                this.controls.getObject().position.set(0,4,0);
+            }
+
+
+            /* to not fall down in this method +++++++++++++++ keep this for now +++++++++++++++ */
+            // let cameraDirection = new THREE.Vector3();
+            // let fallingRaycaster = new THREE.Raycaster(this.camera.position, cameraDirection, 0, this.personHeight * Math.sqrt(2) + 1);
+    
+            // cameraDirection = this.camera.getWorldDirection(cameraDirection);
+            // cameraDirection.normalize();
+            // cameraDirection.y = -2; ////////
+            // fallingRaycaster.ray.origin.copy( this.camera.position );
+            // fallingRaycaster.ray.direction.copy( cameraDirection );
+            
+            // const fallingIntersections = fallingRaycaster.intersectObjects(this.sceneMeshes, false);
+            // console.log(fallingIntersections);
+            // if (typeof fallingIntersections != undefined){
+            //     if(fallingIntersections.length > 0){
+
+            //         this.controls.moveRight( - this.velocity.x * delta );
+            //         this.controls.moveForward( - this.velocity.z * delta );
+
+            //     }
+            // }
+
+            // // this.direction.angleTo(new THREE.Vector3(0, -1, 0))
+        }
+    }
+
+
+    getSceneMeshes = () => {
+        this.scene.traverse((child) => {
+            // console.log(child);
+            if(child.isMesh){
+                if (!child.name.includes('twitter') &&
+                    !child.name.includes('Sketchfab_model') &&
+                    !child.name.includes('opensea') &&
+                    !child.name.includes('ringGlowMesh') &&
+                    !child.name.includes('ringMesh') && 
+                    !child.name.includes('ring_disk_img_oasis') &&
+                    !child.name.includes('ring_disk_img_dcl') &&
+                    
+                    !child.name.includes('pool_water_0')) {
+                    
+                    if(!this.sceneMeshesSet.has(child.name)){
+                        this.sceneMeshes.push(child);
+                        this.sceneMeshesSet.add(child.name);    
+                    }   
+                    // console.log('1 ' + child.name);
+                }else{
+                    // console.log(child.name);
+                }
+            }
+        });
+    }
+
+
+    toMoveOrNotToMove = (delta, direction, boundaryRaycaster, sceneMeshes) => {
+        boundaryRaycaster.ray.origin.copy( this.camera.position );
+        boundaryRaycaster.ray.direction.copy( direction ); 
+        const boundaryIntersections = boundaryRaycaster.intersectObjects(sceneMeshes, false);
+        if (boundaryIntersections.length > 0){
+            if(boundaryIntersections[0].distance < this.boundaryLimit){
+                // console.log(boundaryIntersections[0]);
+            }else{
+                this.controls.moveRight(this.velocity.x);
+                this.controls.moveForward(this.velocity.z );
+            }
+        }else{
+            this.controls.moveRight(this.velocity.x );
+            this.controls.moveForward(this.velocity.z );
+        }
+    }
+
+
+    setLockEvents = () => {
+        // const blocker = document.getElementById( 'blocker' );
+        // const instructions = document.getElementById( 'instructions' );
+
+        document.body.addEventListener( 'click', () => {
+            this.controls.lock();
+        } );
+        
+        // blocker.addEventListener( 'click', () => {
+        //     this.controls.lock();
+        // } );
+    
+        this.controls.addEventListener( 'lock', () => {
+            // instructions.style.display = 'none';
+            // blocker.style.display = 'none';
+
+            // const social = document.getElementById( 'socialContainer' );
+            // social.style.display = 'none';
+
+            // const col = document.getElementsByClassName( 'aim' );
+            // col[0].style.display = 'block';
+
+        } );
+    
+        this.controls.addEventListener( 'unlock', () => {
+            // blocker.style.display = 'block';
+            // instructions.style.display = 'flex';
+
+            // const social = document.getElementById( 'socialContainer' );
+            // social.style.display = 'block';
+
+            // const col = document.getElementsByClassName( 'aim' );
+            // col[0].style.display = 'none';
+        } );
+    }
+
+
+    setKeyEvents = () => {
+        const onKeyDown = ( event ) => {
+            switch ( event.code ) {
+                case 'ArrowUp':
+                case 'KeyW':
+                    this.moveForward = true;
+                    break;
+                case 'ArrowLeft':
+                case 'KeyA':
+                    this.moveLeft = true;
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    this.moveBackward = true;
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    this.moveRight = true;
+                    break;
+                // case 'Space':
+                //     if ( this.canJump === true ) this.velocity.y += 100;
+                //     this.canJump = false;
+                //     break;
+            }
+        };
+    
+        const onKeyUp = ( event ) => {
+            switch ( event.code ) {
+                case 'ArrowUp':
+                case 'KeyW':
+                    this.moveForward = false;
+                    break;
+                case 'ArrowLeft':
+                case 'KeyA':
+                    this.moveLeft = false;
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    this.moveBackward = false;
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    this.moveRight = false;
+                    break;
+            }
+        };
+
+        document.addEventListener( 'keydown', onKeyDown );
+        document.addEventListener( 'keyup', onKeyUp );
+    }
 }
