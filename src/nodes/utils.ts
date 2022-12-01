@@ -61,14 +61,14 @@ export const createGlowMaterial = ({glowCoefficient = 0.01, glowColor = '#fce17d
 export const range = (start, stop, step = 1) => Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step);
 
 
-export const createCirclePoints = ({pointCircleRadius = null, pointCount = null, noiseOffset = null} = {}) => {
+export const createCirclePoints = ({pointCircleRadius = null, pointCount = null, noiseOffset = null, pointSize = 0.1} = {}) => {
     let pointPosisions = [];
 
     let radientStep = 2*Math.PI/pointCount;
     let circleRange = range(0, 2*Math.PI, radientStep);
     
     for (let i=0; i<pointCount; i++){
-        let vector3 = new THREE.Vector3(Math.cos(circleRange[i]), Math.sin(circleRange[i]), 0);
+        let vector3 = new THREE.Vector3(Math.cos(circleRange[i]), Math.sin(circleRange[i]), Math.random());
         vector3.normalize();
 
         let noise = Math.random() * (noiseOffset - 0) + 0; // random in a range: Math.random() * (max - min) + min
@@ -80,16 +80,16 @@ export const createCirclePoints = ({pointCircleRadius = null, pointCount = null,
     const pointsGeometry = new THREE.BufferGeometry();
     pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pointPosisions, 3));
 
-    // THREE.Points INSTANCE UISNG THREE.PointsMaterial   
+    // THREE.Points INSTANCE UISNG THREE.PointsMaterial
     const pointsMaterial = new THREE.PointsMaterial({
         color: 0xf5bc0e,
-        size: 0.1,
+        size: pointSize,
         transparent: true,
         blending: THREE.AdditiveBlending,
         map: generateSprite([
-            {offset: 0, color: 'rgba(255, 246, 217, 1)'}, 
-            {offset: 0.2, color: 'rgba(230, 184, 31, 1)'}, 
-            // {offset: 0.36, color: 'rgba(64, 39, 0, 1)'}, 
+            {offset: 0, color: 'rgba(255, 246, 217, 1)'},
+            {offset: 0.2, color: 'rgba(230, 184, 31, 1)'},
+            // {offset: 0.36, color: 'rgba(64, 39, 0, 1)'},
             {offset: 0.7, color: 'rgba(0,0,0,1)'}, // up to 1
         ]),
         // side: THREE.BackSide,
@@ -105,7 +105,7 @@ export const createCirclePoints = ({pointCircleRadius = null, pointCount = null,
 }
 
     
-export const createCubicPoints = ({cubeSize = null, pointCount = null, noiseOffset = null} = {}) => {
+export const createCubicPoints = ({cubeSize = null, pointCount = null, noiseOffset = null, pointSize = 0.1,} = {}) => {
     // geometry
     let pointPosisions = [];
 
@@ -128,7 +128,7 @@ export const createCubicPoints = ({cubeSize = null, pointCount = null, noiseOffs
     // THREE.Points INSTANCE UISNG THREE.PointsMaterial   
     const pointsMaterial = new THREE.PointsMaterial({
         color: 0xf5bc0e,
-        size: 0.1,
+        size: pointSize,
         transparent: true,
         blending: THREE.AdditiveBlending,
         map: generateSprite([

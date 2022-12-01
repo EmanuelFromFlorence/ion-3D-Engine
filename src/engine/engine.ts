@@ -5,6 +5,7 @@ import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
 import { SpaceControls } from './control';
 import { createWebGLRenderer, getCamera } from './graphics'
+import Stats from 'three/examples/jsm/libs/stats.module'
 
 
 export class Engine{
@@ -15,6 +16,7 @@ export class Engine{
     scene: THREE.Scene;
     control: any;
     canvas: HTMLCanvasElement;
+    stats: any;
 
     
     constructor({canvas = null, scene = null, control = null, graphics = null, fullScreen = false} = {}){
@@ -26,6 +28,10 @@ export class Engine{
         }
         this.setScene(scene);
         this.setControl(control);
+
+        this.stats = Stats();
+        this.stats.dom.style.zIndex = '1000000000';
+        document.body.appendChild( this.stats.dom );
     }
 
 
@@ -79,6 +85,9 @@ export class Engine{
                 
                 /* Controls */
                 this.control.updateControl(delta);
+
+                
+                this.stats.update();
     
                 
                 prevTime = time;

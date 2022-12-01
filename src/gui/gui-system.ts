@@ -59,8 +59,6 @@ export class GUISystem extends System{
         for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
             let component = entity.getComponent(GUI_COMPONENT_TYPE);
 
-
-
             // More options:: https://github.com/bubkoo/html-to-image
             htmlToImage.toSvg(component.rootElement, { filter: component.htmlFilter })
             .then(async (svgDataUrl) => {
@@ -71,7 +69,7 @@ export class GUISystem extends System{
                 // component.material.map.dispose();
 
                 component.htmlTexture = new THREE.Texture();
-                component.htmlTexture.needsUpdate = true;
+                // component.htmlTexture.needsUpdate = true;
                 // component.htmlTexture.generateMipmaps = false;
 
                 component.htmlTexture.image = img;
@@ -92,11 +90,6 @@ export class GUISystem extends System{
                 // call .dispose() on the texture and instantiate a new one.
                 // There is material.dispose() too...
 
-
-                // const texture = new THREE.TextureLoader().load( img );
-                // texture.needsUpdate = true;
-                
-                
             });
                 
             // In case going with DataTexture and creating our own canvas:

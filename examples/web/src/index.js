@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// import { bindCSSEvents } from '../../../src/gui/gui-event-binder';
+
 
 import * as ION from '../../../src/ion-3d-engine'
 
@@ -30,7 +30,7 @@ window.addEventListener('load', () => {
   
 
   let guiScene = ION.createGUITemplateScene({
-    lights: false,
+    lights: true,
     fog: true,
   });
 
