@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { SpaceControls } from '../engine/control';
+import { SpaceControls } from '../engine/control/control';
 
 
 interface NamedParameters {

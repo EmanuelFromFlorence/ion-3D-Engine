@@ -119,10 +119,6 @@ export class GUISystem extends System{
         }
 
 
-        if (!engine.control.controls.isLocked) {
-            return;
-        }
-
         if(engine.vrEnabled && engine.renderer.xr.isPresenting) {
             this.updateVRAim(meshesToIntersect);
         }else {
@@ -134,11 +130,13 @@ export class GUISystem extends System{
     public updateVRAim = (meshesToIntersect) => {
         
         if (this.engine.vrControl.controller1Connected) {
+            const near = 0;
+            const far = 200;
+            let controller1Raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0), near, far);
 
-            let controller1Raycaster = new THREE.Raycaster();
-            this.engine.control.tempMatrix.identity().extractRotation( this.engine.vrControl.controller1.matrixWorld );
+            this.engine.vrControl.tempMatrix.identity().extractRotation( this.engine.vrControl.controller1.matrixWorld );
             controller1Raycaster.ray.origin.setFromMatrixPosition( this.engine.vrControl.controller1.matrixWorld );
-            controller1Raycaster.ray.direction.set(  0, 0, - 1 ).applyMatrix4( this.engine.control.tempMatrix );
+            controller1Raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( this.engine.vrControl.tempMatrix );
     
             let controller1Intersections = [];
             controller1Intersections = controller1Raycaster.intersectObjects(meshesToIntersect, false);
@@ -154,11 +152,12 @@ export class GUISystem extends System{
         }
 
         if (this.engine.vrControl.controller2Connected) {
-
-            let controller2Raycaster = new THREE.Raycaster();
-            this.engine.control.tempMatrix.identity().extractRotation( this.engine.vrControl.controller2.matrixWorld );
+            const near = 0;
+            const far = 200;
+            let controller2Raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0), near, far);
+            this.engine.vrControl.tempMatrix.identity().extractRotation( this.engine.vrControl.controller2.matrixWorld );
             controller2Raycaster.ray.origin.setFromMatrixPosition( this.engine.vrControl.controller2.matrixWorld );
-            controller2Raycaster.ray.direction.set(  0, 0, - 1 ).applyMatrix4( this.engine.control.tempMatrix );
+            controller2Raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( this.engine.vrControl.tempMatrix );
             
             let controller2Intersections = [];
             controller2Intersections = controller2Raycaster.intersectObjects(meshesToIntersect, false);
@@ -176,6 +175,10 @@ export class GUISystem extends System{
 
 
     public updateAim = (meshesToIntersect) => {
+        if (!this.engine.control.controls.isLocked) {
+            return;
+        }
+
         let cameraDirection = new THREE.Vector3();
         cameraDirection = this.engine.camera.getWorldDirection(cameraDirection);
         cameraDirection.normalize();
@@ -280,6 +283,12 @@ export class GUISystem extends System{
     public getAimingElement = (x, y, meshesToIntersect, aimingGuiComponent) => {
         let aimingElm = null;
         this.engine.canvas.style.setProperty('pointer-events', 'none', 'important');
+
+        // Skipping the canvas div wrapper in VR Mode:
+        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) {
+            this.engine.canvas.parentElement.style.setProperty('pointer-events', 'none', 'important');
+        }
+
         meshesToIntersect.forEach((mesh) => {
             mesh.rootElement.style.setProperty('pointer-events', 'none', 'important');
         });

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+import { resetCameraPosition } from '../../core/utils/utils';
 
 
 export class VRControls {
@@ -57,9 +58,14 @@ export class VRControls {
         
         // this is attached to the doc by engine or user
         this.vrButtonElm = VRButton.createButton( this.renderer );
+        
 
         this.renderer.xr.enabled = true;
-        this.renderer.xr.addEventListener( 'sessionstart', () => this.vrBaseReferenceSpace = this.renderer.xr.getReferenceSpace() )
+        this.renderer.xr.addEventListener( 'sessionstart', () => {
+            this.vrBaseReferenceSpace = this.renderer.xr.getReferenceSpace();
+            console.info('VR Session starting...');
+            this.setVRCameraPosition(this.camera.position, 0, this.camera.rotation);
+        });
 
 
         /* Controllers: */
@@ -129,13 +135,6 @@ export class VRControls {
         this.teleMarkerMesh.visible = false;
         this.scene.add( this.teleMarkerMesh );
 
-
-        // let vrButton = document.getElementById('VRButton');
-        // vrButton.addEventListener('click', () => {
-        //     setTimeout(() => this.mzContainer.appendChild( this.renderer.domElement ), 3000);
-        //     // this.mzContainer.appendChild( this.renderer.domElement );
-        // });
-
     }
     
 
@@ -168,15 +167,27 @@ export class VRControls {
         if ( this.vrTeleIntersectPoint && doMove) {
             // console.log(this.vrTeleIntersectPoint);
 
-            const offsetPosition = { x: - this.vrTeleIntersectPoint.x, y: - this.vrTeleIntersectPoint.y - 1.9, z: - this.vrTeleIntersectPoint.z, w: 1 };
-            const offsetRotation = new THREE.Quaternion();
-            const transform = new XRRigidTransform( offsetPosition, offsetRotation );
-            const teleportSpaceOffset = this.vrBaseReferenceSpace.getOffsetReferenceSpace( transform );
+            // const offsetPosition = { x: - this.vrTeleIntersectPoint.x, y: - this.vrTeleIntersectPoint.y - 1.9, z: - this.vrTeleIntersectPoint.z, w: 1 };
+            // const offsetRotation = new THREE.Quaternion();
+            // const transform = new XRRigidTransform( offsetPosition, offsetRotation );
+            // const teleportSpaceOffset = this.vrBaseReferenceSpace.getOffsetReferenceSpace( transform );
             
-            this.renderer.xr.setReferenceSpace( teleportSpaceOffset );
-        }
+            // this.renderer.xr.setReferenceSpace( teleportSpaceOffset );
 
+            this.setVRCameraPosition(this.vrTeleIntersectPoint, 1.9);
+        }
     }
+
+
+    setVRCameraPosition = (newPosition: THREE.Vector3, personHeight = 0, newRotation: any = new THREE.Quaternion()) => {
+        const offsetPosition = { x: - newPosition.x, y: - newPosition.y - personHeight, z: - newPosition.z, w: 1 };
+        const offsetRotation = newRotation;
+        const transform = new XRRigidTransform( offsetPosition, offsetRotation );
+        const teleportSpaceOffset = this.vrBaseReferenceSpace.getOffsetReferenceSpace( transform );
+        
+        this.renderer.xr.setReferenceSpace( teleportSpaceOffset );
+    }
+
 
     // getVRHeight = () => {
     //     const raycaster = new THREE.Raycaster();

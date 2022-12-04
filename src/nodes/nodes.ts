@@ -2,7 +2,7 @@ import { createSlice, configureStore } from '@reduxjs/toolkit'
 import { loadGLTF } from '../io/loader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
-import { getGeometryMaps } from './geometry_utils';
+import { getGeometryMaps } from './geometry-utils';
 
 
 
