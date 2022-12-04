@@ -107,11 +107,11 @@
 }
 
 #VRButton{
-  border:0.1em solid #533b08 !important;
+  border:0.1em solid #383862 !important;
   border-radius:1.42em !important;
-  text-decoration:none;
+  text-decoration: none;
   font-family: "Lucida Console", "Courier New", monospace !important;
-  color:#302205 !important;
+  color:rgb(54, 53, 95) !important;
   font-weight: bold !important;
   font-size: 1em !important;
   transition: all 0.5s !important;
@@ -125,15 +125,16 @@
   padding-top: 8px !important;
   padding-bottom: 8px !important; */
 
-  position: static !important;
+  position: fixed !important;
+  /* margin: 100px; */
 
-  z-index: 1000000000;
+
 }
 
 #VRButton:hover{
   background-color: #fefefeab !important;
   box-shadow: 0 0 5px #fefefeab !important;
-  color:#372705 !important;
+  color:#1e1d35 !important;
 
   cursor: pointer;
 }

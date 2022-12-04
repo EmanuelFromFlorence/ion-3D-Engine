@@ -3,24 +3,31 @@ import * as THREE from 'three';
 import { Component } from '../core/components/component';
 import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
-import { getFirstPersonControl, getSpaceControl, SpaceControls } from './control';
+import { ArcBallControls, FirstPersonControls, FlyieControls, SpaceControls } from './control/control';
 import { createWebGLRenderer, getCamera } from './graphics'
 import Stats from 'three/examples/jsm/libs/stats.module'
-import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, TransformControl } from '../core/constants';
+import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } from '../core/constants';
+import { VRControls } from './control/vr-control';
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 
 
 export class Engine{
+    canvas: HTMLCanvasElement;
     entityRegistry: any;
     systemRegistry: System[];
     renderer: any;
     camera: any;
     scene: THREE.Scene;
     control: any;
-    canvas: HTMLCanvasElement;
+    controlOptions: {};
+    vrEnabled: boolean;
+    vrControl: any;
+    vrButtonElm: any;
     stats: any;
-
+    vrTeleMeshesToIntersect: any[];
     
-    constructor({canvas = null, scene = null, control = null, graphics = null, fullScreen = false} = {}){
+
+    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: []}, vrEnabled = false, graphics = null, fullScreen = false} = {}){
         this.entityRegistry = {};
         this.systemRegistry = [];
         this.canvas = canvas;
@@ -28,10 +35,13 @@ export class Engine{
             this.initGraphics(canvas, fullScreen);
         }
         this.setScene(scene);
+
+        this.vrEnabled = vrEnabled;
+        this.controlOptions = controlOptions;
         this.setControl(control);
 
         this.stats = Stats();
-        this.stats.dom.style.zIndex = '1000000000';
+        this.stats.dom.style.zIndex = zIndex + 1;
         document.body.appendChild( this.stats.dom );
     }
 
@@ -61,7 +71,7 @@ export class Engine{
 
 
     public start = (): any => {
-        this.runEngine();
+        this.runEngine();   
     }
 
 
@@ -86,7 +96,9 @@ export class Engine{
                 
                 /* Controls */
                 this.control.updateControl(delta);
-
+                if(this.vrEnabled ){ // this.renderer.xr.isPresenting
+                    this.vrControl.updateControl(delta, this.controlOptions['vrTeleportList']);
+                }
 
                 this.stats.update();
     
@@ -165,27 +177,44 @@ export class Engine{
         if (!this.scene) throw new Error('Scene must be initialized before setting control.');
         switch(control) {
             case SpaceControl:
-                this.control = getSpaceControl(this.camera, this.renderer);
+                this.control = new SpaceControls(this.camera, this.renderer);
+                this.control.setKeyEvents();
+                this.control.setLockEvents();
                 break;
             case FirstPersonControl:
-                this.control = getFirstPersonControl(this.camera, this.renderer);
+                this.control = new FirstPersonControls(this.camera, this.scene);
+                this.control.setKeyEvents();
+                this.control.setLockEvents();
                 break;
             case ArcBallControl:
-                break;
-            case TransformControl:
+                this.control = new ArcBallControls(this.camera, this.renderer, this.scene);
                 break;
             case FlyControl:
+                this.control = new FlyieControls(this.camera, this.renderer);
                 break;
             default:
                 if (control) {
                     this.control = control;
                     break;
                 }
-                this.control = getSpaceControl(this.camera, this.renderer);
+                this.control = new SpaceControls(this.camera, this.renderer);
                 break;
         };
-        this.camera = this.control.controls.getObject();
-        this.scene.add(this.camera);
+
+        if(this.vrEnabled){
+            this.renderer.xr.enabled = true;
+            this.vrControl = new VRControls(this, this.scene, this.camera, this.renderer);
+
+            // Attaching vrButton to UI:
+            this.vrControl.vrButtonElm.style.zIndex = zIndex + 1;
+            document.body.appendChild(this.vrControl.vrButtonElm);
+        }
+
+    }
+
+
+    public setVRTeleportList = (vrTeleportList: any[]): any => {
+        this.controlOptions['vrTeleportList'] = vrTeleportList;
     }
 
 }

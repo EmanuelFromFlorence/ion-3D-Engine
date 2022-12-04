@@ -6,7 +6,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { Component } from '../core/components/component';
 import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
-import { SpaceControls } from './control';
+import { SpaceControls } from './control/control';
 import { createWebGLRenderer, getCamera } from './graphics'
 
 

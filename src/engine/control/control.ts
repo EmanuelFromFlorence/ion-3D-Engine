@@ -1,21 +1,9 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-
-
-export function getSpaceControl(camera: any, renderer: any){
-    const control = new SpaceControls(camera, renderer);
-    control.setKeyEvents();
-    control.setLockEvents();
-    return control;
-}
-
-
-export function getFirstPersonControl(camera: any, renderer: any){
-    const control = new FirstPersonControls(camera, renderer);
-    control.setKeyEvents();
-    control.setLockEvents();
-    return control;
-}
+import { ArcballControls } from 'three/examples/jsm/controls/ArcballControls.js';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
+import { TransformControls } from 'three/examples/jsm//controls/TransformControls.js';
+import { OrbitControls } from 'three/examples/jsm//controls/OrbitControls.js';
 
 
 /* Integrated the FlyControls code with PointerLockControls */
@@ -240,8 +228,8 @@ export class FirstPersonControls {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
 
-        this.personHeight = 1.9;
-        this.speed = 0.2;
+        this.personHeight = 2;
+        this.speed = 0.4;
         this.boundaryLimit = 2.5;
 
         this.sceneMeshes = [];
@@ -397,23 +385,9 @@ export class FirstPersonControls {
         this.scene.traverse((child) => {
             // console.log(child);
             if(child.isMesh){
-                if (!child.name.includes('twitter') &&
-                    !child.name.includes('Sketchfab_model') &&
-                    !child.name.includes('opensea') &&
-                    !child.name.includes('ringGlowMesh') &&
-                    !child.name.includes('ringMesh') && 
-                    !child.name.includes('ring_disk_img_oasis') &&
-                    !child.name.includes('ring_disk_img_dcl') &&
-                    
-                    !child.name.includes('pool_water_0')) {
-                    
-                    if(!this.sceneMeshesSet.has(child.name)){
-                        this.sceneMeshes.push(child);
-                        this.sceneMeshesSet.add(child.name);    
-                    }   
-                    // console.log('1 ' + child.name);
-                }else{
-                    // console.log(child.name);
+                if(!this.sceneMeshesSet.has(child.name)){
+                    this.sceneMeshes.push(child);
+                    this.sceneMeshesSet.add(child.name);    
                 }
             }
         });
@@ -526,3 +500,71 @@ export class FirstPersonControls {
         document.addEventListener( 'keyup', onKeyUp );
     }
 }
+
+
+
+
+export class ArcBallControls {
+    camera: any;
+    scene: any;
+    controls: any;
+
+    constructor(camera, renderer, scene){
+        this.camera = camera;
+        this.scene = scene;
+        
+        this.controls = new ArcballControls( camera, renderer.domElement, scene );
+
+        // TODO: should test this:
+        this.controls.addEventListener('change', () => {
+            renderer.render(scene, camera);
+        });
+
+        this.controls.enabled = true;
+        this.controls.enableGrid;
+        this.controls.enableRotate;
+        this.controls.enablePan;
+        this.controls.enableZoom;
+        this.controls.cursorZoom;
+        this.controls.adjustNearFar;
+        this.controls.scaleFactor;
+        this.controls.minDistance;
+        this.controls.maxDistance;
+        this.controls.minZoom;
+        this.controls.maxZoom;
+        this.controls.gizmoVisible; // = true
+        this.controls.enableAnimations;
+        this.controls.dampingFactor;
+        this.controls.wMax;
+    }
+
+    updateControl = (delta) => {
+        this.controls.update();
+    }
+}
+
+
+export class FlyieControls {
+    camera: any;
+    scene: any;
+    controls: any;
+
+    constructor(camera, renderer){
+        this.camera = camera;
+        
+        this.controls = new FlyControls( camera, renderer.domElement );
+
+        this.controls.movementSpeed = 1000;
+        this.controls.domElement = renderer.domElement;
+        this.controls.rollSpeed = Math.PI / 24;
+        this.controls.autoForward = false;
+        this.controls.dragToLook = false;
+    }
+
+    updateControl = (delta) => {
+        // https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_fly.html
+        // this.controls.movementSpeed = 0.33 * d;
+        this.controls.update(delta);
+    }
+}
+

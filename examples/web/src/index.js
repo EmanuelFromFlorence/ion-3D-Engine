@@ -38,6 +38,12 @@ window.addEventListener('load', () => {
     scene: guiScene, 
     fullScreen: true,
     control: ION.SpaceControl,
+    // control: ION.FirstPersonControl,
+    // control: ION.ArcBallControl,
+    // control: ION.FlyControl,
+    
+    controlOptions: {vrTeleportEnabled: false, vrTeleportList: []},
+    vrEnabled: true,
   });
 
   // /* Component */
@@ -82,7 +88,6 @@ window.addEventListener('load', () => {
   let guiEntity2 = new ION.Entity();
   guiEntity2.addComponent(guiComponent2);
   engine.addEntity(guiEntity2);
-
 
 
   /* System */
