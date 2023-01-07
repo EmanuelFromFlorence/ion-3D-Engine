@@ -5,6 +5,13 @@ import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox } from './u
 import { Entity } from '../core/entity';
 import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
+import { toSvg } from './src/index';
+import { throttle } from '../core/utils/utils';
+// import { cloneNode } from './src/clone-node';
+// import { embedWebFonts } from './src/embed-webfonts';
+// import { embedImages } from './src/embed-images';
+// import { applyStyle } from './src/apply-style';
+
 
 
 interface NamedParameters {
@@ -32,6 +39,9 @@ export class GUISystem extends System{
     aimingHTMLElementVR22: any;
     aimXVR22: number;
     aimYVR22: number;
+    flag: boolean;
+    guiWorker: Worker;
+    svgDataUrl: any;
 
 
     constructor(){ // {}: NamedParameters
@@ -45,6 +55,29 @@ export class GUISystem extends System{
         this.boundEvents = false;
         this.initUIEvents();
         this.initRaycaster();
+
+
+        // this.flag = false;
+        // resvg.initWasm(fetch('https://unpkg.com/@resvg/resvg-wasm/index_bg.wasm')).then(() => {
+        //     this.flag = true;
+        // });
+
+
+
+        // this.guiWorker = new Worker('gui-worker.js');
+        this.guiWorker = new Worker(new URL('./gui-worker.ts', import.meta.url));
+
+        this.guiWorker.postMessage([]);
+        
+        this.guiWorker.onmessage = (e) => {
+            //  = e.data;
+            console.log('Message received from worker::');
+            console.log(e.data);
+            
+        }   
+
+
+
     }
 
 
@@ -70,52 +103,123 @@ export class GUISystem extends System{
         
         let meshesToIntersect = [];
 
-        for (let [entityId, entity] of Object.entries(entityRegistry[GUI_COMPONENT_TYPE])) { // {entityId: String, entity: Entity}
-            let component = entity.getComponent(GUI_COMPONENT_TYPE);
+        let entities = entityRegistry[GUI_COMPONENT_TYPE];
+        if (!entities) return;
 
-            // More options:: https://github.com/bubkoo/html-to-image
-            htmlToImage.toSvg(component.rootElement, { filter: component.htmlFilter })
-            .then(async (svgDataUrl) => {
-                const img = await createImage(svgDataUrl);
+        for (let [entityId, entity] of Object.entries(entities)) { // {entityId: String, entity: Entity}
+            let guiComponent = entity.getComponent(GUI_COMPONENT_TYPE);
 
 
-                component.htmlTexture.dispose();
-                // component.material.map.dispose();
+            this.initGUIComponentObverver(guiComponent);
+            
+            
+            
 
-                component.htmlTexture = new THREE.Texture();
-                // component.htmlTexture.needsUpdate = true;
-                // component.htmlTexture.generateMipmaps = false;
+            // throttling/debouncing
 
-                component.htmlTexture.image = img;
+            
 
-                // needsUpdate should be set after setting the image -> Error: Texture marked for update but no image data found.
-                // Only this worked, needsUpdate values are getting overwritten
-                if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
-                    component.htmlTexture.needsUpdate = true;
-                    component.material.needsUpdate = true;
-                }
 
-                component.material.map = component.htmlTexture;
-                component.material.alphaMap = component.htmlTexture;
 
-                // Example of creating texture and setting texture props:::
-                // https://github.com/mrdoob/three.js/blob/dev/src/renderers/WebGLRenderTarget.js
+            // let node = component.rootElement;
+            // let options = { filter: component.htmlFilter };
+            
+            // const { width, height } = getImageSize(node, options)
+            // // const width = 800; 
+            // // const height = 800;
+            // cloneNode(node, options, true).then(async (clonedNode) => {
 
-                // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed. Instead, 
-                // call .dispose() on the texture and instantiate a new one.
-                // There is material.dispose() too...
+            //     // await embedWebFonts(clonedNode, options);
+            //     // await embedImages(clonedNode, options);
+            //     // applyStyle(clonedNode, options);
 
-            });
+
+            //     // const xmlns = 'http://www.w3.org/2000/svg';
+            //     // const svg = document.createElementNS(xmlns, 'svg');
+            //     // const foreignObject = document.createElementNS(xmlns, 'foreignObject');
+                            
+            //     // svg.setAttribute('width', `${width}`);
+            //     // svg.setAttribute('height', `${height}`);
+            //     // svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            
+            //     // foreignObject.setAttribute('width', '100%');
+            //     // foreignObject.setAttribute('height', '100%');
+            //     // foreignObject.setAttribute('x', '0');
+            //     // foreignObject.setAttribute('y', '0');
+            //     // foreignObject.setAttribute('externalResourcesRequired', 'true');
+            
+            //     // svg.appendChild(foreignObject);
+            //     // foreignObject.appendChild(clonedNode);
+
+
+            //     // let svgTag = new XMLSerializer().serializeToString(svg);
+
+            //     // let encoded = encodeURIComponent(svgTag);
+
+            //     // let sssvggg = `data:image/svg+xml;charset=utf-8,${encoded}`;
+
+            //     // const image = new Image();
+            //     // image.src = sssvggg;
                 
-            // In case going with DataTexture and creating our own canvas:
-            // https://dustinpfister.github.io/2022/04/15/threejs-data-texture/
-            // const width = 32, height = 32;
-            // const size = width * height;
-            // const data = new Uint8Array( 4 * size );
-            // const texture = new THREE.DataTexture( data, width, height );
-            // texture.needsUpdate = true;
+            //     // image.onload = () => {
+            //     //     component.htmlTexture.dispose();
 
-            meshesToIntersect.push(component);
+            //     //     component.htmlTexture = new THREE.Texture(image);
+                    
+            //     //     if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
+            //     //         component.htmlTexture.needsUpdate = true;
+            //     //         component.material.needsUpdate = true;
+            //     //     }
+
+            //     //     component.material.map = component.htmlTexture;
+            //     // };
+
+            // });
+
+
+
+
+            // /* ++++++++++++ Original solution (12 FPS) ++++++++++++ */
+            // htmlToImage.toSvg(component.rootElement, { filter: component.htmlFilter })
+            // .then(async (svgDataUrl) => {
+
+
+            //     // const image = new Image();
+            //     // image.src = svgDataUrl;
+
+                
+            //     // image.onload = () =>  { 
+
+            //     //     component.htmlTexture.dispose();
+
+            //     //     component.htmlTexture = new THREE.Texture(image);
+                    
+            //     //     if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
+            //     //         component.htmlTexture.needsUpdate = true;
+            //     //         component.material.needsUpdate = true;
+            //     //     }
+                
+            //     //     component.material.map = component.htmlTexture;
+            //     // };
+
+            // });
+
+            // /* ++++++++++++++++++++++++++++++ */
+
+
+
+
+        //     });
+                
+        //     // In case going with DataTexture and creating our own canvas:
+        //     // https://dustinpfister.github.io/2022/04/15/threejs-data-texture/
+        //     // const width = 32, height = 32;
+        //     // const size = width * height;
+        //     // const data = new Uint8Array( 4 * size );
+        //     // const texture = new THREE.DataTexture( data, width, height );
+        //     // texture.needsUpdate = true;
+
+            meshesToIntersect.push(guiComponent);
         }
 
 
@@ -124,6 +228,64 @@ export class GUISystem extends System{
         }else {
             this.updateAim(meshesToIntersect);
         }
+    }
+
+
+    public initGUIComponentObverver = (guiComponent) => {
+        if(!guiComponent.onMutation){
+
+            // throttling the callback function:
+            const throttledUpdateHTMLImage = throttle(() => this.updateHTMLImage(guiComponent), 0.5);
+
+            // Callback function to execute when mutations are observed
+            guiComponent.onMutation = (mutationList, observer) => {
+                for (const mutation of mutationList) {
+                    if (mutation.type === 'childList') {
+                        // console.log('A child node has been added or removed.');
+                    } else if (mutation.type === 'attributes') {
+                        // console.log(`The ${mutation.attributeName} attribute was modified.`);
+                    }
+
+                    throttledUpdateHTMLImage();
+                    
+                }
+            };
+
+            // Create an observer instance linked to the callback function
+            const observer = new MutationObserver(guiComponent.onMutation);
+
+            // Start observing the target node for configured mutations
+            observer.observe(guiComponent.rootElement, { attributes: true, childList: true, subtree: true });
+
+            // Later, you can stop observing
+            // observer.disconnect();
+
+            // Calling once in the beginning:
+            this.updateHTMLImage(guiComponent);
+        }
+    }
+
+
+    public updateHTMLImage = (guiComponent) => {
+        htmlToImage.toSvg(guiComponent.rootElement, { filter: guiComponent.htmlFilter })
+        .then(async (svgDataUrl) => {
+            
+            const image = new Image();
+            image.src = svgDataUrl;
+
+            image.onload = () =>  {
+                guiComponent.htmlTexture.dispose();
+                guiComponent.htmlTexture = new THREE.Texture(image);
+                
+                if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
+                    guiComponent.htmlTexture.needsUpdate = true;
+                    guiComponent.material.needsUpdate = true;
+                }
+            
+                guiComponent.material.map = guiComponent.htmlTexture;
+            };
+
+        });
     }
 
 

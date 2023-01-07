@@ -18,7 +18,8 @@ export class GUIComponent extends MeshComponent{
     ratio: number;
     material: any;
     htmlFilter: any;
-    counter: number;
+    compId: string;
+    onMutation: any;
 
 
     constructor({
@@ -59,6 +60,7 @@ export class GUIComponent extends MeshComponent{
         this.htmlFilter = props.htmlFilter;
         this.material = props.material;
         this.ratio = props.ratio;
+        this.compId = THREE.MathUtils.generateUUID();
         
         this.initRootElement();
         this.genPlaneMesh();
@@ -82,7 +84,7 @@ export class GUIComponent extends MeshComponent{
         let [widthInWorldUnit, heightInWorldUnit] = this.get2DSizeInWorldUnit();
         const planeGeometry = new THREE.PlaneGeometry( widthInWorldUnit, heightInWorldUnit );
         const planeMaterial = this.material;
-        planeMaterial.needsUpdate = true;
+        // planeMaterial.needsUpdate = true;
 
         super.setGeometry(planeGeometry);
         super.setMeterial(planeMaterial);

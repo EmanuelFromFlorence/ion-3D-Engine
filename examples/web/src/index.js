@@ -75,19 +75,21 @@ window.addEventListener('load', () => {
 
 
 
-  const rootElement2 = document.getElementById('root');
-  const guiComponent2 = new ION.GUIComponent({
-    rootElement: rootElement2,
-    ratio: 1,
-  });
-  guiComponent2.position.y = 5;
-  guiComponent2.position.x = 4;
-  guiComponent2.rotateY(-0.3);
+  // const rootElement2 = document.getElementById('root');
+  // const guiComponent2 = new ION.GUIComponent({
+  //   rootElement: rootElement2,
+  //   ratio: 1,
+  // });
+  // guiComponent2.position.y = 5;
+  // guiComponent2.position.x = 4;
+  // guiComponent2.rotateY(-0.3);
 
-  /* Entity */
-  let guiEntity2 = new ION.Entity();
-  guiEntity2.addComponent(guiComponent2);
-  engine.addEntity(guiEntity2);
+  // /* Entity */
+  // let guiEntity2 = new ION.Entity();
+  // guiEntity2.addComponent(guiComponent2);
+  // engine.addEntity(guiEntity2);
+
+
 
 
   /* System */
@@ -98,11 +100,12 @@ window.addEventListener('load', () => {
   engine.start();
 
 
+  const unit = 0.1;
 
-  // let id = setTimeout(() => {
-  //   engine.start();
-  // }, 1000);
-  
+  // x -> towards x
+  // y -> towards y
+  // z -> towards z
+
 });
 
 

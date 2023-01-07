@@ -124,6 +124,10 @@ export class VRControls {
         this.controller2.add( line.clone() );
 
 
+        // const raycasterOrigin = new THREE.Vector3(0, 0, 0);
+        // const raycasterDirection = new THREE.Vector3(0, - 2, 0);
+        // const near = 0;
+        // const far = 200;
         this.vrRaycaster = new THREE.Raycaster();
 
 

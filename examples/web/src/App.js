@@ -265,7 +265,7 @@ function App() {
 
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <img src="logo512.png" className="App-logo" alt="logo" />
+        <img id='looogoo' src="logo512.png" className="App-logo" alt="logo" />
         
         <p>
           Edit <code>src/App.js</code> and save to reload.
