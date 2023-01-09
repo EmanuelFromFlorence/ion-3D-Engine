@@ -20,6 +20,7 @@ export class GUIComponent extends MeshComponent{
     htmlFilter: any;
     compId: string;
     onMutation: any;
+    svg: any;
 
 
     constructor({

@@ -16,8 +16,8 @@ export function getRandomInt(min: number, max: number): number {
 }
 
 
-/////////////////// limit on total number of calls
-// https://towardsdev.com/debouncing-and-throttling-in-javascript-8862efe2b563
+// TODO: limit on total number of calls
+// source: https://towardsdev.com/debouncing-and-throttling-in-javascript-8862efe2b563
 export const throttle = (func, limit) => {
     let lastFunc;
     let lastRan;

@@ -65,6 +65,7 @@ export class Engine{
 
     protected executeSystems = (): any => {
         for (let system of this.systemRegistry) {
+            // TODO: detecting async system execution: myFunction.constructor.name === "AsyncFunction"
             system.execute(this, this.entityRegistry);
         }
     }

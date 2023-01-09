@@ -7,6 +7,11 @@ import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { toSvg } from './src/index';
 import { throttle } from '../core/utils/utils';
+import { getImageSize, nodeToDataURL, svgToDataURL } from './src/util';
+import { cloneNode } from './src/clone-node';
+import { embedWebFonts } from './src/embed-webfonts';
+import { embedImages } from './src/embed-images';
+import { applyStyle } from './src/apply-style';
 // import { cloneNode } from './src/clone-node';
 // import { embedWebFonts } from './src/embed-webfonts';
 // import { embedImages } from './src/embed-images';
@@ -41,7 +46,6 @@ export class GUISystem extends System{
     aimYVR22: number;
     flag: boolean;
     guiWorker: Worker;
-    svgDataUrl: any;
 
 
     constructor(){ // {}: NamedParameters
@@ -64,17 +68,17 @@ export class GUISystem extends System{
 
 
 
-        // this.guiWorker = new Worker('gui-worker.js');
-        this.guiWorker = new Worker(new URL('./gui-worker.ts', import.meta.url));
+        // // this.guiWorker = new Worker('gui-worker.js');
+        // this.guiWorker = new Worker(new URL('./gui-worker.ts', import.meta.url));
 
-        this.guiWorker.postMessage([]);
+        // this.guiWorker.postMessage([]);
         
-        this.guiWorker.onmessage = (e) => {
-            //  = e.data;
-            console.log('Message received from worker::');
-            console.log(e.data);
+        // this.guiWorker.onmessage = (e) => {
+        //     //  = e.data;
+        //     console.log('Message received from worker::');
+        //     console.log(e.data);
             
-        }   
+        // }   
 
 
 
@@ -95,7 +99,7 @@ export class GUISystem extends System{
     }
 
 
-    public execute = (engine: Engine, entityRegistry: any) => {
+    public execute = async (engine: Engine, entityRegistry: any) => {
         this.engine = engine;
         if (!this.boundEvents){
             this.bindClickEvents(); // needs this.engine
@@ -110,106 +114,9 @@ export class GUISystem extends System{
             let guiComponent = entity.getComponent(GUI_COMPONENT_TYPE);
 
 
-            this.initGUIComponentObverver(guiComponent);
+            await this.initGUIComponentObverver(guiComponent);
             
             
-            
-
-            // throttling/debouncing
-
-            
-
-
-
-            // let node = component.rootElement;
-            // let options = { filter: component.htmlFilter };
-            
-            // const { width, height } = getImageSize(node, options)
-            // // const width = 800; 
-            // // const height = 800;
-            // cloneNode(node, options, true).then(async (clonedNode) => {
-
-            //     // await embedWebFonts(clonedNode, options);
-            //     // await embedImages(clonedNode, options);
-            //     // applyStyle(clonedNode, options);
-
-
-            //     // const xmlns = 'http://www.w3.org/2000/svg';
-            //     // const svg = document.createElementNS(xmlns, 'svg');
-            //     // const foreignObject = document.createElementNS(xmlns, 'foreignObject');
-                            
-            //     // svg.setAttribute('width', `${width}`);
-            //     // svg.setAttribute('height', `${height}`);
-            //     // svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-            
-            //     // foreignObject.setAttribute('width', '100%');
-            //     // foreignObject.setAttribute('height', '100%');
-            //     // foreignObject.setAttribute('x', '0');
-            //     // foreignObject.setAttribute('y', '0');
-            //     // foreignObject.setAttribute('externalResourcesRequired', 'true');
-            
-            //     // svg.appendChild(foreignObject);
-            //     // foreignObject.appendChild(clonedNode);
-
-
-            //     // let svgTag = new XMLSerializer().serializeToString(svg);
-
-            //     // let encoded = encodeURIComponent(svgTag);
-
-            //     // let sssvggg = `data:image/svg+xml;charset=utf-8,${encoded}`;
-
-            //     // const image = new Image();
-            //     // image.src = sssvggg;
-                
-            //     // image.onload = () => {
-            //     //     component.htmlTexture.dispose();
-
-            //     //     component.htmlTexture = new THREE.Texture(image);
-                    
-            //     //     if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
-            //     //         component.htmlTexture.needsUpdate = true;
-            //     //         component.material.needsUpdate = true;
-            //     //     }
-
-            //     //     component.material.map = component.htmlTexture;
-            //     // };
-
-            // });
-
-
-
-
-            // /* ++++++++++++ Original solution (12 FPS) ++++++++++++ */
-            // htmlToImage.toSvg(component.rootElement, { filter: component.htmlFilter })
-            // .then(async (svgDataUrl) => {
-
-
-            //     // const image = new Image();
-            //     // image.src = svgDataUrl;
-
-                
-            //     // image.onload = () =>  { 
-
-            //     //     component.htmlTexture.dispose();
-
-            //     //     component.htmlTexture = new THREE.Texture(image);
-                    
-            //     //     if(!component.htmlTexture.needsUpdate || !component.material.needsUpdate){
-            //     //         component.htmlTexture.needsUpdate = true;
-            //     //         component.material.needsUpdate = true;
-            //     //     }
-                
-            //     //     component.material.map = component.htmlTexture;
-            //     // };
-
-            // });
-
-            // /* ++++++++++++++++++++++++++++++ */
-
-
-
-
-        //     });
                 
         //     // In case going with DataTexture and creating our own canvas:
         //     // https://dustinpfister.github.io/2022/04/15/threejs-data-texture/
@@ -231,22 +138,33 @@ export class GUISystem extends System{
     }
 
 
-    public initGUIComponentObverver = (guiComponent) => {
+    public initGUIComponentObverver = async (guiComponent) => {
         if(!guiComponent.onMutation){
 
             // throttling the callback function:
-            const throttledUpdateHTMLImage = throttle(() => this.updateHTMLImage(guiComponent), 0.5);
+            const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg), 0.5);
+
+            // Calling these once in the beginning:
+            guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });
+            this.updateGUIComponentTexture(guiComponent);
+            
+            // throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false });
+
 
             // Callback function to execute when mutations are observed
             guiComponent.onMutation = (mutationList, observer) => {
                 for (const mutation of mutationList) {
                     if (mutation.type === 'childList') {
                         // console.log('A child node has been added or removed.');
+
+                        // throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement);
+
                     } else if (mutation.type === 'attributes') {
                         // console.log(`The ${mutation.attributeName} attribute was modified.`);
-                    }
 
-                    throttledUpdateHTMLImage();
+                        throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false });
+                        
+                    }
                     
                 }
             };
@@ -259,33 +177,153 @@ export class GUISystem extends System{
 
             // Later, you can stop observing
             // observer.disconnect();
-
-            // Calling once in the beginning:
-            this.updateHTMLImage(guiComponent);
         }
     }
 
 
-    public updateHTMLImage = (guiComponent) => {
-        htmlToImage.toSvg(guiComponent.rootElement, { filter: guiComponent.htmlFilter })
-        .then(async (svgDataUrl) => {
-            
-            const image = new Image();
-            image.src = svgDataUrl;
+    // TODO: htmlToImageOptions should be configured by user
+    public createGUIComponentSVG = async (guiComponent, htmlElement, htmlToImageOptions) => {
+        const { width, height } = getImageSize(htmlElement, htmlToImageOptions)
 
-            image.onload = () =>  {
-                guiComponent.htmlTexture.dispose();
-                guiComponent.htmlTexture = new THREE.Texture(image);
+        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions);        
+        
+        const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
+        
+        return svg;
+
+
+        
+
+        // htmlToImage.toSvg(htmlElement, htmlToImageOptions)
+        // .then(async (svgDataUrl) => {
+            
+        //     const image = new Image();
+        //     image.src = svgDataUrl;
+
+        //     image.onload = () =>  {
+        //         guiComponent.htmlTexture.dispose();
+        //         guiComponent.htmlTexture = new THREE.Texture(image);
                 
-                if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
-                    guiComponent.htmlTexture.needsUpdate = true;
-                    guiComponent.material.needsUpdate = true;
-                }
+        //         if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
+        //             guiComponent.htmlTexture.needsUpdate = true;
+        //             guiComponent.material.needsUpdate = true;
+        //         }
             
-                guiComponent.material.map = guiComponent.htmlTexture;
-            };
+        //         guiComponent.material.map = guiComponent.htmlTexture;
+        //     };
 
-        });
+        // });
+    }
+
+
+    // TODO: put this as an arrow function when defining as throttled function...
+    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions) => {
+        this.updateNodeInSVG(guiComponent, node, htmlToImageOptions);
+        this.updateGUIComponentTexture(guiComponent);
+    }
+
+
+    public updateGUIComponentTexture = async (guiComponent) => {
+        const svgDataUrl = await svgToDataURL(guiComponent.svg);
+        const image = new Image();
+        image.src = svgDataUrl;
+
+        image.onload = () =>  {
+            guiComponent.htmlTexture.dispose(); //////////////////////
+            guiComponent.htmlTexture = new THREE.Texture(image);
+            
+            if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
+                guiComponent.htmlTexture.needsUpdate = true;
+                guiComponent.material.needsUpdate = true;
+            }
+        
+            guiComponent.material.map = guiComponent.htmlTexture;
+        };
+    }
+
+
+    public updateNodeInSVG = async (guiComponent, node, htmlToImageOptions) => {
+        const clonedNode = await this.processHTMLNode(node, htmlToImageOptions) as HTMLElement;
+        // let className = null;
+        // clonedNode.classList.forEach((cls) => {
+        //     if (cls.includes('gui_svg__')) {
+        //         className = cls;
+        //     }
+        // });
+
+        // In case data attr:
+        const id = clonedNode.dataset.guiSvgId;
+        // console.log(guiComponent.svg.contentDocument);
+
+        
+        // console.log(Promise.resolve(guiComponent.svg.svg));
+
+        
+        // console.log(guiComponent.svg);
+        
+
+
+
+
+        // const svgDocument = guiComponent.svg.getSVGDocument();
+        // console.log(id);
+        // console.log(guiComponent.svg);
+        
+        
+        const oldNode = guiComponent.svg.querySelector(`[data-gui-svg-id = "${id}"]`);
+        // const oldNode = guiComponent.svg.contentDocument.querySelector(`[data-gui-svg-id = "${id}"]`);
+
+        // console.log(oldNode);
+        
+        oldNode.replaceWith(clonedNode);
+    
+
+
+
+
+        // guiComponent.svg.addEventListener("load", () => {
+            
+        //     console.log(guiComponent.svg);
+            
+        // }, false);
+        
+        // const oldNode = guiComponent.svg.contentDocument.querySelector(`[data-gui-svg-id = "${id}"]`);
+
+        // const oldNode = guiComponent.svg.contentDocument.getElementsByClassName(className)[0];
+        // oldNode.replaceWith(clonedNode);
+    }
+
+
+    public processHTMLNode = async (node, htmlToImageOptions) => {
+        // toSVG modification:
+        const clonedNode = (await cloneNode(node, htmlToImageOptions, true)) as HTMLElement; // overwrites width and height!!!
+        await embedWebFonts(clonedNode, htmlToImageOptions);
+        await embedImages(clonedNode, htmlToImageOptions);
+        applyStyle(clonedNode, htmlToImageOptions);
+        return clonedNode;
+    }
+
+
+    public createSVGDocument = (guiComponent, node, width, height) => {
+        // nodeToDataURL modification:
+        const xmlns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(xmlns, 'svg');
+        const foreignObject = document.createElementNS(xmlns, 'foreignObject');
+
+        svg.setAttribute('width', `${width}`);
+        svg.setAttribute('height', `${height}`);
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+        foreignObject.setAttribute('width', '100%');
+        foreignObject.setAttribute('height', '100%');
+        foreignObject.setAttribute('x', '0');
+        foreignObject.setAttribute('y', '0');
+        foreignObject.setAttribute('externalResourcesRequired', 'true');
+
+        svg.appendChild(foreignObject);
+        foreignObject.appendChild(node);
+
+        return svg;
     }
 
 
