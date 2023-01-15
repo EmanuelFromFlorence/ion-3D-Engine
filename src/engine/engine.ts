@@ -25,6 +25,7 @@ export class Engine{
     vrButtonElm: any;
     stats: any;
     vrTeleMeshesToIntersect: any[];
+    frameCount: number;
     
 
     constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: []}, vrEnabled = false, graphics = null, fullScreen = false} = {}){
@@ -78,11 +79,14 @@ export class Engine{
 
     protected runEngine = (): any => {
         let prevTime = performance.now();
+        this.frameCount = 0;
         const animate = () => {
-            try{
+            try {
                 // requestAnimationFrame( animate );
                 const time = performance.now();
                 const delta = ( time - prevTime ) / 1000;
+                
+                this.frameCount++;
     
                 // TODO::
                 this.scene.updateMatrixWorld();
@@ -102,10 +106,9 @@ export class Engine{
                 }
 
                 this.stats.update();
-    
                 
                 prevTime = time;
-            }catch (err){
+            } catch (err) {
                 this.renderer.setAnimationLoop( null );
                 console.error('ION Engine Stopped.');
                 console.error(err);

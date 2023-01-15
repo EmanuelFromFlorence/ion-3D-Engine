@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
-import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox } from './utils';
+import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox, buildPageStyleString } from './utils';
 import { Entity } from '../core/entity';
 import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
@@ -46,6 +46,7 @@ export class GUISystem extends System{
     aimYVR22: number;
     flag: boolean;
     guiWorker: Worker;
+    pageStyle: string;
 
 
     constructor(){ // {}: NamedParameters
@@ -96,6 +97,7 @@ export class GUISystem extends System{
     
     public initUIEvents = () => {
         bindCSSEvents();
+        this.pageStyle = buildPageStyleString();
     }
 
 
@@ -117,7 +119,6 @@ export class GUISystem extends System{
             await this.initGUIComponentObverver(guiComponent);
             
             
-                
         //     // In case going with DataTexture and creating our own canvas:
         //     // https://dustinpfister.github.io/2022/04/15/threejs-data-texture/
         //     // const width = 32, height = 32;
@@ -140,41 +141,29 @@ export class GUISystem extends System{
 
     public initGUIComponentObverver = async (guiComponent) => {
         if(!guiComponent.onMutation){
-
             // throttling the callback function:
-            const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg), 0.5);
+            const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 0.001);
 
             // Calling these once in the beginning:
             guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });
             this.updateGUIComponentTexture(guiComponent);
-            
-            // throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false });
-
 
             // Callback function to execute when mutations are observed
             guiComponent.onMutation = (mutationList, observer) => {
+                // TODO: optimizng by sending and processing the whole mutationList
                 for (const mutation of mutationList) {
-                    if (mutation.type === 'childList') {
-                        // console.log('A child node has been added or removed.');
-
-                        // throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement);
-
-                    } else if (mutation.type === 'attributes') {
-                        // console.log(`The ${mutation.attributeName} attribute was modified.`);
-
-                        throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false });
-                        
-                    }
-                    
+                    const guiOptions = {
+                        mutationType: mutation.type,
+                        mutation: mutation,
+                    };
+                    throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, guiOptions);
+                    // TODO: testing without throttling later:
+                    // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false });
                 }
             };
 
-            // Create an observer instance linked to the callback function
             const observer = new MutationObserver(guiComponent.onMutation);
-
-            // Start observing the target node for configured mutations
-            observer.observe(guiComponent.rootElement, { attributes: true, childList: true, subtree: true });
-
+            observer.observe(guiComponent.rootElement, { attributes: true, childList: true, subtree: false });
             // Later, you can stop observing
             // observer.disconnect();
         }
@@ -185,7 +174,11 @@ export class GUISystem extends System{
     public createGUIComponentSVG = async (guiComponent, htmlElement, htmlToImageOptions) => {
         const { width, height } = getImageSize(htmlElement, htmlToImageOptions)
 
-        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions);        
+        const guiOptions = {
+
+        };
+
+        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, guiOptions);        
         
         const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
         
@@ -217,8 +210,8 @@ export class GUISystem extends System{
 
 
     // TODO: put this as an arrow function when defining as throttled function...
-    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions) => {
-        this.updateNodeInSVG(guiComponent, node, htmlToImageOptions);
+    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions, guiOptions) => {        
+        this.updateNodeInSVG(guiComponent, node, htmlToImageOptions, guiOptions);
         this.updateGUIComponentTexture(guiComponent);
     }
 
@@ -242,8 +235,8 @@ export class GUISystem extends System{
     }
 
 
-    public updateNodeInSVG = async (guiComponent, node, htmlToImageOptions) => {
-        const clonedNode = await this.processHTMLNode(node, htmlToImageOptions) as HTMLElement;
+    public updateNodeInSVG = async (guiComponent, node, htmlToImageOptions, guiOptions) => {
+        const clonedNode = await this.processHTMLNode(node, htmlToImageOptions, guiOptions) as HTMLElement;
         // let className = null;
         // clonedNode.classList.forEach((cls) => {
         //     if (cls.includes('gui_svg__')) {
@@ -279,6 +272,8 @@ export class GUISystem extends System{
     
 
 
+        this.appendPageStyle(guiComponent.svg);
+
 
 
         // guiComponent.svg.addEventListener("load", () => {
@@ -294,9 +289,23 @@ export class GUISystem extends System{
     }
 
 
-    public processHTMLNode = async (node, htmlToImageOptions) => {
+    // public processHTMLNode = async (node, htmlToImageOptions) => {
+    //     // toSVG modification:
+    //     const clonedNode = (await cloneNode(node, htmlToImageOptions, true)) as HTMLElement; // overwrites width and height!!!
+    //     await embedWebFonts(clonedNode, htmlToImageOptions);
+    //     await embedImages(clonedNode, htmlToImageOptions);
+    //     applyStyle(clonedNode, htmlToImageOptions);
+    //     return clonedNode;
+    // }
+
+    public processHTMLNode = async (node, htmlToImageOptions, guiOptions) => {
         // toSVG modification:
-        const clonedNode = (await cloneNode(node, htmlToImageOptions, true)) as HTMLElement; // overwrites width and height!!!
+        const clonedNode = (await cloneNode(node, htmlToImageOptions, guiOptions, true)) as HTMLElement; // overwrites width and height!!!
+        // console.log(node);
+        
+        // clonedNode.style.cssText = 'background-color: rgb(255, 255, 0);';
+
+
         await embedWebFonts(clonedNode, htmlToImageOptions);
         await embedImages(clonedNode, htmlToImageOptions);
         applyStyle(clonedNode, htmlToImageOptions);
@@ -322,10 +331,26 @@ export class GUISystem extends System{
 
         svg.appendChild(foreignObject);
         foreignObject.appendChild(node);
-
+        
+        this.appendPageStyle(svg);
+        
         return svg;
     }
 
+
+    public appendPageStyle = (node) => {
+        // First removing previous style tag if exists:
+        for (let child of node.childNodes) {
+            if (child.tagName.toLowerCase() == 'style') {
+                child.remove();
+            }
+        }
+        const style = document.createElement('style');
+        style.textContent = this.pageStyle;
+        node.append(style);
+        return node;
+    }
+    
 
     public updateVRAim = (meshesToIntersect) => {
         
@@ -604,5 +629,4 @@ export class GUISystem extends System{
             // this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
         }
     }
-
 }

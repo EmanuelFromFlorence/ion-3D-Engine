@@ -217,3 +217,17 @@ export function isRadioCheckBox(element) {
   let inputTypes = ['checkbox', 'radio'];
   return inputTypes.indexOf(type) >= 0;
 }
+
+
+export function buildPageStyleString() {
+  let pageStyle = '';
+  for (let stylesheet of document.styleSheets) {
+      // console.log(stylesheet);
+      for (let cssRule of stylesheet.cssRules){
+          pageStyle = `${pageStyle} \n ${cssRule.cssText}`;
+      }
+  }
+  return pageStyle;
+}
+
+

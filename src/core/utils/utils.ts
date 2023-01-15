@@ -45,3 +45,13 @@ export function resetCameraPosition(camera: any) {
     let cameraDirection = new THREE.Vector3(0, 3, -1);
     camera.lookAt(cameraDirection);
 }
+
+
+export const timeIt = (context, func, args) => {
+    let startTime = performance.now();
+    context = context || this;
+    const result = func.apply(context, ...args);
+    let endTime = performance.now();
+    console.log(`It took ${(endTime - startTime)} ms and ${((endTime - startTime)/1000).toFixed(3)} s.`);
+    return result;
+}

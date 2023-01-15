@@ -59,6 +59,7 @@ function getOldStyleMap(newStyleMap: any, oldStyle: CSSStyleDeclaration) {
 }
 
 
+// TODO: optimization: looping and setProperty is slow let's try styles.cssText later... it sets all styles auto
 function setStylesOneByOne(element, style: any) {
     for (let [propName, values] of Object.entries(style)) {   
         element.style.setProperty(propName, values.propValue, values.propPriority);
@@ -74,7 +75,7 @@ function bindToggleEvents(originalSelector: string, ionClass: string, cssRule: C
 
     for (let [i, element] of elements.entries()) {
         oldStyleMapList[i] = getOldStyleMap(newStyleMap, element.style); // window.getComputedStyle(element)
-
+        
         element.addEventListener(onEvent, (e: any) => {
             setStylesOneByOne(element, newStyleMap);
             element.classList.add(ionClass);
@@ -88,7 +89,6 @@ function bindToggleEvents(originalSelector: string, ionClass: string, cssRule: C
 
 
 export function bindCSSEvents(){ // <T extends HTMLElement>
-    
     for (let stylesheet of document.styleSheets){
         let newCSSRules = [];
         for (let cssRule of stylesheet.cssRules){

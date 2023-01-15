@@ -23,7 +23,6 @@ root.render(
 
 window.addEventListener('load', () => {
   
-
   /* Engine */
   const canvas = document.getElementById('viewport');
   
