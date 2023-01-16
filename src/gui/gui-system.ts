@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
 import * as htmlToImage from 'html-to-image';
-import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox, buildPageStyleString } from './utils';
+import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
 import { Entity } from '../core/entity';
 import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
@@ -12,15 +12,6 @@ import { cloneNode } from './src/clone-node';
 import { embedWebFonts } from './src/embed-webfonts';
 import { embedImages } from './src/embed-images';
 import { applyStyle } from './src/apply-style';
-// import { cloneNode } from './src/clone-node';
-// import { embedWebFonts } from './src/embed-webfonts';
-// import { embedImages } from './src/embed-images';
-// import { applyStyle } from './src/apply-style';
-
-
-
-interface NamedParameters {
-}
 
 
 export class GUISystem extends System{
@@ -47,6 +38,7 @@ export class GUISystem extends System{
     flag: boolean;
     guiWorker: Worker;
     pageStyle: string;
+    pageStyleMap: Map<string, any>;
 
 
     constructor(){ // {}: NamedParameters
@@ -98,6 +90,12 @@ export class GUISystem extends System{
     public initUIEvents = () => {
         bindCSSEvents();
         this.pageStyle = buildPageStyleString();
+
+        
+        buildPageStyleList((styleName, value) => {
+            if (!this.pageStyleMap) this.pageStyleMap = new Map();
+            this.pageStyleMap.set(styleName, value);
+        });
     }
 
 
@@ -155,6 +153,7 @@ export class GUISystem extends System{
                     const guiOptions = {
                         mutationType: mutation.type,
                         mutation: mutation,
+                        'pageStyleMap': this.pageStyleMap,
                     };
                     throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, guiOptions);
                     // TODO: testing without throttling later:
@@ -172,12 +171,11 @@ export class GUISystem extends System{
 
     // TODO: htmlToImageOptions should be configured by user
     public createGUIComponentSVG = async (guiComponent, htmlElement, htmlToImageOptions) => {
-        const { width, height } = getImageSize(htmlElement, htmlToImageOptions)
+        const { width, height } = getImageSize(htmlElement, htmlToImageOptions);
 
         const guiOptions = {
-
+            'pageStyleMap': this.pageStyleMap,
         };
-
         const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, guiOptions);        
         
         const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
@@ -289,23 +287,9 @@ export class GUISystem extends System{
     }
 
 
-    // public processHTMLNode = async (node, htmlToImageOptions) => {
-    //     // toSVG modification:
-    //     const clonedNode = (await cloneNode(node, htmlToImageOptions, true)) as HTMLElement; // overwrites width and height!!!
-    //     await embedWebFonts(clonedNode, htmlToImageOptions);
-    //     await embedImages(clonedNode, htmlToImageOptions);
-    //     applyStyle(clonedNode, htmlToImageOptions);
-    //     return clonedNode;
-    // }
-
     public processHTMLNode = async (node, htmlToImageOptions, guiOptions) => {
         // toSVG modification:
         const clonedNode = (await cloneNode(node, htmlToImageOptions, guiOptions, true)) as HTMLElement; // overwrites width and height!!!
-        // console.log(node);
-        
-        // clonedNode.style.cssText = 'background-color: rgb(255, 255, 0);';
-
-
         await embedWebFonts(clonedNode, htmlToImageOptions);
         await embedImages(clonedNode, htmlToImageOptions);
         applyStyle(clonedNode, htmlToImageOptions);

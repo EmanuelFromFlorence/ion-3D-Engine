@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CompleteStyleList, ExcluderKey } from '../core/constants';
 import { createCirclePoints, createCubicPoints, createGlowMaterial } from '../nodes/utils';
 
 
@@ -230,4 +231,81 @@ export function buildPageStyleString() {
   return pageStyle;
 }
 
+
+export function buildPageStyleList(setPageStyleMap) {
+
+  for (let script of document.scripts) {
+
+    if (script.hasAttribute('src')) {
+      let url = '';
+      if (script.src.includes('http')) {
+        url = script.src;
+      } else {
+        url = `${window.location.origin}/${script.src}`;
+      }
+
+      fetch(url).then((response) => response.body)
+      .then((readableStream) => {
+
+        const reader = readableStream.getReader();
+        return new ReadableStream({
+          start(controller) {
+            // The following function handles each data chunk
+            function push() {
+              // "done" is a Boolean and value a "Uint8Array"
+              reader.read().then(({ done, value }) => {
+                // If there is no more data to read
+                if (done) {
+                  // console.log('done', done);
+                  controller.close();
+                  return;
+                }
+                // Get the data and send it to the browser via the controller
+                controller.enqueue(value);
+                // Check chunks by logging to the console
+                // console.log(done, value);
+                push();
+              });
+            }
+    
+            push();
+          },
+        });
+      })
+      .then((stream) => {
+        // Respond with our stream
+        return new Response(stream, { headers: { 'Content-Type': 'text/html' } }).text();
+      }).then((textContent) => {
+        if (textContent.includes(ExcluderKey)) return;
+
+        /* BUILDING THE STYLE LIST */
+        for (let styleName of CompleteStyleList) {
+          
+          if (textContent.includes(styleName)) {
+            
+            setPageStyleMap(styleName, true);
+            
+          }
+        }
+        
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    } else { // if inline script
+
+      for (let styleName of CompleteStyleList) {
+        if (script.textContent.includes(styleName)) {
+
+          setPageStyleMap(styleName, true);
+
+        }
+      }
+      
+
+    }
+  }
+  
+}
 
