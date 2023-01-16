@@ -5,13 +5,13 @@ import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox, buildPageS
 import { Entity } from '../core/entity';
 import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
-import { toSvg } from './src/index';
+import { toSvg } from './html-to-image/index';
 import { throttle } from '../core/utils/utils';
-import { getImageSize, nodeToDataURL, svgToDataURL } from './src/util';
-import { cloneNode } from './src/clone-node';
-import { embedWebFonts } from './src/embed-webfonts';
-import { embedImages } from './src/embed-images';
-import { applyStyle } from './src/apply-style';
+import { getImageSize, nodeToDataURL, svgToDataURL } from './html-to-image/util';
+import { cloneNode } from './html-to-image/clone-node';
+import { embedWebFonts } from './html-to-image/embed-webfonts';
+import { embedImages } from './html-to-image/embed-images';
+import { applyStyle } from './html-to-image/apply-style';
 
 
 export class GUISystem extends System{
