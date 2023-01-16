@@ -1,13 +1,10 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import * as htmlToImage from 'html-to-image';
-import { createImage, GUI_COMPONENT_TYPE, isRadioCheckBox, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
-import { Entity } from '../core/entity';
+import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
 import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
-import { toSvg } from './html-to-image/index';
 import { throttle } from '../core/utils/utils';
-import { getImageSize, nodeToDataURL, svgToDataURL } from './html-to-image/util';
+import { getImageSize, svgToDataURL } from './html-to-image/util';
 import { cloneNode } from './html-to-image/clone-node';
 import { embedWebFonts } from './html-to-image/embed-webfonts';
 import { embedImages } from './html-to-image/embed-images';
@@ -52,29 +49,6 @@ export class GUISystem extends System{
         this.boundEvents = false;
         this.initUIEvents();
         this.initRaycaster();
-
-
-        // this.flag = false;
-        // resvg.initWasm(fetch('https://unpkg.com/@resvg/resvg-wasm/index_bg.wasm')).then(() => {
-        //     this.flag = true;
-        // });
-
-
-
-        // // this.guiWorker = new Worker('gui-worker.js');
-        // this.guiWorker = new Worker(new URL('./gui-worker.ts', import.meta.url));
-
-        // this.guiWorker.postMessage([]);
-        
-        // this.guiWorker.onmessage = (e) => {
-        //     //  = e.data;
-        //     console.log('Message received from worker::');
-        //     console.log(e.data);
-            
-        // }   
-
-
-
     }
 
 
@@ -91,7 +65,6 @@ export class GUISystem extends System{
         bindCSSEvents();
         this.pageStyle = buildPageStyleString();
 
-        
         buildPageStyleList((styleName, value) => {
             if (!this.pageStyleMap) this.pageStyleMap = new Map();
             this.pageStyleMap.set(styleName, value);
@@ -181,29 +154,6 @@ export class GUISystem extends System{
         const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
         
         return svg;
-
-
-        
-
-        // htmlToImage.toSvg(htmlElement, htmlToImageOptions)
-        // .then(async (svgDataUrl) => {
-            
-        //     const image = new Image();
-        //     image.src = svgDataUrl;
-
-        //     image.onload = () =>  {
-        //         guiComponent.htmlTexture.dispose();
-        //         guiComponent.htmlTexture = new THREE.Texture(image);
-                
-        //         if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
-        //             guiComponent.htmlTexture.needsUpdate = true;
-        //             guiComponent.material.needsUpdate = true;
-        //         }
-            
-        //         guiComponent.material.map = guiComponent.htmlTexture;
-        //     };
-
-        // });
     }
 
 
@@ -235,55 +185,12 @@ export class GUISystem extends System{
 
     public updateNodeInSVG = async (guiComponent, node, htmlToImageOptions, guiOptions) => {
         const clonedNode = await this.processHTMLNode(node, htmlToImageOptions, guiOptions) as HTMLElement;
-        // let className = null;
-        // clonedNode.classList.forEach((cls) => {
-        //     if (cls.includes('gui_svg__')) {
-        //         className = cls;
-        //     }
-        // });
-
         // In case data attr:
-        const id = clonedNode.dataset.guiSvgId;
-        // console.log(guiComponent.svg.contentDocument);
-
-        
-        // console.log(Promise.resolve(guiComponent.svg.svg));
-
-        
-        // console.log(guiComponent.svg);
-        
-
-
-
-
-        // const svgDocument = guiComponent.svg.getSVGDocument();
-        // console.log(id);
-        // console.log(guiComponent.svg);
-        
-        
+        const id = clonedNode.dataset.guiSvgId;        
         const oldNode = guiComponent.svg.querySelector(`[data-gui-svg-id = "${id}"]`);
-        // const oldNode = guiComponent.svg.contentDocument.querySelector(`[data-gui-svg-id = "${id}"]`);
 
-        // console.log(oldNode);
-        
         oldNode.replaceWith(clonedNode);
-    
-
-
         this.appendPageStyle(guiComponent.svg);
-
-
-
-        // guiComponent.svg.addEventListener("load", () => {
-            
-        //     console.log(guiComponent.svg);
-            
-        // }, false);
-        
-        // const oldNode = guiComponent.svg.contentDocument.querySelector(`[data-gui-svg-id = "${id}"]`);
-
-        // const oldNode = guiComponent.svg.contentDocument.getElementsByClassName(className)[0];
-        // oldNode.replaceWith(clonedNode);
     }
 
 
