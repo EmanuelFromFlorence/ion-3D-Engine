@@ -305,6 +305,18 @@ export function buildPageStyleList(setPageStyleMap) {
       
 
     }
+  }  
+}
+
+
+export function callbackOnNodesRecursive<T extends HTMLElement>(
+  node: T,
+  callback: Function,
+): void {
+
+  for (const child of node.children) {
+    callback(child);
+    callbackOnNodesRecursive(child, callback);
   }
   
 }

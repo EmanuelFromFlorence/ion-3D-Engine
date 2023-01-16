@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
-import { bindCSSEvents, dispatchMouseEvent } from './gui-event-binder';
+import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList, callbackOnNodesRecursive } from './utils';
+import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
 import { getImageSize, svgToDataURL } from './html-to-image/util';
@@ -86,17 +86,7 @@ export class GUISystem extends System{
         for (let [entityId, entity] of Object.entries(entities)) { // {entityId: String, entity: Entity}
             let guiComponent = entity.getComponent(GUI_COMPONENT_TYPE);
 
-
             await this.initGUIComponentObverver(guiComponent);
-            
-            
-        //     // In case going with DataTexture and creating our own canvas:
-        //     // https://dustinpfister.github.io/2022/04/15/threejs-data-texture/
-        //     // const width = 32, height = 32;
-        //     // const size = width * height;
-        //     // const data = new Uint8Array( 4 * size );
-        //     // const texture = new THREE.DataTexture( data, width, height );
-        //     // texture.needsUpdate = true;
 
             meshesToIntersect.push(guiComponent);
         }
@@ -107,13 +97,15 @@ export class GUISystem extends System{
         }else {
             this.updateAim(meshesToIntersect);
         }
+        
     }
 
 
     public initGUIComponentObverver = async (guiComponent) => {
+        // throttling the callback function: TODO: should later get the delay time from user
+        const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 0.001);
+
         if(!guiComponent.onMutation){
-            // throttling the callback function:
-            const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 0.001);
 
             // Calling these once in the beginning:
             guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });
@@ -123,14 +115,11 @@ export class GUISystem extends System{
             guiComponent.onMutation = (mutationList, observer) => {
                 // TODO: optimizng by sending and processing the whole mutationList
                 for (const mutation of mutationList) {
-                    const guiOptions = {
-                        mutationType: mutation.type,
-                        mutation: mutation,
-                        'pageStyleMap': this.pageStyleMap,
-                    };
-                    throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, guiOptions);
-                    // TODO: testing without throttling later:
-                    // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false });
+                    
+                    throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+                    // Tested without throttling and it significantly impacts the FPS
+                    // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+
                 }
             };
 
@@ -139,6 +128,18 @@ export class GUISystem extends System{
             // Later, you can stop observing
             // observer.disconnect();
         }
+
+        // updating and rendering gui texture for a duration after not aiming to the gui components
+        let currentTime = new Date().getTime();
+        if (!guiComponent.lastProcess) guiComponent.lastProcess = new Date().getTime();
+        let duration = currentTime - guiComponent.lastProcess;
+        // runs for initially for the duration too. (if not needed change the initial value in guiComponent init func)
+        // isAiming and lastProcess are now associated with each component
+        // TODO: later should get the duration option from user...
+        if (!guiComponent.isAiming && duration < 5000 ) {
+            throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+        }
+
     }
 
 
@@ -146,10 +147,7 @@ export class GUISystem extends System{
     public createGUIComponentSVG = async (guiComponent, htmlElement, htmlToImageOptions) => {
         const { width, height } = getImageSize(htmlElement, htmlToImageOptions);
 
-        const guiOptions = {
-            'pageStyleMap': this.pageStyleMap,
-        };
-        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, guiOptions);        
+        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, { 'pageStyleMap': this.pageStyleMap, });        
         
         const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
         
@@ -158,7 +156,7 @@ export class GUISystem extends System{
 
 
     // TODO: put this as an arrow function when defining as throttled function...
-    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions, guiOptions) => {        
+    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions, guiOptions) => {    
         this.updateNodeInSVG(guiComponent, node, htmlToImageOptions, guiOptions);
         this.updateGUIComponentTexture(guiComponent);
     }
@@ -263,7 +261,7 @@ export class GUISystem extends System{
     
                 this.processAimEvents('controller1', newAimingGuiComponent, pointerVector2, meshesToIntersect);
             }else {
-                this.clearAimEvents('controller1');
+                this.clearAimEvents('controller1', meshesToIntersect);
             }
         }
 
@@ -284,7 +282,7 @@ export class GUISystem extends System{
     
                 this.processAimEvents('controller2', newAimingGuiComponent, pointerVector2, meshesToIntersect);
             }else {
-                this.clearAimEvents('controller2');
+                this.clearAimEvents('controller2', meshesToIntersect);
             }
         }
     }
@@ -312,12 +310,16 @@ export class GUISystem extends System{
             this.processAimEvents('hamster', newAimingGuiComponent, pointerVector2, meshesToIntersect);
 
         }else {
-            this.clearAimEvents('hamster');
+            this.clearAimEvents('hamster', meshesToIntersect);
         }
     }
 
 
     public processAimEvents = (aimType, newAimingGuiComponent, pointerVector2, meshesToIntersect) => {
+
+        newAimingGuiComponent.isAiming = true;
+        newAimingGuiComponent.lastProcess = new Date().getTime();
+
         
         if (aimType === 'hamster'){
             this.aimingGuiComponent = newAimingGuiComponent;
@@ -368,9 +370,23 @@ export class GUISystem extends System{
     }
 
 
-    public clearAimEvents = (aimType) => {
+    public clearAimEvents = (aimType, meshesToIntersect) => {
+
+        for (let guiComponent of meshesToIntersect) {
+            guiComponent.isAiming = false;
+        }
+
+        // TODO: When aiming at no components send clear events to all html elements for all gui components:
+        // Maybe later implement this. For now just dispatching clear events recursively on elements from last aimingHTMLElement
+        if (this.aimingHTMLElement || this.aimingGuiComponentVR11 || this.aimingGuiComponentVR22) {
+            // for (let guiComponent of meshesToIntersect) {
+                // callbackOnNodesRecursive(guiComponent.rootElement);
+            // }
+        }
+        
+
         if (aimType === 'hamster'){
-            if (this.aimingHTMLElement) dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+            if (this.aimingHTMLElement) dispatchMouseEventRucursive(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);  // dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
             this.aimingGuiComponent = null;
             this.aimX = null;
             this.aimY = null;
@@ -378,7 +394,7 @@ export class GUISystem extends System{
         }
 
         if (aimType === 'controller1'){
-            if (this.aimingHTMLElementVR11) dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11);
+            if (this.aimingHTMLElementVR11) dispatchMouseEventRucursive(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11); // dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11);
             this.aimingGuiComponentVR11 = null;
             this.aimXVR11 = null;
             this.aimYVR11 = null;
@@ -386,7 +402,7 @@ export class GUISystem extends System{
         }
         
         if (aimType === 'controller2'){
-            if (this.aimingHTMLElementVR22) dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22);
+            if (this.aimingHTMLElementVR22) dispatchMouseEventRucursive(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22); // dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22);
             this.aimingGuiComponentVR22 = null;
             this.aimXVR22 = null;
             this.aimYVR22 = null;

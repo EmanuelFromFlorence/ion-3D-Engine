@@ -21,6 +21,8 @@ export class GUIComponent extends MeshComponent{
     compId: string;
     onMutation: any;
     svg: any;
+    isAiming: boolean;
+    lastProcess: number;
 
 
     constructor({
@@ -62,6 +64,9 @@ export class GUIComponent extends MeshComponent{
         this.material = props.material;
         this.ratio = props.ratio;
         this.compId = THREE.MathUtils.generateUUID();
+
+        this.isAiming = false;
+        this.lastProcess = 0;
         
         this.initRootElement();
         this.genPlaneMesh();

@@ -60,6 +60,7 @@ function getOldStyleMap(newStyleMap: any, oldStyle: CSSStyleDeclaration) {
 
 
 // TODO: optimization: looping and setProperty is slow let's try styles.cssText later... it sets all styles auto
+// TODO: should use the same pageStyleMap for updating these...
 function setStylesOneByOne(element, style: any) {
     for (let [propName, values] of Object.entries(style)) {   
         element.style.setProperty(propName, values.propValue, values.propPriority);
@@ -78,7 +79,7 @@ function bindToggleEvents(originalSelector: string, ionClass: string, cssRule: C
         
         element.addEventListener(onEvent, (e: any) => {
             setStylesOneByOne(element, newStyleMap);
-            element.classList.add(ionClass);
+            element.classList.add(ionClass);            
         });
         element.addEventListener(offEvent, (e: any) => {
             setStylesOneByOne(element, oldStyleMapList[i]);
@@ -180,5 +181,13 @@ export function dispatchMouseEvent(element, event, clientX, clientY) {
         clientY,
     });
     element.dispatchEvent(mouseEvent);
+}
+
+
+export function dispatchMouseEventRucursive(element, event, clientX, clientY) {
+    for (const child of element.children) {        
+        dispatchMouseEvent(child, event, clientX, clientY);
+        dispatchMouseEventRucursive(child, event, clientX, clientY);
+      }
 }
 

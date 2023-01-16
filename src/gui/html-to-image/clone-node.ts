@@ -28,6 +28,7 @@ async function cloneSingleNode<T extends HTMLElement>(
 ): Promise<HTMLElement> {
 
 
+  // Adding gui_svg id so not is retrievable later...
   if(options.addId && node.dataset && !node.dataset.guiSvgId) {
     node.dataset.guiSvgId = `gui_svg__${THREE.MathUtils.generateUUID()}`;
   }
