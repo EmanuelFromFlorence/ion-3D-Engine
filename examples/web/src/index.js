@@ -60,7 +60,7 @@ window.addEventListener('load', () => {
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 1,
-    transparent: false,
+    transparent: true,
   });
   guiComponent.position.y = 5;
   guiComponent.position.z = -2;

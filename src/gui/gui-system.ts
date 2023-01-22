@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList, callbackOnNodesRecursive } from './utils';
+import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
 import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
@@ -150,7 +150,7 @@ export class GUISystem extends System{
         const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, { 'pageStyleMap': this.pageStyleMap, });        
         
         const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
-        
+
         return svg;
     }
 
@@ -168,9 +168,9 @@ export class GUISystem extends System{
         image.src = svgDataUrl;
 
         image.onload = () =>  {
-            guiComponent.htmlTexture.dispose(); //////////////////////
+            guiComponent.htmlTexture.dispose(); // TODO: check if working correctly
             guiComponent.htmlTexture = new THREE.Texture(image);
-            
+
             if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
                 guiComponent.htmlTexture.needsUpdate = true;
                 guiComponent.material.needsUpdate = true;
