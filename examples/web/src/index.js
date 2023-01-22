@@ -91,6 +91,76 @@ window.addEventListener('load', () => {
 
 
 
+  /* keyboard GUI Component */
+
+  let Keyboard = window.SimpleKeyboard.default;
+
+  let keyboard = new Keyboard({
+    onChange: input => onChange(input),
+    onKeyPress: button => onKeyPress(button)
+  });
+
+  /**
+   * Update simple-keyboard when input is changed directly
+   */
+  document.querySelector(".input").addEventListener("input", event => {
+    keyboard.setInput(event.target.value);
+  });
+
+  console.log(keyboard);
+
+  function onChange(input) {
+    document.querySelector(".input").value = input;
+    console.log("Input changed", input);
+  }
+
+  function onKeyPress(button) {
+    console.log("Button pressed", button);
+
+    /**
+     * If you want to handle the shift and caps lock buttons
+     */
+    if (button === "{shift}" || button === "{lock}") handleShift();
+  }
+
+  function handleShift() {
+    let currentLayout = keyboard.options.layoutName;
+    let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+    keyboard.setOptions({
+      layoutName: shiftToggle
+    });
+  }
+
+
+
+
+
+  const simpleKeyboardElm = document.getElementsByClassName('simple-keyboard')[0];
+  // rootElement.style.background = '#000000';
+  const simpleKeyboardComp = new ION.GUIComponent({
+    rootElement: simpleKeyboardElm,
+    ratio: 1,
+    transparent: true,
+  });
+  simpleKeyboardComp.position.y = 5;
+  simpleKeyboardComp.position.z = -2;
+  simpleKeyboardComp.position.x = 6;
+  // simpleKeyboardComp.rotateY(0.2);
+
+  /* Entity */
+  let simpleKeyboardEntity = new ION.Entity();
+  simpleKeyboardEntity.addComponent(simpleKeyboardComp);
+  engine.addEntity(simpleKeyboardEntity);
+
+
+  
+
+
+
+
+
+
   /* System */
   const guiSystem = new ION.GUISystem();
   engine.addSystem(guiSystem);
@@ -104,6 +174,14 @@ window.addEventListener('load', () => {
   // x -> towards x
   // y -> towards y
   // z -> towards z
+
+
+
+  
+
+
+
+
 
 });
 
