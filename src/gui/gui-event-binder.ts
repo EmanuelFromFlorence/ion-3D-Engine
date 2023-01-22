@@ -108,6 +108,7 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     newCSSRules.push(newRule);
                     // (mouseenter/mouseleave) = (mouseover/mouseout)
                     bindToggleEvents(originalSelector, ionClass, cssRule, 'mouseover', 'mouseout');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'pointerover', 'pointerout');
                     break;
 
                 case cssRule instanceof CSSStyleRule && ACTIVE_REGXP.test(cssRule.selectorText):
@@ -115,6 +116,7 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
                     newCSSRules.push(newRule);
                     // DOMActivate which is Deprecated in favor of click
                     bindToggleEvents(originalSelector, ionClass, cssRule, 'mousedown', 'mouseup');
+                    bindToggleEvents(originalSelector, ionClass, cssRule, 'pointerdown', 'pointerup');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && VISITED_REGXP.test(cssRule.selectorText):
@@ -171,7 +173,7 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
 }
 
 
-export function dispatchMouseEvent(element, event, clientX, clientY) {
+export function dispatchMouseEvent(element, event, clientX, clientY) {    
     const mouseEvent = new MouseEvent(event, {
         view: window,
         bubbles: true,

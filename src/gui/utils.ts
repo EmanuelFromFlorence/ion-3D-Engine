@@ -213,10 +213,12 @@ export function createImage(url: string): Promise<HTMLImageElement> {
 
 
 export function isTextBox(element) {
-  let tagName = element.tagName.toLowerCase();
+  let tagName = element.tagName || '';
+  tagName = tagName.toLowerCase();
   if (tagName === 'textarea') return true;
   if (tagName !== 'input') return false;
-  let type = element.getAttribute('type').toLowerCase();
+  let type = element.getAttribute('type') || '';
+  type = type.toLowerCase();
   // if any of these input types is not supported by a browser, it will behave as input type text.
   let inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
   return inputTypes.indexOf(type) >= 0;

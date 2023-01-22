@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-import { Component } from '../core/components/component';
 import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
 import { ArcBallControls, FirstPersonControls, FlyieControls, SpaceControls } from './control/control';

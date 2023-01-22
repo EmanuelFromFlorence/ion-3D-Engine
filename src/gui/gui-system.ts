@@ -497,7 +497,7 @@ export class GUISystem extends System{
             if (!this.engine.control.controls.isLocked) {
                 return;
             }
-            
+
             this.sendUpEvent(this.aimingHTMLElement, this.aimX, this.aimY);
         });
     }
@@ -507,7 +507,8 @@ export class GUISystem extends System{
 
         if (this.engine && aimingHTMLElement) { // click not captured until gui system executed
             this.downEventHandled = true;
-            dispatchMouseEvent(aimingHTMLElement, 'mousedown', aimX, aimY);    
+            dispatchMouseEvent(aimingHTMLElement, 'mousedown', aimX, aimY);
+            dispatchMouseEvent(aimingHTMLElement, 'pointerdown', aimX, aimY); // TODO: should add more events such as touchend?
             dispatchMouseEvent(aimingHTMLElement, 'focus', aimX, aimY);
             aimingHTMLElement.focus(); // only this focuses on element
             if (this.focusedElement && !this.focusedElement.isSameNode(aimingHTMLElement)) {
@@ -530,6 +531,7 @@ export class GUISystem extends System{
         if (this.engine && aimingHTMLElement) { // click not captured until gui system executed
             this.upEventSent = true;
             dispatchMouseEvent(aimingHTMLElement, 'mouseup', aimX, aimY);
+            dispatchMouseEvent(aimingHTMLElement, 'pointerup', aimX, aimY); // TODO: should add more events such as touchend?
             dispatchMouseEvent(aimingHTMLElement, 'click', aimX, aimY);
             // this.this.aimingHTMLElement.click(); // no need for this
 

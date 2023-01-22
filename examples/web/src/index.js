@@ -93,44 +93,197 @@ window.addEventListener('load', () => {
 
   /* keyboard GUI Component */
 
+  // let Keyboard = window.SimpleKeyboard.default;
+
+  // let keyboard = new Keyboard({
+  //   onChange: input => onChange(input),
+  //   onKeyPress: button => onKeyPress(button)
+  // });
+
+  // keyboard.addButtonTheme(
+  //   "\` ` 1 2 3 4 5 6 7 8 9 0 - = {bksp} {tab} q w e r t y u i o p [ ] \\ {lock} a s d f g h j k l ; ' " 
+  //   + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}',
+    
+  //   "customKeyboardBtnClass"
+  // );
+
+  // // let layout = {
+  // //   'default': [
+  // //     '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
+  // //     '{tab} q w e r t y u i o p [ ] \\',
+  // //     '{lock} a s d f g h j k l ; \' {enter}',
+  // //     '{shift} z x c v b n m , . / {shift}',
+  // //     '.com @ {space}'
+  // //   ],
+  // //   'shift': [
+  // //     '~ ! @ # $ % ^ &amp; * ( ) _ + {bksp}',
+  // //     '{tab} Q W E R T Y U I O P { } |',
+  // //     '{lock} A S D F G H J K L : " {enter}',
+  // //     '{shift} Z X C V B N M &lt; &gt; ? {shift}',
+  // //     '.com @ {space}'
+  // //   ]
+  // // };
+
+  // // keyboard.setOptions({layout});
+
+
+  // keyboard.setOptions({
+  //   layoutName: 'appleIOS'
+  // });
+  
+
+
+
+  // /**
+  //  * Update simple-keyboard when input is changed directly
+  //  */
+  // document.querySelector(".input").addEventListener("input", event => {
+  //   keyboard.setInput(event.target.value);
+  // });
+  // // console.log(keyboard);
+
+  // function onChange(input) {
+  //   document.querySelector(".input").value = input;
+  //   // console.log("Input changed", input);
+  // }
+
+  // function onKeyPress(button) {
+  //   // console.log("Button pressed", button);
+
+  //   /**
+  //    * If you want to handle the shift and caps lock buttons
+  //    */
+  //   if (button === "{shift}" || button === "{lock}") handleShift();
+  // }
+
+  // function handleShift() {
+  //   let currentLayout = keyboard.options.layoutName;
+  //   let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+  //   keyboard.setOptions({
+  //     layoutName: shiftToggle
+  //   });
+  // }
+
+  
+
+
+
   let Keyboard = window.SimpleKeyboard.default;
 
   let keyboard = new Keyboard({
     onChange: input => onChange(input),
-    onKeyPress: button => onKeyPress(button)
+    onKeyPress: button => onKeyPress(button),
+    theme: "hg-theme-default hg-theme-ios",
+    layout: {
+      default: [
+        "q w e r t y u i o p {bksp}",
+        "a s d f g h j k l {enter}",
+        "{shift} z x c v b n m , . {shift}",
+        "{alt} {smileys} {space} {altright} {downkeyboard}"
+      ],
+      shift: [
+        "Q W E R T Y U I O P {bksp}",
+        "A S D F G H J K L {enter}",
+        "{shiftactivated} Z X C V B N M , . {shiftactivated}",
+        "{alt} {smileys} {space} {altright} {downkeyboard}"
+      ],
+      alt: [
+        "1 2 3 4 5 6 7 8 9 0 {bksp}",
+        `@ # $ & * ( ) ' " {enter}`,
+        "{shift} % - + = / ; : ! ? {shift}",
+        "{default} {smileys} {space} {back} {downkeyboard}"
+      ],
+      smileys: [
+        "😀 😊 😅 😂 🙂 😉 😍 😛 😠 😎 {bksp}",
+        `😏 😬 😭 😓 😱 😪 😬 😴 😯 {enter}`,
+        "😐 😇 🤣 😘 😚 😆 😡 😥 😓 🙄 {shift}",
+        "{default} {smileys} {space} {altright} {downkeyboard}"
+      ]
+    },
+    display: {
+      "{alt}": ".?123",
+      "{smileys}": "\uD83D\uDE03",
+      "{shift}": "⇧",
+      "{shiftactivated}": "⇧",
+      "{enter}": "return",
+      "{bksp}": "⌫",
+      "{altright}": ".?123",
+      "{downkeyboard}": "🞃",
+      "{space}": " ",
+      "{default}": "ABC",
+      "{back}": "⇦"
+    }
   });
-
+  
   /**
    * Update simple-keyboard when input is changed directly
    */
-  document.querySelector(".input").addEventListener("input", event => {
+  document.querySelector(".keyboard-input").addEventListener("input", event => {
     keyboard.setInput(event.target.value);
   });
-
-  console.log(keyboard);
-
+  
+  // console.log(keyboard);
+  
   function onChange(input) {
-    document.querySelector(".input").value = input;
     console.log("Input changed", input);
+    document.querySelector(".keyboard-input").value = input;
   }
-
+  
   function onKeyPress(button) {
     console.log("Button pressed", button);
-
+  
     /**
-     * If you want to handle the shift and caps lock buttons
+     * Handle toggles
      */
-    if (button === "{shift}" || button === "{lock}") handleShift();
+    if (button.includes("{") && button.includes("}")) {
+      handleLayoutChange(button);
+    }
   }
-
-  function handleShift() {
+  
+  function handleLayoutChange(button) {
     let currentLayout = keyboard.options.layoutName;
-    let shiftToggle = currentLayout === "default" ? "shift" : "default";
-
-    keyboard.setOptions({
-      layoutName: shiftToggle
-    });
+    let layoutName;
+  
+    switch (button) {
+      case "{shift}":
+      case "{shiftactivated}":
+      case "{default}":
+        layoutName = currentLayout === "default" ? "shift" : "default";
+        break;
+  
+      case "{alt}":
+      case "{altright}":
+        layoutName = currentLayout === "alt" ? "default" : "alt";
+        break;
+  
+      case "{smileys}":
+        layoutName = currentLayout === "smileys" ? "default" : "smileys";
+        break;
+  
+      default:
+        break;
+    }
+  
+    if (layoutName) {
+      keyboard.setOptions({
+        layoutName: layoutName
+      });
+    }
   }
+  
+
+
+
+  keyboard.addButtonTheme(
+    "\` ` 1 2 3 4 5 6 7 8 9 0 - = {bksp} {tab} q w e r t y u i o p [ ] \\ {lock} a s d f g h j k l ; ' " 
+    + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}',
+    
+    "customKeyboardBtnClass"
+  );
+
+
+
 
 
 
@@ -145,7 +298,7 @@ window.addEventListener('load', () => {
   });
   simpleKeyboardComp.position.y = 5;
   simpleKeyboardComp.position.z = -2;
-  simpleKeyboardComp.position.x = 6;
+  simpleKeyboardComp.position.x = 3;
   // simpleKeyboardComp.rotateY(0.2);
 
   /* Entity */
@@ -155,6 +308,21 @@ window.addEventListener('load', () => {
 
 
   
+  const keyboardInputElm = document.getElementsByClassName('keyboard-input')[0];
+  const keyboardInputComp = new ION.GUIComponent({
+    rootElement: keyboardInputElm,
+    ratio: 1,
+    transparent: true,
+  });
+  keyboardInputComp.position.y = 8;
+  keyboardInputComp.position.z = -2;
+  keyboardInputComp.position.x = 3;
+  // keyboardInputComp.rotateY(0.2);
+
+  /* Entity */
+  let keyboardInputEntity = new ION.Entity();
+  keyboardInputEntity.addComponent(keyboardInputComp);
+  engine.addEntity(keyboardInputEntity);
 
 
 
