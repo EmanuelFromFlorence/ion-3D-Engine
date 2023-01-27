@@ -25,19 +25,47 @@ export const throttle = (func, limit) => {
         const context = this;
         const args = arguments;
         if (!lastRan) {
-        func.apply(context, args)
-        lastRan = Date.now();
+            func.apply(context, args)
+            lastRan = Date.now();
         } else {
-        clearTimeout(lastFunc);
-        lastFunc = setTimeout(function() {
-            if ((Date.now() - lastRan) >= limit) {
-                func.apply(context, args);
-                lastRan = Date.now();
-            }
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                }
             }, limit - (Date.now() - lastRan));
         }
     }
 }
+
+// In case we want to have a callback for trottling.... not sue if this works:
+// export const throttle = (func, limit, doTrottle) => {
+//     let lastFunc;
+//     let lastRan;
+//     return function() {
+//         const context = this;
+//         const args = arguments;
+
+//         const forceRun = doTrottle ? doTrottle(): false;
+
+//         if (forceRun) {
+//             func.apply(context, args)
+//             lastRan = Date.now();
+//         } else if (!lastRan) {
+//             func.apply(context, args)
+//             lastRan = Date.now();
+//         } else {
+//             clearTimeout(lastFunc);
+//             lastFunc = setTimeout(function() {
+//                 if ((Date.now() - lastRan) >= limit) {
+//                     func.apply(context, args);
+//                     lastRan = Date.now();
+//                 }
+//             }, limit - (Date.now() - lastRan));
+//         }
+//     }
+// }
 
 
 export function resetCameraPosition(camera: any) {

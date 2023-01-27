@@ -36,6 +36,9 @@ export class GUISystem extends System{
     guiWorker: Worker;
     pageStyle: string;
     pageStyleMap: Map<string, any>;
+    throttledUpdateHTMLImage: () => void;
+    throttledUpdateAim: () => void;
+    throttledUpdateVRAim: () => void;
 
 
     constructor(){ // {}: NamedParameters
@@ -47,6 +50,7 @@ export class GUISystem extends System{
         this.aimY = null;
         this.aimingHTMLElement = null;
         this.boundEvents = false;
+        this.initTrottledMethods();
         this.initUIEvents();
         this.initRaycaster();
     }
@@ -61,6 +65,13 @@ export class GUISystem extends System{
     }
 
     
+    public initTrottledMethods = () => {
+        this.throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 10);
+        this.throttledUpdateAim = throttle((meshesToIntersectArg) => this.updateAim(meshesToIntersectArg), 10);
+        this.throttledUpdateVRAim = throttle((meshesToIntersectArg) => this.updateVRAim(meshesToIntersectArg), 10);
+    }
+
+
     public initUIEvents = () => {
         bindCSSEvents();
         this.pageStyle = buildPageStyleString();
@@ -93,17 +104,15 @@ export class GUISystem extends System{
 
 
         if(engine.vrEnabled && engine.renderer.xr.isPresenting) {
-            this.updateVRAim(meshesToIntersect);
+            this.throttledUpdateVRAim(meshesToIntersect);
         }else {
-            this.updateAim(meshesToIntersect);
+            this.throttledUpdateAim(meshesToIntersect);
         }
         
     }
 
 
     public initGUIComponentObverver = async (guiComponent) => {
-        // throttling the callback function: TODO: should later get the delay time from user
-        const throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 0.001);
 
         if(!guiComponent.onMutation){
 
@@ -116,7 +125,7 @@ export class GUISystem extends System{
                 // TODO: optimizng by sending and processing the whole mutationList
                 for (const mutation of mutationList) {
                     
-                    throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+                    this.throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
                     // Tested without throttling and it significantly impacts the FPS
                     // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
 
@@ -137,7 +146,7 @@ export class GUISystem extends System{
         // isAiming and lastProcess are now associated with each component
         // TODO: later should get the duration option from user...
         if (!guiComponent.isAiming && duration < 5000 ) {
-            throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+            this.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
         }
 
     }
@@ -310,6 +319,7 @@ export class GUISystem extends System{
             this.processAimEvents('hamster', newAimingGuiComponent, pointerVector2, meshesToIntersect);
 
         }else {
+            // clear only once not infinite times (handled inside the clearAimEvents function)
             this.clearAimEvents('hamster', meshesToIntersect);
         }
     }
@@ -320,7 +330,6 @@ export class GUISystem extends System{
         newAimingGuiComponent.isAiming = true;
         newAimingGuiComponent.lastProcess = new Date().getTime();
 
-        
         if (aimType === 'hamster'){
             this.aimingGuiComponent = newAimingGuiComponent;
 
@@ -330,10 +339,12 @@ export class GUISystem extends System{
             let newAimingHTMLElement = this.getAimingElement(this.aimX, this.aimY, meshesToIntersect, this.aimingGuiComponent);
             if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement && !newAimingHTMLElement.isSameNode(this.aimingHTMLElement)) {
                 dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+                dispatchMouseEvent(this.aimingHTMLElement, 'pointerout', this.aimX, this.aimY);
             }
             this.aimingHTMLElement = newAimingHTMLElement;
             if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElement, 'mouseover', this.aimX, this.aimY);
+                dispatchMouseEvent(this.aimingHTMLElement, 'pointerover', this.aimX, this.aimY);
             }
         }
 
@@ -345,10 +356,12 @@ export class GUISystem extends System{
             let newAimingHTMLElement = this.getAimingElement(this.aimXVR11, this.aimYVR11, meshesToIntersect, this.aimingGuiComponentVR11);
             if(this.aimingHTMLElementVR11 && newAimingHTMLElement instanceof HTMLElement && !newAimingHTMLElement.isSameNode(this.aimingHTMLElementVR11)) {
                 dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEvent(this.aimingHTMLElementVR11, 'pointerout', this.aimXVR11, this.aimYVR11);
             }
             this.aimingHTMLElementVR11 = newAimingHTMLElement;
             if(this.aimingHTMLElementVR11 && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseover', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEvent(this.aimingHTMLElementVR11, 'pointerover', this.aimXVR11, this.aimYVR11);
             }
         }
 
@@ -361,10 +374,12 @@ export class GUISystem extends System{
             let newAimingHTMLElement = this.getAimingElement(this.aimXVR22, this.aimYVR22, meshesToIntersect, this.aimingGuiComponentVR22);
             if(this.aimingHTMLElementVR22 && newAimingHTMLElement instanceof HTMLElement && !newAimingHTMLElement.isSameNode(this.aimingHTMLElementVR22)) {
                 dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEvent(this.aimingHTMLElementVR22, 'pointerout', this.aimXVR22, this.aimYVR22);
             }
             this.aimingHTMLElementVR22 = newAimingHTMLElement;
             if(this.aimingHTMLElementVR22 && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseover', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEvent(this.aimingHTMLElementVR22, 'pointerover', this.aimXVR22, this.aimYVR22);
             }
         }
     }
@@ -378,7 +393,7 @@ export class GUISystem extends System{
 
         // TODO: When aiming at no components send clear events to all html elements for all gui components:
         // Maybe later implement this. For now just dispatching clear events recursively on elements from last aimingHTMLElement
-        if (this.aimingHTMLElement || this.aimingGuiComponentVR11 || this.aimingGuiComponentVR22) {
+        if (this.aimingGuiComponent || this.aimingGuiComponentVR11 || this.aimingGuiComponentVR22) {
             // for (let guiComponent of meshesToIntersect) {
                 // callbackOnNodesRecursive(guiComponent.rootElement);
             // }
@@ -386,7 +401,11 @@ export class GUISystem extends System{
         
 
         if (aimType === 'hamster'){
-            if (this.aimingHTMLElement) dispatchMouseEventRucursive(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);  // dispatchMouseEvent(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+            // This if condition makes it to run only once and not infinite clear events dispatched
+            if (this.aimingHTMLElement) {
+                dispatchMouseEventRucursive(this.aimingHTMLElement, 'mouseout', this.aimX, this.aimY);
+                dispatchMouseEventRucursive(this.aimingHTMLElement, 'pointerout', this.aimX, this.aimY);
+            }
             this.aimingGuiComponent = null;
             this.aimX = null;
             this.aimY = null;
@@ -394,7 +413,11 @@ export class GUISystem extends System{
         }
 
         if (aimType === 'controller1'){
-            if (this.aimingHTMLElementVR11) dispatchMouseEventRucursive(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11); // dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11);
+            // This if condition makes it to run only once and not infinite clear events dispatched
+            if (this.aimingHTMLElementVR11) {
+                dispatchMouseEventRucursive(this.aimingHTMLElementVR11, 'mouseout', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEventRucursive(this.aimingHTMLElementVR11, 'pointerout', this.aimXVR11, this.aimYVR11);
+            }
             this.aimingGuiComponentVR11 = null;
             this.aimXVR11 = null;
             this.aimYVR11 = null;
@@ -402,7 +425,11 @@ export class GUISystem extends System{
         }
         
         if (aimType === 'controller2'){
-            if (this.aimingHTMLElementVR22) dispatchMouseEventRucursive(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22); // dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22);
+            // This if condition makes it to run only once and not infinite clear events dispatched
+            if (this.aimingHTMLElementVR22) {
+                dispatchMouseEventRucursive(this.aimingHTMLElementVR22, 'mouseout', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEventRucursive(this.aimingHTMLElementVR22, 'pointerout', this.aimXVR22, this.aimYVR22);
+            }
             this.aimingGuiComponentVR22 = null;
             this.aimXVR22 = null;
             this.aimYVR22 = null;
