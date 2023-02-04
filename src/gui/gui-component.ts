@@ -9,6 +9,7 @@ interface NamedParameters {
     ratio: number;
     material: THREE.Material;
     transparent: boolean;
+    renderTimeout: number;
 }
 
 
@@ -23,6 +24,7 @@ export class GUIComponent extends MeshComponent{
     svg: any;
     isAiming: boolean;
     lastProcess: number;
+    renderTimeout: number;
 
 
     constructor({
@@ -31,6 +33,7 @@ export class GUIComponent extends MeshComponent{
         ratio = 1,
         material = null,
         transparent = false,
+        renderTimeout = Infinity, // milliseconds
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
@@ -49,12 +52,15 @@ export class GUIComponent extends MeshComponent{
             transparent: transparent,
             fog: false,
         }); // #282c34
+
+        if (!renderTimeout || typeof renderTimeout !== 'number') throw new TypeError('Invalid renderTimeout is passed!');
         
         this.initComponent({
             rootElement,
             ratio,
             htmlFilter,
             material,
+            renderTimeout,
         });
     }
 
@@ -64,6 +70,7 @@ export class GUIComponent extends MeshComponent{
         this.htmlFilter = props.htmlFilter;
         this.material = props.material;
         this.ratio = props.ratio;
+        this.renderTimeout = props.renderTimeout;
         this.compId = THREE.MathUtils.generateUUID();
 
         this.isAiming = false;

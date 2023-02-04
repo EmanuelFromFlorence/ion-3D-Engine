@@ -145,7 +145,7 @@ export class GUISystem extends System{
         // runs for initially for the duration too. (if not needed change the initial value in guiComponent init func)
         // isAiming and lastProcess are now associated with each component
         // TODO: later should get the duration option from user...
-        if (!guiComponent.isAiming && duration < 5000 ) {
+        if (!guiComponent.isAiming && duration < guiComponent.renderTimeout ) { // 5000
             this.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
         }
 

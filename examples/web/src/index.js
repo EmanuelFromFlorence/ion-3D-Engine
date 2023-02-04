@@ -112,16 +112,44 @@ window.addEventListener('load', () => {
   /* Engine */
   const canvas = document.getElementById('viewport');
 
-  let size = 150;
+  // Scene template 0 (built from the util func):
+  // let size = 30;
+  // let surfaces = ION.addDefaultSurfaces(null, 'ground_0', size);
+  // let surfaces = ION.addDefaultSurfaces(null, 'room_0', size);
+  
   let guiScene = ION.createGUITemplateScene({
     lights: false,
-    fog: true,
+    fog: false,
+    size: 50, // size
 
-    size: size,
-    background: new THREE.Color( '#1a1a1a' ),
-    
-    surfaces: getSurfaces(size),
+    // surfaces: surfaces,
   });
+
+  // // Scene template 0: built from the util func
+  // let size = 150;
+  // let guiScene = ION.createGUITemplateScene({
+  //   lights: false,
+  //   fog: false,
+  //   size: size,
+  // });
+
+  // Scene template 1:
+  // let size = 150;
+  // let guiScene = ION.createGUITemplateScene({
+  //   lights: false,
+  //   fog: new THREE.Fog(backgroundColor, size/4, size/2.5),
+  //   size: size,
+  //   background: new THREE.Color( '#1a1a1a' ),
+  //   surfaces: getSurfaces(size),
+  // });
+
+
+
+// Scene template 3: without any surfaces in space...
+
+
+
+
   
 
   const engine = new ION.Engine({
@@ -155,12 +183,13 @@ window.addEventListener('load', () => {
   // rootElement.style.background = '#000000';
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
-    ratio: 1,
+    ratio: 0.5,
     transparent: true,
+    // renderTimeout: ,
   });
-  guiComponent.position.y = 5;
-  guiComponent.position.z = -2;
-  guiComponent.position.x = -4;
+  guiComponent.position.y = 4;
+  guiComponent.position.z = -1;
+  guiComponent.position.x = -3;
   guiComponent.rotateY(0.2);
 
   /* Entity */
@@ -389,12 +418,12 @@ window.addEventListener('load', () => {
   // rootElement.style.background = '#000000';
   const simpleKeyboardComp = new ION.GUIComponent({
     rootElement: simpleKeyboardElm,
-    ratio: 1,
+    ratio: 0.5,
     transparent: true,
   });
-  simpleKeyboardComp.position.y = 5;
-  simpleKeyboardComp.position.z = -2;
-  simpleKeyboardComp.position.x = 3;
+  simpleKeyboardComp.position.y = 3;
+  simpleKeyboardComp.position.z = -1;
+  simpleKeyboardComp.position.x = 1;
   // simpleKeyboardComp.rotateY(0.2);
 
   /* Entity */
@@ -407,12 +436,12 @@ window.addEventListener('load', () => {
   const keyboardInputElm = document.getElementsByClassName('keyboard-input')[0];
   const keyboardInputComp = new ION.GUIComponent({
     rootElement: keyboardInputElm,
-    ratio: 1,
+    ratio: 0.5,
     transparent: true,
   });
-  keyboardInputComp.position.y = 8;
-  keyboardInputComp.position.z = -2;
-  keyboardInputComp.position.x = 3;
+  keyboardInputComp.position.y = 4;
+  keyboardInputComp.position.z = -1;
+  keyboardInputComp.position.x = 1;
   // keyboardInputComp.rotateY(0.2);
 
   /* Entity */

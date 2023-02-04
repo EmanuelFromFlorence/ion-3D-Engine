@@ -69,7 +69,7 @@ export const throttle = (func, limit) => {
 
 
 export function resetCameraPosition(camera: any) {
-    camera.position.set(0, 4, 10);
+    camera.position.set(0, 3, 4);
     let cameraDirection = new THREE.Vector3(0, 3, -1);
     camera.lookAt(cameraDirection);
 }

@@ -78,7 +78,7 @@ export class TemplateScene{
         const near = 0.1;
         const far = 10000; // 100000
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far); // OrthographicCamera
-        this.camera.position.set(0, 10, 2);
+        this.camera.position.set(0, 2, 0);
         // camera.lookAt(new THREE.Vector3(1,0,0));
     }
 
