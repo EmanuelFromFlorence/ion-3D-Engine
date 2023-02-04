@@ -20,10 +20,9 @@ export function createGUITemplateScene({
     fog = null,
   } = {}): THREE.Scene{
     let scene = new THREE.Scene();
-    const backgroundColor = '#b6d9ed'; // #7f94a7 #eef7ff
+    const backgroundColor = '#1a1a1a'; // '#b6d9ed' #7f94a7 #eef7ff
 
     if (setDefault(background)) {
-      // background = new THREE.Color( backgroundColor ); // '#a0a0a0' // scene.fog = new THREE.Fog( '#a0a0a0', 200, 1000 ); // 9cb8c6
       const loader = new THREE.CubeTextureLoader();
       background = loader.load([
         '../../resources/background/px.png',
@@ -134,24 +133,26 @@ export function createGUITemplateScene({
 
     
     if (setDefault(points)) {
-      let circleRadius = size/2;
+      let circleRadius = size/4;
+      let offset = size/6;
+
       const circlePointsMesh1 = createCirclePoints({
         pointCircleRadius: circleRadius,
-        pointCount: 300,
-        noiseOffset: size,
-        pointSize: 0.9,
+        pointCount: 500,
+        noiseOffset: offset,
+        pointSize: 0.15,
       });
       circlePointsMesh1.rotateX( Math.PI / 2 );
-      circlePointsMesh1.position.y = size;
+      circlePointsMesh1.position.y = size/3.8;
       scene.add( circlePointsMesh1 );
 
       const cubicPointsMesh1 = createCubicPoints({
         cubeSize: circleRadius,
         pointCount: 70,
-        noiseOffset: size,
-        pointSize: 0.9,
+        noiseOffset: offset,
+        pointSize: 0.15,
       });
-      cubicPointsMesh1.position.set(0, size, 0);
+      cubicPointsMesh1.position.set(0, size/4, 0);
       scene.add( cubicPointsMesh1 );
     }else {
       scene.add(points)
@@ -162,7 +163,7 @@ export function createGUITemplateScene({
     }
 
     if (setDefault(fog)) {
-      // scene.fog = new THREE.Fog( backgroundColor, 50, size/2 ); // b5d3e2 // cef4de
+      scene.fog = new THREE.Fog(backgroundColor, size/4, size/2.5);
     }
     
     return scene;

@@ -153,7 +153,7 @@ export class VRControls {
         let doMove = true;
 
         // If selecting buttons don't move...
-        if (this.vrSelectIntersects.length > 0){
+        // if (this.vrSelectIntersects.length > 0){
             // console.log(this.vrSelectIntersects);
             // if (this.vrSelectIntersects[0].object.name.includes('boundary')){
             //     return;
@@ -161,7 +161,7 @@ export class VRControls {
             // if (this.vrSelectIntersects[0].object.name.includes('Cube009')){ 
             //     doMove = false;
             // }
-        }
+        // }
 
         if(controllerNum === '1') this.controller1.userData.isSelecting = false;
         if(controllerNum === '2') {

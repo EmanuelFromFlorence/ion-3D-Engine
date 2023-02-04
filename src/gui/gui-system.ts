@@ -114,7 +114,7 @@ export class GUISystem extends System{
 
     public initGUIComponentObverver = async (guiComponent) => {
 
-        if(!guiComponent.onMutation){
+        if(!guiComponent.onMutation) {
 
             // Calling these once in the beginning:
             guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });

@@ -47,6 +47,7 @@ export class GUIComponent extends MeshComponent{
             // color: '#ffffff', // no need
             side: THREE.DoubleSide,
             transparent: transparent,
+            fog: false,
         }); // #282c34
         
         this.initComponent({

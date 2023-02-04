@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import * as THREE from 'three';
 
 
 import * as ION from '../../../src/ion-3d-engine'
@@ -21,16 +22,107 @@ root.render(
 // reportWebVitals();
 
 
+
+function generateCanvasTexture() {
+  let size = 512;
+
+  // create canvas
+  let canvas2 = document.createElement("canvas");
+  canvas2.width = size;
+  canvas2.height = size;
+
+  // get context
+  let context = canvas2.getContext("2d");
+
+  // draw gradient
+  context.rect(0, 0, size, size);
+  let gradient = context.createLinearGradient(0, 0, size, size);
+  // Create a radial gradient
+  // The inner circle is at x=110, y=90, with radius=30
+  // The outer circle is at x=100, y=100, with radius=70
+  // const gradient = context.createRadialGradient(110, 90, 30, 100, 100, 70);
+  
+  
+  // let color1 = 'rgb(23, 20, 75)';
+  // let color2 = 'rgb(55, 19, 19)';
+
+  let color1 = 'rgb(41, 37, 118)';
+  let color2 = 'rgb(114, 32, 32)';
+
+  gradient.addColorStop(0, color1);
+  gradient.addColorStop(0.44, color1);
+  gradient.addColorStop(0.58, color2);
+  gradient.addColorStop(1, color2);
+
+  context.fillStyle = gradient;
+  context.fill();
+
+  return canvas2;
+}
+
+
+function getSurfaces(size) {
+  let surfaces = new THREE.Object3D();
+  
+
+  // const texture = new THREE.TextureLoader().load(textureImageData);
+  const texture = new THREE.Texture(generateCanvasTexture());
+  
+  // texture.image = img;
+  // texture.repeat.set(size, size); // (timesToRepeatHorizontally, timesToRepeatVertically)
+  // texture.wrapS = THREE.RepeatWrapping;
+  // texture.wrapT = THREE.RepeatWrapping;
+  texture.needsUpdate = true;  // important!
+
+  // const floorMaterial = new THREE.MeshBasicMaterial({
+  //   color: '#ffffff',
+  //   map: texture,
+  //   // side: THREE.DoubleSide
+  // });
+
+  // MeshStandardMaterial needs lights:
+  const floorMaterial = new THREE.MeshBasicMaterial({
+    // color: '#ffffff',
+    
+    map: texture,
+    aoMap: texture,
+ 
+    // lightMap: texture,
+    
+    fog: true,
+
+  });
+  // floorMaterial.needsUpdate = true;
+
+  const floorGeometry = new THREE.PlaneGeometry( size, size );
+  floorGeometry.rotateX( - Math.PI / 2 );
+
+  const floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
+  // floorMesh.receiveShadow = true;
+  floorMesh.position.y = 0;
+  surfaces.add(floorMesh);
+
+  return surfaces;
+}
+
+
+
 window.addEventListener('load', () => {
   
   /* Engine */
   const canvas = document.getElementById('viewport');
-  
 
+  let size = 150;
   let guiScene = ION.createGUITemplateScene({
-    lights: true,
+    lights: false,
     fog: true,
+
+    size: size,
+    background: new THREE.Color( '#1a1a1a' ),
+    
+    surfaces: getSurfaces(size),
   });
+  
 
   const engine = new ION.Engine({
     canvas: canvas, 
@@ -41,7 +133,11 @@ window.addEventListener('load', () => {
     // control: ION.ArcBallControl,
     // control: ION.FlyControl,
     
-    controlOptions: {vrTeleportEnabled: false, vrTeleportList: []},
+    controlOptions: {
+      vrTeleportEnabled: false, 
+      vrTeleportList: [], 
+      framebufferScaleFactor: 2.0, // lower this for for higher performance
+    },
     vrEnabled: true,
   });
 
@@ -346,7 +442,6 @@ window.addEventListener('load', () => {
 
 
   
-
 
 
 

@@ -27,7 +27,7 @@ export class Engine{
     frameCount: number;
     
 
-    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: []}, vrEnabled = false, graphics = null, fullScreen = false} = {}){
+    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: [], framebufferScaleFactor: 2.0}, vrEnabled = false, graphics = null, fullScreen = false} = {}){
         this.entityRegistry = {};
         this.systemRegistry = [];
         this.canvas = canvas;
@@ -206,6 +206,8 @@ export class Engine{
 
         if(this.vrEnabled){
             this.renderer.xr.enabled = true;
+            this.renderer.xr.setFramebufferScaleFactor( this.controlOptions.framebufferScaleFactor ); //double xr resolution default is 1 and we set 2.0
+
             this.vrControl = new VRControls(this, this.scene, this.camera, this.renderer);
 
             // Attaching vrButton to UI:
