@@ -187,7 +187,7 @@ export function dispatchMouseEvent(element, event, clientX, clientY) {
 
 
 export function dispatchMouseEventRucursive(element, event, clientX, clientY) {
-    for (const child of element.children) {        
+    for (const child of element.children) {
         dispatchMouseEvent(child, event, clientX, clientY);
         dispatchMouseEventRucursive(child, event, clientX, clientY);
       }
