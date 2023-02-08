@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { concreteNormalDataURL } from '../core/constants';
+import { setDefault } from '../core/utils/utils';
 
 
 export const createGlowMaterial = ({glowCoefficient = 0.01, glowColor = '#fce17d', glowPower = 5, materialSide = THREE.FrontSide, blending = THREE.NormalBlending} = {}) => {
@@ -227,4 +229,227 @@ export const createLine = (linePosisions, lineColors, lineMaterial) => {
     const circleLineMesh = new THREE.Line(lineGeometry, lineMaterial);
     circleLineMesh.computeLineDistances();
     return circleLineMesh;
+}
+
+
+export function getTemplateScene({
+        width = 80, 
+        height = 20, 
+        surfaces = null,
+        gridHelper = false, 
+        lights = null,
+        platform = null,
+        platformOptions = {
+            platformMaterial: null, 
+            radius: null, 
+            platformHeight: null,  
+            platformSegments: null, 
+        },
+    } = {}){
+    
+    const templateScene = new THREE.Scene(); // new THREE.Object3D();
+
+    const backgroundColor = '#ffffff';
+    templateScene.background = new THREE.Color(backgroundColor);
+
+    if (setDefault(lights)) {
+        let dirLight = new THREE.DirectionalLight('#ffffff', 0.4);
+        dirLight.position.set(0, height/2, 0);
+        dirLight.target.position.set(0, 0, 0);
+        dirLight.castShadow = true;
+        // dirLight.shadow.autoUpdate = false;
+        templateScene.add(dirLight);
+
+        const pointLight = new THREE.PointLight( '#ffffff', 10, 200 );
+        pointLight.castShadow = true;
+        pointLight.position.set( width/10, height/3, width/10 );
+        templateScene.add(pointLight);
+
+        const pointLight2 = new THREE.PointLight( '#ffffff', 10, 200 );
+        pointLight2.castShadow = true;
+        pointLight2.position.set( -width/10, height/3, -width/10 );
+        templateScene.add(pointLight2);
+        
+        let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
+        // ambientLight.shadow.autoUpdate = false; // errored
+        templateScene.add(ambientLight);
+
+    }
+
+    if (setDefault(surfaces)) {
+        const normalMap = getRepeatingTexture(concreteNormalDataURL, width, height);
+        // const normalMap = new THREE.TextureLoader().load(concreteNormalDataURL);
+        normalMap.needsUpdate = true;
+
+        
+        const surfaceMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color('#9abeda'),
+            normalMap: normalMap,
+            normalScale: new THREE.Vector2(0.7, 0.7),
+            // lightMapIntensity : 1,
+            side: THREE.DoubleSide,
+        });
+        // surfaceMaterial.receiveShadow = true;
+        surfaceMaterial.needsUpdate = true;
+
+
+        const floorGeometry = new THREE.PlaneGeometry( width, width );
+        floorGeometry.rotateX( - Math.PI / 2 );
+
+        const floorMesh = new THREE.Mesh( floorGeometry, surfaceMaterial );
+        // floorMesh.castShadow = true; //default is false
+        floorMesh.receiveShadow = true; //default
+        floorMesh.position.y = 0;
+        
+
+        templateScene.add(floorMesh);
+
+
+        // Wall Material:   
+        const wallMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color('#466882'),
+            side: THREE.DoubleSide,
+        });
+
+
+        const backWallGeometry = new THREE.PlaneGeometry( width, height );
+        const backWallMesh = new THREE.Mesh( backWallGeometry, wallMaterial );
+        backWallMesh.position.set(0, height/2, width/2);
+        backWallMesh.rotation.x = Math.PI
+        templateScene.add(backWallMesh);
+
+
+        const frontWallMesh = backWallMesh.clone();
+        frontWallMesh.position.set(0, height/2, -width/2);
+        templateScene.add(frontWallMesh);
+
+
+        const rightWallMesh = backWallMesh.clone();
+        rightWallMesh.position.set(width/2, height/2, 0);
+        rightWallMesh.rotation.y = Math.PI/2;
+        templateScene.add(rightWallMesh);
+
+
+        const leftWallMesh = backWallMesh.clone();
+        leftWallMesh.position.set(-width/2, height/2, 0);
+        leftWallMesh.rotation.y = Math.PI/2;
+        templateScene.add(leftWallMesh);
+
+
+        const ceilingMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color('#ffffff'),
+        });
+        const ceilingMesh = floorMesh.clone();
+        ceilingMesh.material = ceilingMaterial;
+        ceilingMesh.position.set(0, height, 0);
+        const grid = new THREE.GridHelper( width/2, width/2, 0x000000, 0x000000 );
+        grid.material.opacity = 0.6;
+        grid.material.transparent = true;
+        grid.position.set(0, -height*0.001, 0);
+        grid.scale.set(2, 0, 2);
+        ceilingMesh.add(grid);
+        templateScene.add(ceilingMesh);
+
+
+        const geometry = new THREE.BoxGeometry( 2,2,2);
+        const box = new THREE.Mesh( geometry, surfaceMaterial );
+        box.castShadow = true;
+        // box.receiveShadow = true;
+        box.position.y = 2;
+        templateScene.add(box);
+
+    }
+
+    if (setDefault(gridHelper)) {
+        const grid = new THREE.GridHelper( width, width, 0x000000, 0x000000 );
+        grid.material.opacity = 0.1;
+        grid.material.transparent = true;
+        grid.position.y = 0.01;
+        templateScene.add( grid );
+    }
+    
+    if (setDefault(platform)) {
+        platformOptions.radius = platformOptions.radius || Math.sqrt(width/2);
+        platformOptions.platformHeight = platformOptions.platformHeight || 0.4;
+        platformOptions.platformSegments = platformOptions.platformSegments || 64;
+        const platform = getPlatformMesh(platformOptions.platformMaterial, platformOptions.radius, platformOptions.platformHeight, platformOptions.platformSegments);
+        templateScene.add(platform);
+    }
+
+
+    templateScene.fog = new THREE.Fog(backgroundColor, width/8, width/0.9);
+  
+    return templateScene;
+}
+
+export function getRepeatingTexture(imgDataURI, width, height) {
+    const texture = new THREE.TextureLoader().load(imgDataURI);
+    texture.repeat.set(width, height); // (timesToRepeatHorizontally, timesToRepeatVertically)
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.needsUpdate = true;
+    return texture;
+}
+
+
+export function getPlatformMesh(platformMaterial, radius, platformHeight, platformSegments) {
+    const radiusTop = radius * 0.96;
+    const radiusBottom = radius;
+    const height = platformHeight;
+    const radialSegments = platformSegments;
+    const geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments );
+    geometry.computeVertexNormals();
+    geometry.computeTangents();
+    geometry.normalizeNormals();
+    geometry.computeBoundingSphere();
+    geometry.computeBoundingBox();
+    
+    let material;
+    if (!platformMaterial) {
+        material = new THREE.MeshStandardMaterial({
+            color: new THREE.Color('#aac1d2'),
+            metalness: 0.6, // 0-1
+            roughness: 0.2,
+        });
+        material.receiveShadow = true;
+        material.needsUpdate = true;
+        material.flatShading = false;
+    } else {
+        material = platformMaterial;
+    }
+
+    const platform = new THREE.Mesh( geometry, material );
+    platform.receiveShadow = true;
+    platform.castShadow = true;
+    platform.position.set(0, platformHeight / 2, 0);
+    platform.rotateY(Math.PI);
+
+
+    /* Neon Light */
+    const neonRadius = radiusTop + (radiusBottom - radiusTop) / 2;
+    const tubeRadius = platformHeight / 37;
+    const radialSegmentsThickness = 8;
+    const tubularSegments = radialSegments;
+    const neonGeometry = new THREE.TorusGeometry(neonRadius, tubeRadius, radialSegmentsThickness, tubularSegments );
+    neonGeometry.computeVertexNormals();
+    neonGeometry.computeTangents();
+    neonGeometry.normalizeNormals();
+    neonGeometry.computeBoundingSphere();
+    neonGeometry.computeBoundingBox();
+
+    const neonMaterial = new THREE.MeshStandardMaterial({
+        color: new THREE.Color('#fff99f'),
+        emissive: new THREE.Color('#fff99f'),
+        emissiveIntensity: 2,
+    });
+    neonMaterial.needsUpdate = true;
+    neonMaterial.flatShading = false;
+
+    const neon = new THREE.Mesh( neonGeometry, neonMaterial );
+    // neon.position.set(0, platformHeight/2, 0);
+    neon.rotateX(Math.PI/2);
+    platform.add(neon);
+
+
+    return platform;
 }

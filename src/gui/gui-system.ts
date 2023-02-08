@@ -116,7 +116,7 @@ export class GUISystem extends System{
         if(!guiComponent.onMutation) {
 
             // Should only run once and for each guiComponent otherwise it also throttles updating different guiComponents as we iterate over them:
-            guiComponent.throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 100);
+            guiComponent.throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 200);
 
             // Calling these once in the beginning:
             guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });
@@ -136,12 +136,17 @@ export class GUISystem extends System{
                     // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
                     
                 }
+
+
             };
 
             const observer = new MutationObserver(guiComponent.onMutation);
             observer.observe(guiComponent.rootElement, { attributes: true, childList: true, subtree: false });
             // Later, you can stop observing
             // observer.disconnect();
+            
+            // Called once in the beginning...
+            guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
         }
 
         // updating and rendering gui texture for a duration after not aiming to the gui components
@@ -171,7 +176,7 @@ export class GUISystem extends System{
 
     // TODO: put this as an arrow function when defining as throttled function...
     public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions, guiOptions) => {
-        this.updateNodeInSVG(guiComponent, node, htmlToImageOptions, guiOptions);
+        await this.updateNodeInSVG(guiComponent, node, htmlToImageOptions, guiOptions);
         this.updateGUIComponentTexture(guiComponent);
     }
 
@@ -208,7 +213,15 @@ export class GUISystem extends System{
 
     public processHTMLNode = async (node, htmlToImageOptions, guiOptions) => {
         // toSVG modification:
+
+        // let start = Date.now();
         const clonedNode = (await cloneNode(node, htmlToImageOptions, guiOptions, true)) as HTMLElement; // overwrites width and height!!!
+        // let end = Date.now();
+        // console.log(clonedNode);
+        
+        // console.log(((end - start)).toFixed(4));
+
+
         await embedWebFonts(clonedNode, htmlToImageOptions);
         await embedImages(clonedNode, htmlToImageOptions);
         applyStyle(clonedNode, htmlToImageOptions);

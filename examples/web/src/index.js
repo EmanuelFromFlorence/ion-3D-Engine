@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 
 import * as ION from '../../../src/ion-3d-engine'
@@ -117,13 +119,13 @@ window.addEventListener('load', () => {
   // let surfaces = ION.addDefaultSurfaces(null, 'ground_0', size);
   // let surfaces = ION.addDefaultSurfaces(null, 'room_0', size);
   
-  let guiScene = ION.createGUITemplateScene({
-    lights: false,
-    fog: false,
-    size: 50, // size
+  // let guiScene = ION.createGUITemplateScene({
+  //   lights: true,
+  //   fog: false,
+  //   size: 50, // size
 
-    // surfaces: surfaces,
-  });
+  //   // surfaces: surfaces,
+  // });
 
   // // Scene template 0: built from the util func
   // let size = 150;
@@ -149,8 +151,15 @@ window.addEventListener('load', () => {
 
 
 
+// let guiScene = ION.getTemplateScene({
+//     width: 80, 
+//     height: 12,
+//     gridHelper: false,
+    
+//   });
 
-  
+  let guiScene = new THREE.Scene();
+  guiScene.background = new THREE.Color('#313131');
 
   const engine = new ION.Engine({
     canvas: canvas, 
@@ -164,9 +173,18 @@ window.addEventListener('load', () => {
     controlOptions: {
       vrTeleportEnabled: false, 
       vrTeleportList: [], 
-      framebufferScaleFactor: 2.0, // lower this for for higher performance
+      framebufferScaleFactor: 2, // 2.0 lower this for for higher performance
     },
     vrEnabled: true,
+
+    graphicsOptions: {
+      shadowMapEnabled: false,  // was true
+      shadowMapType: null,
+      outputEncoding: null, 
+      toneMapping: false, // was null
+      physicallyCorrectLights: false, // was true
+    },
+
   });
 
   // /* Component */
@@ -473,7 +491,113 @@ window.addEventListener('load', () => {
 
 
 
+
+
+
+
+
+
+
+  // const loader = new GLTFLoader();
+
+  // // Optional: Provide a DRACOLoader instance to decode compressed mesh data
+  // const dracoLoader = new DRACOLoader();
+  // dracoLoader.setDecoderPath('three/examples/js/libs/draco/');
+  // loader.setDRACOLoader( dracoLoader );
   
+
+
+  // // Load a glTF resource
+  // loader.load(
+  //     // resource URL
+  //     '/mz_base.glb', 
+  //     // called when the resource is loaded
+  //     ( gltf ) => {
+
+  //       engine.scene.add( gltf.scene );
+          
+  //       gltf.animations; // Array<THREE.AnimationClip>
+  //       gltf.scene; // THREE.Group
+  //       gltf.scenes; // Array<THREE.Group>
+  //       gltf.cameras; // Array<THREE.Camera>
+  //       gltf.asset; // Object
+
+
+
+  //       // this.mixer = new THREE.AnimationMixer( gltf.scene );
+  //       // gltf.animations.forEach((clip) => {
+  //       //     console.log('heeeee');
+  //       //     this.mixer.clipAction( clip ).play();
+  //       // });
+
+
+  //       gltf.scene.position.set(0,-4,0);
+
+        
+  //       // gltf.scene.scale.set(2,2,2);
+
+  //       // const mesh = gltf.scene.children[0];
+  //       // const fooExtension = mesh.userData.gltfExtensions.EXT_foo;
+
+  //     // gltf.parser.getDependency( 'bufferView', fooExtension.bufferView )
+  //     //     .then( function ( fooBuffer ) { ... } );
+
+        
+  //       // Note: normals not needed since it's in the gltf file already!
+
+        
+  //       // for (let child of gltf.scene.children) {  this is not traversing all children (boundary)!!! 
+  //       gltf.scene.traverse((child) => {
+  //           // child.geometry
+  //           let meshName = child.userData.name;
+  //           // console.log(meshName);
+
+  //           // if(child.name.includes('next_btn')){
+  //           //     // this.nextBTNOriginalPos = new THREE.Vector3();
+  //           //     // this.nextBTNOriginalPos.copy(child.position);
+  //           //     // this.nextBTNMesh = child;
+                
+  //           //     this.sceneMeshes.push(child);
+  //           // }
+  //           // if(child.name.includes('pre_btn')){
+  //           //     this.preBTNOriginalPos = new THREE.Vector3();
+  //           //     this.preBTNOriginalPos.copy(child.position);
+  //           //     this.preBTNMesh = child;
+
+  //           //     this.sceneMeshes.push(child);
+  //           // }
+
+  //           // if (child.isMesh){
+                
+  //           //     // console.log(meshName);
+  //           //     // console.log(child);
+  //           //     // console.log(meshName);
+
+  //           //     // this.sceneMeshGroup.add(child);
+  //           //     this.sceneMeshes.push(child);
+  //           // }
+  //       });
+
+  //       // this.isMainSceneLoaded = true;
+  //       console.log('Main Scene loaded...');
+
+  //     },
+  //     // called while loading is progressing
+  //     function ( xhr ) {
+  //         // console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+  //     },
+  //     // called when loading has errors
+  //     function ( error ) {
+  //         console.log( 'An GLTF error happened: ' );
+  //         console.log(error);
+  //     }
+  // );
+
+  
+
+
+
+
 
 
 

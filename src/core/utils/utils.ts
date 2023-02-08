@@ -83,3 +83,7 @@ export const timeIt = (context, func, args) => {
     console.log(`It took ${(endTime - startTime)} ms and ${((endTime - startTime)/1000).toFixed(3)} s.`);
     return result;
 }
+
+
+export const setDefault = (x: any): boolean => x !== false && ( x === undefined || x === null || x === true );
+

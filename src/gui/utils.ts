@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CompleteStyleList, ExcluderKey, ionicTileImageURI } from '../core/constants';
+import { CompleteStyleList, ExcluderKey } from '../core/constants';
 import { createCirclePoints, createCubicPoints, createGlowMaterial } from '../nodes/utils';
 
 
@@ -20,7 +20,8 @@ export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {
 
 
 export function getGround0(width, height) {
-  const texture = getRepeatingTexture(ionicTileImageURI, width, height);
+  // const texture = getRepeatingTexture(ionicTileImageURI, width, height);
+  const texture = null;
   const floorMaterial = new THREE.MeshBasicMaterial({
     map: texture,
     side: THREE.DoubleSide,
@@ -45,8 +46,7 @@ export function addDefaultSurfaces(surfaces, type, size = 30){
     surfaces.add(floorMesh);
   }
 
-
-  if (type === 'room_0') {
+  if (type === 'room_1') {
     // Floor:
     const floorMesh = getGround0(size, size);
     surfaces.add(floorMesh);
@@ -54,7 +54,9 @@ export function addDefaultSurfaces(surfaces, type, size = 30){
     // Wall Material:   
     let width = size;
     let height = size/2;
-    let texture = getRepeatingTexture(ionicTileImageURI, width, height);
+    // let texture = getRepeatingTexture(ionicTileImageURI, width, height);
+    const texture = null;
+    
     const wallMaterial = new THREE.MeshBasicMaterial({
       color: new THREE.Color('#ffffff'), // you can make it darker for darker tiles...
       map: texture,

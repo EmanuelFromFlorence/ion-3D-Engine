@@ -27,13 +27,13 @@ export class Engine{
     frameCount: number;
     
 
-    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: [], framebufferScaleFactor: 2.0}, vrEnabled = false, graphics = null, fullScreen = false} = {}){
+    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: [], framebufferScaleFactor: 2.0}, vrEnabled = false, graphicsOptions = {}, fullScreen = false} = {}){
         this.entityRegistry = {};
         this.systemRegistry = [];
         this.canvas = canvas;
-        if (!graphics) {
-            this.initGraphics(canvas, fullScreen);
-        }
+
+        this.initGraphics(canvas, fullScreen, graphicsOptions);
+        
         this.setScene(scene);
 
         this.vrEnabled = vrEnabled;
@@ -118,12 +118,12 @@ export class Engine{
     }
 
 
-    public initGraphics = (canvas: HTMLCanvasElement, fullScreen: boolean): any => {
+    public initGraphics = (canvas: HTMLCanvasElement, fullScreen: boolean, graphicsOptions): any => {
         
-
-        this.renderer = createWebGLRenderer(canvas);
+        this.renderer = createWebGLRenderer(canvas, graphicsOptions.shadowMapEnabled, graphicsOptions.shadowMapType, graphicsOptions.outputEncoding, graphicsOptions.toneMapping, graphicsOptions.physicallyCorrectLights);
         this.camera = getCamera(canvas.offsetWidth / canvas.offsetHeight);
         
+
         // const onCanvasResize = () => {
         //     console.log('In onCanvasResize');
             

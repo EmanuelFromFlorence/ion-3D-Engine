@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { resetCameraPosition } from '../core/utils/utils';
 
 
-export const createWebGLRenderer = (canvas: HTMLCanvasElement) => {
+export const createWebGLRenderer = (canvas: HTMLCanvasElement, shadowMapEnabled, shadowMapType, outputEncoding, toneMapping, physicallyCorrectLights) => {
     const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
     // renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio( window.devicePixelRatio ); 
@@ -11,18 +11,18 @@ export const createWebGLRenderer = (canvas: HTMLCanvasElement) => {
     
     // Shadows: https://www.youtube.com/watch?v=AUF15I3sy6s
     // Remember this makes it super slow!!!!!!!!!!!!
-    // renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = (shadowMapEnabled === true) ? true: false;
 
-    // renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default ((which is faster)) THREE.PCFShadowMap // PCFSoftShadowMap VSMShadowMap
+    // renderer.shadowMap.type = shadowMapType || THREE.PCFSoftShadowMap; // default ((which is faster)) THREE.PCFShadowMap // PCFSoftShadowMap VSMShadowMap
     // This changes the colors dramatically and shadoes are not good too (although maybe needed for some of the post processing)!!!
     
     // Why to do this: https://stackoverflow.com/questions/69962432/when-do-we-need-to-use-renderer-outputencoding-three-srgbencoding
-    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.outputEncoding = outputEncoding || THREE.sRGBEncoding;
     // Why to do this https://www.youtube.com/watch?v=6XvqaokjuYU
     // Docs: https://threejs.org/examples/#webgl_tonemapping
-    // renderer.toneMapping = THREE.ACESFilmicToneMapping; // not much performance diff...
+    // if (toneMapping !== false) renderer.toneMapping = toneMapping || THREE.ACESFilmicToneMapping; // not much performance diff...
 
-    // renderer.physicallyCorrectLights = true;
+    renderer.physicallyCorrectLights = (physicallyCorrectLights === true)? true: false;
     return renderer;
 }
 
