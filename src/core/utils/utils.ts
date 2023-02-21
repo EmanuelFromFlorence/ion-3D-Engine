@@ -18,6 +18,7 @@ export function getRandomInt(min: number, max: number): number {
 
 // TODO: limit on total number of calls
 // source: https://towardsdev.com/debouncing-and-throttling-in-javascript-8862efe2b563
+// This also includes the last call:
 export const throttle = (func, limit) => {
     let lastFunc;
     let lastRan;
@@ -38,6 +39,32 @@ export const throttle = (func, limit) => {
         }
     }
 }
+
+
+export const throttleFirstArgIsMapKey = (func, limit) => {
+    let lastFunc;
+    const lastRanMap = new Map();
+    return function() {
+        const context = this;
+        const args = arguments;
+        let lastRan = lastRanMap.get(args[0]);
+        if (!lastRan) {
+            func.apply(context, args)
+            lastRan = Date.now();
+            lastRanMap.set(args[0], lastRan);
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                    lastRanMap.set(args[0], lastRan);
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    }
+}
+
 
 // In case we want to have a callback for trottling.... not sue if this works:
 // export const throttle = (func, limit, doTrottle) => {

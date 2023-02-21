@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { MeshComponent } from '../core/components/mesh-component';
-import { GUI_COMPONENT_TYPE } from './utils';
+import { GUI_COMPONENT_TYPE, getElementSize, fixElementTopLeft, get2DSizeInWorldUnit, getPixelValue } from './utils';
 
 
 interface NamedParameters {
@@ -25,6 +25,14 @@ export class GUIComponent extends MeshComponent{
     isAiming: boolean;
     lastProcess: number;
     renderTimeout: number;
+    guiStyleMap: Map<any, any>;
+    guiSystemInitialized: boolean;
+    pxWidth: any;
+    pxHeight: any;
+    rootElementHeight: any;
+    rootElementWidth: any;
+    widthInWorldUnit: any;
+    heightInWorldUnit: any;
 
 
     constructor({
@@ -72,11 +80,13 @@ export class GUIComponent extends MeshComponent{
         this.ratio = props.ratio;
         this.renderTimeout = props.renderTimeout;
         this.compId = THREE.MathUtils.generateUUID();
+        this.guiStyleMap = new Map();
+        this.setSizeFromHTMLNode(this.rootElement);
 
         this.isAiming = false;
         this.lastProcess = 0;
         
-        this.initRootElement();
+        fixElementTopLeft(this.rootElement);
         this.genPlaneMesh();
 
         // init texture (GUISystem later assigns this to material):
@@ -94,11 +104,13 @@ export class GUIComponent extends MeshComponent{
     }
 
 
-    protected genPlaneMesh = (): THREE.Mesh => { // rootElement, MaterialType: THREE.Material
-        let [widthInWorldUnit, heightInWorldUnit] = this.get2DSizeInWorldUnit();
-        const planeGeometry = new THREE.PlaneGeometry( widthInWorldUnit, heightInWorldUnit );
+    protected genPlaneMesh = (): THREE.Mesh => {
+        this.setSizeFromHTMLNode(this.rootElement);
+
+        const planeGeometry = new THREE.PlaneGeometry( this.widthInWorldUnit, this.heightInWorldUnit );
+        planeGeometry.attributes.position.needsUpdate = true;
         const planeMaterial = this.material;
-        // planeMaterial.needsUpdate = true;
+        planeMaterial.needsUpdate = true;
 
         super.setGeometry(planeGeometry);
         super.setMeterial(planeMaterial);
@@ -107,39 +119,54 @@ export class GUIComponent extends MeshComponent{
         // Reflect.set(THREE.Mesh.prototype, "material", planeMaterial, this);
 
         super.updateTheMorph();
+    }
+
+
+    // TODO: later set observers to check for size changes and only trigger when...
+    public updateMeshAndSVGSize = () => {
+        // Only changing geometry in case of change:
+        if (this.setSizeFromHTMLNode(this.rootElement)) {
+            if (this.geometry) {
+                const planeGeometry = new THREE.PlaneGeometry( this.widthInWorldUnit, this.heightInWorldUnit );
+                this.geometry.dispose();
+                // planeGeometry.attributes.position.needsUpdate = true; // no need
+                super.setGeometry(planeGeometry);
+            }
+
+            if (this.svg) {
+                // const { width, height } = getElementSize(this.rootElement);
+                this.svg.setAttribute('width', `${this.rootElementWidth}`);
+                this.svg.setAttribute('height', `${this.rootElementHeight}`);
+                this.svg.setAttribute('viewBox', `0 0 ${this.rootElementWidth} ${this.rootElementHeight}`);
+            }
+        }
+    }
+
+
+    public setSizeFromHTMLNode = (htmlNode) => {        
+        const rect = htmlNode.getBoundingClientRect();
+        let width = rect.width;
+        let height = rect.height;
         
-        // this.receiveShadow = true;
-    }
+        if (this.rootElementWidth === width && this.rootElementHeight === height) return false;
 
+        // Or:
+        // const leftBorder = getPixelValue(htmlNode, 'border-left-width');
+        // const rightBorder = getPixelValue(htmlNode, 'border-right-width');
+        // const topBorder = getPixelValue(htmlNode, 'border-top-width');
+        // const bottomBorder = getPixelValue(htmlNode, 'border-bottom-width');  
+        // let width = htmlNode.clientWidth + leftBorder + rightBorder;
+        // let height = htmlNode.clientHeight + topBorder + bottomBorder;
 
-    public get2DSizeInWorldUnit(): any {
-        // ratio:
-        let unitPX = 100;
-        unitPX = unitPX / this.ratio;
+        this.rootElementWidth = width;
+        this.rootElementHeight = height;
+
+        let [widthInWorldUnit, heightInWorldUnit] = get2DSizeInWorldUnit(this.rootElementWidth, this.rootElementHeight, this.ratio);
         
-        // rootElement Dimensions: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
-        let rect = this.rootElement.getBoundingClientRect();
-        let widthInWorldUnit = rect.width / unitPX;
-        let heightInWorldUnit = rect.height / unitPX;
+        this.widthInWorldUnit = widthInWorldUnit;
+        this.heightInWorldUnit = heightInWorldUnit;
 
-        return [widthInWorldUnit, heightInWorldUnit];
+        return true;
     }
-
-
-    public initRootElement(): any {
-        this.rootElement.style.position = 'fixed';
-        this.rootElement.style.left = '0';
-        this.rootElement.style.top = '0';
-        this.rootElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
-        // rootElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
-        this.rootElement.style.margin = '0 auto';
-    }
-
-
-    // // Later set the getter and setter for x, y, z
-    // public setPosition = (x: number, y: number, z: number): void => {
-    //     this.state.planeMesh.x = x;
-    // }
-
 
 }

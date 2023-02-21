@@ -1,14 +1,9 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleList } from './utils';
+import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleMap, callbackOnNodesRecursive, createGUISVGWrapper, appendSVGStyle, fixElementTopLeft, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
 import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
-import { getImageSize, svgToDataURL } from './html-to-image/util';
-import { cloneNode } from './html-to-image/clone-node';
-import { embedWebFonts } from './html-to-image/embed-webfonts';
-import { embedImages } from './html-to-image/embed-images';
-import { applyStyle } from './html-to-image/apply-style';
 
 
 export class GUISystem extends System{
@@ -39,6 +34,7 @@ export class GUISystem extends System{
     throttledUpdateHTMLImage: () => void;
     throttledUpdateAim: () => void;
     throttledUpdateVRAim: () => void;
+    throttledRenderGUIComponent: () => void;
 
 
     constructor(){ // {}: NamedParameters
@@ -66,8 +62,8 @@ export class GUISystem extends System{
 
     
     public initTrottledMethods = () => {
-        this.throttledUpdateAim = throttle((meshesToIntersectArg) => this.updateAim(meshesToIntersectArg), 10);
-        this.throttledUpdateVRAim = throttle((meshesToIntersectArg) => this.updateVRAim(meshesToIntersectArg), 10);
+        this.throttledUpdateAim = throttle((meshesToIntersectArg) => this.updateAim(meshesToIntersectArg), 20);
+        this.throttledUpdateVRAim = throttle((meshesToIntersectArg) => this.updateVRAim(meshesToIntersectArg), 20);
     }
 
 
@@ -75,7 +71,8 @@ export class GUISystem extends System{
         bindCSSEvents();
         this.pageStyle = buildPageStyleString();
 
-        buildPageStyleList((styleName, value) => {
+        // TODO: later should only add style map to the gui components and specific to their dom
+        buildPageStyleMap((styleName, value) => {
             if (!this.pageStyleMap) this.pageStyleMap = new Map();
             this.pageStyleMap.set(styleName, value);
         });
@@ -96,7 +93,21 @@ export class GUISystem extends System{
         for (let [entityId, entity] of Object.entries(entities)) { // {entityId: String, entity: Entity}
             let guiComponent = entity.getComponent(GUI_COMPONENT_TYPE);
 
-            await this.initGUIComponentObverver(guiComponent);
+            await this.initGUIComponent(guiComponent);
+            guiComponent.throttledUpdateGUIComponent(guiComponent);
+        
+            // // updating and rendering gui texture for a duration after not aiming to the gui components
+            // let currentTime = new Date().getTime();
+            // if (!guiComponent.lastProcess) guiComponent.lastProcess = new Date().getTime();
+            // let duration = currentTime - guiComponent.lastProcess;
+            // // runs for initially for the duration too. (if not needed change the initial value in guiComponent init func)
+            // // isAiming and lastProcess are now associated with each component
+
+            // if (guiComponent.renderTimeout > 1000000000) {
+            //     guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+            // } else if (!guiComponent.isAiming && duration < guiComponent.renderTimeout ) {            
+            //     guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+            // }
 
             meshesToIntersect.push(guiComponent);
         }
@@ -107,164 +118,71 @@ export class GUISystem extends System{
         }else {
             this.throttledUpdateAim(meshesToIntersect);
         }
+    }
+
+
+    public initGUIComponent = async (guiComponent) => {
+        if(guiComponent.guiSystemInitialized) return;
+        guiComponent.guiSystemInitialized = true;
+
+        guiComponent.convertHTMLNodeOptions = { filter: guiComponent.htmlFilter };
+
+        guiComponent.throttledUpdateGUIComponent = throttle((guiCompArg) => this.updateGUIComponent(guiCompArg), 60); // 20> for 60 fps
+
+        guiComponent.throttledDisposeMaterialGUIComponent = throttle(() => guiComponent.material.dispose(), 10000);
+
+        await this.createGUIComponentSVG(guiComponent);
+    }
+
+
+    public createGUIComponentSVG = async (guiComponent) => {
+        const svg = createGUISVGWrapper(guiComponent);
         
+        appendSVGStyle(svg, this.pageStyle);
+        guiComponent.svg = svg;
+        guiComponent.updateMeshAndSVGSize();
     }
 
 
-    public initGUIComponentObverver = async (guiComponent) => {
-
-        if(!guiComponent.onMutation) {
-
-            // Should only run once and for each guiComponent otherwise it also throttles updating different guiComponents as we iterate over them:
-            guiComponent.throttledUpdateHTMLImage = throttle((guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg) => this.updateGUIComponentSVGAndTexture(guiCompArg, htmlElementArg, htmlToImageOptionsArg, guiOptionsArg), 200);
-
-            // Calling these once in the beginning:
-            guiComponent.svg = await this.createGUIComponentSVG(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: true });
-            this.updateGUIComponentTexture(guiComponent);
-
-            // Callback function to execute when mutations are observed
-            guiComponent.onMutation = (mutationList, observer) => {
-                // TODO: optimizng by sending and processing the whole mutationList
-                for (const mutation of mutationList) {
-                    
-                    // update only on updates (users can choose to be like this by passing options)
-                    if (guiComponent.renderTimeout < 1) {
-                        guiComponent.throttledUpdateHTMLImage(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-                    }
-                    
-                    // Tested without throttling and it significantly impacts the FPS
-                    // this.updateGUIComponentSVGAndTexture(guiComponent, mutation.target, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-                    
-                }
-
-
-            };
-
-            const observer = new MutationObserver(guiComponent.onMutation);
-            observer.observe(guiComponent.rootElement, { attributes: true, childList: true, subtree: false });
-            // Later, you can stop observing
-            // observer.disconnect();
-            
-            // Called once in the beginning...
-            guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-        }
-
-        // updating and rendering gui texture for a duration after not aiming to the gui components
-        let currentTime = new Date().getTime();
-        if (!guiComponent.lastProcess) guiComponent.lastProcess = new Date().getTime();
-        let duration = currentTime - guiComponent.lastProcess;
-        // runs for initially for the duration too. (if not needed change the initial value in guiComponent init func)
-        // isAiming and lastProcess are now associated with each component
-
-        if (guiComponent.renderTimeout > 1000000000) {
-            guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-        } else if (!guiComponent.isAiming && duration < guiComponent.renderTimeout ) {            
-            guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-        }
-
+    public updateGUIComponent = async (guiComponent) => {
+        // document.getElementById('input_11').value = this.engine.fps.toFixed(0); //////// Doesn't work!!!!!!!!!!!
+        document.getElementById('input_11').setAttribute('value', this.engine.fps.toFixed(0));
+        
+        processHTMLNodeTree(guiComponent.rootElement);
+        guiComponent.updateMeshAndSVGSize();
+        await this.updateGUIComponentTexture(guiComponent);
     }
 
 
-    // TODO: htmlToImageOptions should be configured by user
-    public createGUIComponentSVG = async (guiComponent, htmlElement, htmlToImageOptions) => {
-        const { width, height } = getImageSize(htmlElement, htmlToImageOptions);
-        const clonedNode = await this.processHTMLNode(htmlElement, htmlToImageOptions, { 'pageStyleMap': this.pageStyleMap, });        
-        const svg = this.createSVGDocument(guiComponent, clonedNode, width, height);
-        return svg;
-    }
-
-
-    // TODO: put this as an arrow function when defining as throttled function...
-    public updateGUIComponentSVGAndTexture = async (guiComponent, node, htmlToImageOptions, guiOptions) => {
-        await this.updateNodeInSVG(guiComponent, node, htmlToImageOptions, guiOptions);
-        this.updateGUIComponentTexture(guiComponent);
-    }
-
-
+    // Source: https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_as_an_Image
+    // External resources (e.g. images, stylesheets) cannot be loaded, though they can be used if inlined through data: Ls.
     public updateGUIComponentTexture = async (guiComponent) => {
         const svgDataUrl = await svgToDataURL(guiComponent.svg);
-        const image = new Image();
+
+        let image = new Image();
+        // image.setAttribute('loading', 'lazy');
+        // image.setAttribute('decoding', 'async');
         image.src = svgDataUrl;
 
         image.onload = () =>  {
-            guiComponent.htmlTexture.dispose(); // TODO: check if working correctly
+            // Should dispose and solved the memeory leak:
+            guiComponent.htmlTexture.dispose(); 
+            // guiComponent.material.dispose(); /////////// SHOULD Uncomment to solve the memoery leak but performance issue.
+            guiComponent.throttledDisposeMaterialGUIComponent();
             guiComponent.htmlTexture = new THREE.Texture(image);
+            // guiComponent.htmlTexture.matrixAutoUpdate = true;
+            guiComponent.htmlTexture.generateMipmaps = true; // works like anti-aliasing default is true.
 
             if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
                 guiComponent.htmlTexture.needsUpdate = true;
-                guiComponent.material.needsUpdate = true;
+                guiComponent.material.needsUpdate = true; // no need
             }
         
             guiComponent.material.map = guiComponent.htmlTexture;
+
+            image.remove();
+            image = null;
         };
-    }
-
-
-    public updateNodeInSVG = async (guiComponent, node, htmlToImageOptions, guiOptions) => {
-        const clonedNode = await this.processHTMLNode(node, htmlToImageOptions, guiOptions) as HTMLElement;
-        // In case data attr:
-        const id = clonedNode.dataset.guiSvgId;        
-        const oldNode = guiComponent.svg.querySelector(`[data-gui-svg-id = "${id}"]`);
-
-        oldNode.replaceWith(clonedNode);
-        this.appendPageStyle(guiComponent.svg);
-    }
-
-
-    public processHTMLNode = async (node, htmlToImageOptions, guiOptions) => {
-        // toSVG modification:
-
-        // let start = Date.now();
-        const clonedNode = (await cloneNode(node, htmlToImageOptions, guiOptions, true)) as HTMLElement; // overwrites width and height!!!
-        // let end = Date.now();
-        // console.log(clonedNode);
-        
-        // console.log(((end - start)).toFixed(4));
-
-
-        await embedWebFonts(clonedNode, htmlToImageOptions);
-        await embedImages(clonedNode, htmlToImageOptions);
-        applyStyle(clonedNode, htmlToImageOptions);
-        return clonedNode;
-    }
-
-
-    public createSVGDocument = (guiComponent, node, width, height) => {
-        // nodeToDataURL modification:
-        const xmlns = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(xmlns, 'svg');
-        const foreignObject = document.createElementNS(xmlns, 'foreignObject');
-
-        svg.setAttribute('width', `${width}`);
-        svg.setAttribute('height', `${height}`);
-        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-
-        foreignObject.setAttribute('width', '100%');
-        foreignObject.setAttribute('height', '100%');
-        foreignObject.setAttribute('x', '0');
-        foreignObject.setAttribute('y', '0');
-        foreignObject.setAttribute('externalResourcesRequired', 'true');
-
-        svg.appendChild(foreignObject);
-        foreignObject.appendChild(node);
-        
-        this.appendPageStyle(svg);
-        
-        return svg;
-    }
-
-
-    public appendPageStyle = (node) => {
-        // First removing previous style tag if exists:
-        for (let child of node.childNodes) {
-            if (child.tagName.toLowerCase() == 'style') {
-                child.remove();
-            }
-        }
-        const style = document.createElement('style');
-        style.textContent = this.pageStyle;
-        node.append(style);
-        return node;
     }
     
 
@@ -409,7 +327,7 @@ export class GUISystem extends System{
         // Maybe later implement this. For now just dispatching clear events recursively on elements from last aimingHTMLElement
         if (this.aimingGuiComponent || this.aimingGuiComponentVR11 || this.aimingGuiComponentVR22) {
             // for (let guiComponent of meshesToIntersect) {
-                // callbackOnNodesRecursive(guiComponent.rootElement);
+                // callbackOChildrenRecursive(guiComponent.rootElement);
             // }
         }
         
@@ -443,8 +361,8 @@ export class GUISystem extends System{
             }
             // Not really necessary at this point but still:
             if (this.aimingGuiComponentVR11) {
-                dispatchMouseEventRucursive(this.aimingHTMLElementVR11.rootElement, 'mouseout', this.aimXVR11, this.aimYVR11);
-                dispatchMouseEventRucursive(this.aimingHTMLElementVR11.rootElement, 'pointerout', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEventRucursive(this.aimingGuiComponentVR11.rootElement, 'mouseout', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEventRucursive(this.aimingGuiComponentVR11.rootElement, 'pointerout', this.aimXVR11, this.aimYVR11);
             }
             this.aimingGuiComponentVR11 = null;
             this.aimXVR11 = null;
@@ -460,8 +378,8 @@ export class GUISystem extends System{
             }
             // Not really necessary at this point but still:
             if (this.aimingGuiComponentVR22) {
-                dispatchMouseEventRucursive(this.aimingHTMLElementVR22.rootElement, 'mouseout', this.aimXVR22, this.aimYVR22);
-                dispatchMouseEventRucursive(this.aimingHTMLElementVR22.rootElement, 'pointerout', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEventRucursive(this.aimingGuiComponentVR22.rootElement, 'mouseout', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEventRucursive(this.aimingGuiComponentVR22.rootElement, 'pointerout', this.aimXVR22, this.aimYVR22);
             }
             this.aimingGuiComponentVR22 = null;
             this.aimXVR22 = null;
@@ -484,9 +402,13 @@ export class GUISystem extends System{
         meshesToIntersect.forEach((mesh) => {
             mesh.rootElement.style.setProperty('pointer-events', 'none', 'important');
         });
+
         aimingGuiComponent.rootElement.style.setProperty('pointer-events', 'initial', 'important');
         aimingElm = document.elementFromPoint(x, y);
         this.engine.canvas.style.setProperty('pointer-events', 'initial', 'important');
+        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) {
+            this.engine.canvas.parentElement.style.setProperty('pointer-events', 'initial', 'important');
+        }
         return aimingElm;
     }
 

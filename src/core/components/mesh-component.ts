@@ -6,7 +6,7 @@ interface NamedParameters {
 }
 
 
-export abstract class MeshComponent extends THREE.Mesh{
+export abstract class MeshComponent extends THREE.Mesh {
     type: string;
 
 

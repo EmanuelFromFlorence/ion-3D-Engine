@@ -24,7 +24,7 @@ export class Engine{
     vrButtonElm: any;
     stats: any;
     vrTeleMeshesToIntersect: any[];
-    frameCount: number;
+    fps: number;
     
 
     constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: [], framebufferScaleFactor: 2.0}, vrEnabled = false, graphicsOptions = {}, fullScreen = false} = {}){
@@ -42,7 +42,8 @@ export class Engine{
 
         this.stats = Stats();
         this.stats.dom.style.zIndex = zIndex + 1;
-        document.body.appendChild( this.stats.dom );
+
+        document.body.appendChild( this.stats.dom )
     }
 
 
@@ -78,17 +79,19 @@ export class Engine{
 
     protected runEngine = (): any => {
         let prevTime = performance.now();
-        this.frameCount = 0;
+        this.fps = 0;
+        let fpsArr = [];
         const animate = () => {
             try {
-                // requestAnimationFrame( animate );
                 const time = performance.now();
-                const delta = ( time - prevTime ) / 1000;
+                const delta = ( time - prevTime ) / 1000; // delta is in seconds
+                fpsArr.push(1/delta);
+                if (fpsArr.length>60) fpsArr = fpsArr.slice(1);
+                this.fps = fpsArr.reduce((sum, x) => sum + x, 0)/fpsArr.length;
                 
-                this.frameCount++;
     
                 // TODO::
-                this.scene.updateMatrixWorld();
+                // this.scene.updateMatrixWorld();
     
                 this.executeSystems();
     
@@ -113,7 +116,6 @@ export class Engine{
                 console.error(err);
             }
         }
-        // animate();
         this.renderer.setAnimationLoop( animate );
     }
 

@@ -13,14 +13,14 @@ export const createWebGLRenderer = (canvas: HTMLCanvasElement, shadowMapEnabled,
     // Remember this makes it super slow!!!!!!!!!!!!
     renderer.shadowMap.enabled = (shadowMapEnabled === true) ? true: false;
 
-    // renderer.shadowMap.type = shadowMapType || THREE.PCFSoftShadowMap; // default ((which is faster)) THREE.PCFShadowMap // PCFSoftShadowMap VSMShadowMap
+    renderer.shadowMap.type = shadowMapType || THREE.PCFShadowMap; // default ((which is faster)) THREE.PCFShadowMap // PCFSoftShadowMap VSMShadowMap
     // This changes the colors dramatically and shadoes are not good too (although maybe needed for some of the post processing)!!!
     
     // Why to do this: https://stackoverflow.com/questions/69962432/when-do-we-need-to-use-renderer-outputencoding-three-srgbencoding
     renderer.outputEncoding = outputEncoding || THREE.sRGBEncoding;
     // Why to do this https://www.youtube.com/watch?v=6XvqaokjuYU
     // Docs: https://threejs.org/examples/#webgl_tonemapping
-    // if (toneMapping !== false) renderer.toneMapping = toneMapping || THREE.ACESFilmicToneMapping; // not much performance diff...
+    if (toneMapping !== false) renderer.toneMapping = toneMapping || THREE.ACESFilmicToneMapping; // not much performance diff...
 
     renderer.physicallyCorrectLights = (physicallyCorrectLights === true)? true: false;
     return renderer;

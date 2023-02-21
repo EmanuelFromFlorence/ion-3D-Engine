@@ -1,12 +1,8 @@
 import * as THREE from 'three';
 import { CompleteStyleList, ExcluderKey } from '../core/constants';
-import { createCirclePoints, createCubicPoints, createGlowMaterial } from '../nodes/utils';
 
 
 export const GUI_COMPONENT_TYPE  = 'gui_1000'
-
-
-const setDefault = (x: any): boolean => x !== false && ( x === undefined || x === null || x === true );
 
 
 export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {
@@ -16,208 +12,6 @@ export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {
   texture.wrapT = THREE.RepeatWrapping;
   texture.needsUpdate = true;
   return texture;
-}
-
-
-export function getGround0(width, height) {
-  // const texture = getRepeatingTexture(ionicTileImageURI, width, height);
-  const texture = null;
-  const floorMaterial = new THREE.MeshBasicMaterial({
-    map: texture,
-    side: THREE.DoubleSide,
-  });
-  // floorMaterial.needsUpdate = true;
-
-  const floorGeometry = new THREE.PlaneGeometry( width, height );
-  floorGeometry.rotateX( - Math.PI / 2 );
-
-  const floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
-  floorMesh.position.y = 0;
-
-  return floorMesh;
-}
-
-
-export function addDefaultSurfaces(surfaces, type, size = 30){
-  surfaces = surfaces || new THREE.Object3D();
-  
-  if (type === 'ground_0') {
-    let floorMesh = getGround0(size, size);
-    surfaces.add(floorMesh);
-  }
-
-  if (type === 'room_1') {
-    // Floor:
-    const floorMesh = getGround0(size, size);
-    surfaces.add(floorMesh);
-
-    // Wall Material:   
-    let width = size;
-    let height = size/2;
-    // let texture = getRepeatingTexture(ionicTileImageURI, width, height);
-    const texture = null;
-    
-    const wallMaterial = new THREE.MeshBasicMaterial({
-      color: new THREE.Color('#ffffff'), // you can make it darker for darker tiles...
-      map: texture,
-      side: THREE.DoubleSide,
-      // combine: THREE.AddOperation,
-    });
-
-    // Back Wall:
-    const backWallGeometry = new THREE.PlaneGeometry( width, height );
-    const backWallMesh = new THREE.Mesh( backWallGeometry, wallMaterial );
-    backWallMesh.position.set(0, height/2, size/2);
-    backWallMesh.rotation.x = Math.PI
-    surfaces.add(backWallMesh);
-
-    
-    const frontWallMesh = backWallMesh.clone();
-    frontWallMesh.position.set(0, height/2, -size/2);
-    surfaces.add(frontWallMesh);
-
-
-    const rightWallMesh = backWallMesh.clone();
-    rightWallMesh.position.set(size/2, height/2, 0);
-    rightWallMesh.rotation.y = Math.PI/2;
-    surfaces.add(rightWallMesh);
-
-
-    const leftWallMesh = backWallMesh.clone();
-    leftWallMesh.position.set(-size/2, height/2, 0);
-    leftWallMesh.rotation.y = Math.PI/2;
-    surfaces.add(leftWallMesh);
-
-    const ceilingMesh = floorMesh.clone();
-    ceilingMesh.position.set(0, height, 0);
-    surfaces.add(ceilingMesh);
-    
-  }
-
-  return surfaces;
-}
-
-
-// A default scene creator
-export function createGUITemplateScene({
-    background = null,
-    surfaces = null,
-    lights = null,
-    horizonGlow = null,
-    points = null,
-    size = 200,
-    fog = null,
-  } = {}): THREE.Scene{
-    let scene = new THREE.Scene();
-    const backgroundColor = '#1a1a1a'; // '#b6d9ed' #7f94a7 #eef7ff
-
-    if (setDefault(background)) {
-      const loader = new THREE.CubeTextureLoader();
-      background = loader.load([
-        '../../resources/background/px.png',
-        '../../resources/background/nx.png',
-        '../../resources/background/py.png',
-        '../../resources/background/ny.png',
-        '../../resources/background/pz.png',
-        '../../resources/background/nz.png',
-      ]);
-
-    }
-    scene.background = background;
-
-    if (setDefault(surfaces)) {
-      surfaces = addDefaultSurfaces(surfaces, 'ground_0', size);
-    }
-    scene.add(surfaces);
-
-    /* Glow Material */
-    // if (setDefault(horizonGlow)) {
-    //   const glowMaterial = createGlowMaterial({
-    //     glowCoefficient: 0.1,
-    //     glowColor: '#d0ffa9',
-    //     glowPower: 4,
-    //     // materialSide: THREE.BackSide,
-    //     blending: THREE.AdditiveBlending,
-    //   });
-    //   // const edgeGeometry = new THREE.CylinderGeometry( size/8, size/8, size + size/10, 12 );
-    //   // const edgeGeometry = new THREE.CapsuleGeometry( size/8, size + size/10, 12, 12 );
-    //   const edgeGeometry = new THREE.TorusGeometry( size/2 + size/8, size/8, 6, 40 );
-      
-    //   horizonGlow = new THREE.Mesh( edgeGeometry, glowMaterial );
-    //   horizonGlow.position.y = 0;
-    //   // edgeMesh0.position.z = - size / 2;
-    //   horizonGlow.rotateX( - Math.PI / 2 ); //  + Math.PI / 8
-    //   horizonGlow.rotateZ( Math.PI / 2 );
-    // }
-    // scene.add(horizonGlow);
-
-    
-    if (setDefault(points)) {
-      let circleRadius = size/2;
-      let offset = size/6;
-
-      const circlePointsMesh1 = createCirclePoints({
-        pointCircleRadius: circleRadius,
-        pointCount: 500,
-        noiseOffset: offset,
-        pointSize: 0.15,
-      });
-      circlePointsMesh1.rotateX( Math.PI / 2 );
-      circlePointsMesh1.position.y = size/3.8;
-      scene.add( circlePointsMesh1 );
-
-      const cubicPointsMesh1 = createCubicPoints({
-        cubeSize: circleRadius,
-        pointCount: 70,
-        noiseOffset: offset,
-        pointSize: 0.15,
-      });
-      cubicPointsMesh1.position.set(0, size/4, 0);
-      scene.add( cubicPointsMesh1 );
-    }else {
-      scene.add(points)
-    }
-    
-    if (setDefault(lights)) {
-      scene = initDefaultGUILights(scene);
-    }
-
-    if (setDefault(fog)) {
-      scene.fog = fog; // new THREE.Fog(backgroundColor, size/4, size/2.5);
-    }
-    
-    return scene;
-}
-
-
-export function initDefaultGUILights (scene: THREE.Scene): void {
-  let dirLight = new THREE.DirectionalLight(0xfff8e2, 1); // 0xFFFFFF
-  // let pos = new THREE.Vector3(100, 1000, 100);
-  dirLight.position.set(-50, 40, 20);
-  dirLight.target.position.set(0, 0, 0);
-  // dirLight.castShadow = true;
-  // dirLight.shadow.autoUpdate = false;
-  // scene.add(dirLight);
-  
-  let ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.3);
-  // ambientLight.shadow.autoUpdate = false; // errored
-  scene.add(ambientLight);
-  return scene;
-
-
-  // const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-  // hemiLight.position.set( 0, 200, 0 );
-  // scene.add( hemiLight );
-
-  // const dirLight = new THREE.DirectionalLight( 0xffffff );
-  // dirLight.position.set( 0, 200, 100 );
-  // dirLight.castShadow = true;
-  // dirLight.shadow.camera.top = 180;
-  // dirLight.shadow.camera.bottom = - 100;
-  // dirLight.shadow.camera.left = - 120;
-  // dirLight.shadow.camera.right = 120;
-  // scene.add( dirLight );
-
 }
 
 
@@ -256,7 +50,7 @@ export function isRadioCheckBox(element) {
 
 
 export function buildPageStyleString() {
-  let pageStyle = '';
+  let pageStyle = ' ';
   for (let stylesheet of document.styleSheets) {
       // console.log(stylesheet);
       for (let cssRule of stylesheet.cssRules){
@@ -267,7 +61,7 @@ export function buildPageStyleString() {
 }
 
 
-export function buildPageStyleList(setPageStyleMap) {
+export function buildPageStyleMap(setPageStyleMap) {
 
   for (let script of document.scripts) {
 
@@ -331,6 +125,7 @@ export function buildPageStyleList(setPageStyleMap) {
     } else { // if inline script
 
       for (let styleName of CompleteStyleList) {
+        
         if (script.textContent.includes(styleName)) {
 
           setPageStyleMap(styleName, true);
@@ -340,7 +135,35 @@ export function buildPageStyleList(setPageStyleMap) {
       
 
     }
-  }  
+  }
+  
+  
+  /* Hardcoding these so they are always cloned */
+  // TODO: maybe later add these too:
+  // const leftBorder = getPixelValue(htmlElement, 'border-left-width');
+  // const rightBorder = getPixelValue(htmlElement, 'border-right-width');
+  // const topBorder = getPixelValue(htmlElement, 'border-top-width');
+  // const bottomBorder = getPixelValue(htmlElement, 'border-bottom-width');
+  setPageStyleMap('width', true);
+  setPageStyleMap('height', true);
+  setPageStyleMap('x', false);
+  setPageStyleMap('y', false);
+  setPageStyleMap('d', false);
+  setPageStyleMap('r', false);
+
+}
+
+
+export function callbackOnChildrenRecursive<T extends HTMLElement>(
+  node: T,
+  callback: Function,
+): void {
+
+  for (const child of node.children) {
+    callback(child);
+    callbackOnChildrenRecursive(child, callback);
+  }
+
 }
 
 
@@ -349,10 +172,218 @@ export function callbackOnNodesRecursive<T extends HTMLElement>(
   callback: Function,
 ): void {
 
-  for (const child of node.children) {
+  for (const child of node.childNodes) {
     callback(child);
     callbackOnNodesRecursive(child, callback);
   }
 
 }
 
+
+export const createGUISVGWrapper = (guiComponent) => {
+  // nodeToDataURL modification:
+  const xmlns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(xmlns, 'svg');
+  const foreignObject = document.createElementNS(xmlns, 'foreignObject');
+
+  const { width, height } = getElementSize(guiComponent.rootElement);
+  svg.setAttribute('width', `${width}`);
+  svg.setAttribute('height', `${height}`);
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('externalResourcesRequired', 'true');
+  svg.style.setProperty('pointer-events', 'none', 'important'); 
+
+  svg.id = 'svg_id__' + guiComponent.compId;
+
+  foreignObject.setAttribute('width', '100%');
+  foreignObject.setAttribute('height', '100%');
+  foreignObject.setAttribute('x', '0');
+  foreignObject.setAttribute('y', '0');
+  foreignObject.setAttribute('externalResourcesRequired', 'true'); // TODO: check if externalResourcesRequired is needed?
+  foreignObject.style.setProperty('pointer-events', 'none', 'important');
+
+  const parentNode = guiComponent.rootElement.parentNode;
+  
+  svg.appendChild(foreignObject);
+  foreignObject.appendChild(guiComponent.rootElement);
+
+  parentNode.appendChild(svg);
+
+  fixElementTopLeft(svg);
+
+  return svg;
+}
+
+
+// // TODO: optimization: appending only style map rules to svg (image loading faster?) 
+// // TODO: IMPORTANT: should check if it's better to insert a style tag with id for each element and update only that one for each mutation
+export const appendSVGStyle = (svg, pageStyle) => {
+
+  const foreignObject = svg.childNodes[0];
+  if (foreignObject.tagName !== 'foreignObject') throw new Error('Could not find foreignObject in SVG!');
+
+  // First removing previous style tag if exists:
+  for (let child of foreignObject.childNodes) {
+    if (child.tagName.toLowerCase() == 'style') {
+        child.remove();
+    }
+  }
+
+  const style = document.createElement('style');
+  style.textContent = pageStyle;
+  foreignObject.append(style);
+
+  return svg;
+}
+
+
+export const fixElementTopLeft = (htmlNode) => {
+  htmlNode.style.position = 'fixed';
+  htmlNode.style.left = '0';
+  htmlNode.style.top = '0';
+  htmlNode.style.overflow = 'hidden'; // This will not allow the content to exceed the container
+  // htmlNode.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
+  htmlNode.style.margin = '0 auto';
+};
+
+
+export const get2DSizeInWorldUnit = (width, height, ratio): any => {
+  let unitPX = 100;
+  unitPX = unitPX / ratio;
+
+  let widthInWorldUnit = width / unitPX;
+  let heightInWorldUnit = height / unitPX;
+
+  return [widthInWorldUnit, heightInWorldUnit];
+}
+
+
+export const processHTMLNodeTree = (htmlNode) => {
+  
+  processSingleHTMLNode(htmlNode);
+
+  let childNodes = [];
+  if (isSlotElement(htmlNode) && htmlNode.assignedNodes) {
+    childNodes = Array.from(htmlNode.assignedNodes());
+  } else if (isInstanceOfElement(htmlNode, HTMLIFrameElement) && htmlNode.contentDocument?.body) {
+    // TODO: should appendChild in another way below in case of IFRAME
+    childNodes = Array.from(htmlNode.contentDocument.body.childNodes)
+  } else {
+    childNodes = Array.from((htmlNode.shadowRoot ?? htmlNode).childNodes)
+  }
+
+  for (let childNode of htmlNode.childNodes) {
+    processHTMLNodeTree(childNode);
+  }
+
+}
+
+
+export const processSingleHTMLNode = (htmlNode) => {
+  if (isInstanceOfElement(htmlNode, HTMLInputElement)) {
+    // svg needs to have 'value' attribute
+    let attrValue = htmlNode.getAttribute('value');
+    if (htmlNode.value && htmlNode.value !== attrValue) {
+      htmlNode.setAttribute('value', htmlNode.value);
+    }
+    
+    if (htmlNode.type === 'checkbox' || htmlNode.type === 'radio') {
+      // htmlNode.checked default is false and 'checked' attribute default is null
+      const checked = htmlNode.getAttribute('checked');
+      if (checked !== 'checked' && htmlNode.checked) {
+        htmlNode.setAttribute('checked', 'checked');
+      }
+      if (checked === 'checked' && !htmlNode.checked) {
+        htmlNode.removeAttribute('checked');
+      }
+    }
+
+  }
+};
+
+
+const concatStyle = (preCssText, style, styleName, value) => ` ${preCssText} ${styleName}: ${value} ${style.getPropertyPriority(styleName)}; `;
+
+
+const isSlotElement = (node: HTMLElement): node is HTMLSlotElement => node.tagName != null && node.tagName.toUpperCase() === 'SLOT';
+
+
+export function getPixelValue(htmlElement: HTMLElement, styleProperty: string) {
+  const win = htmlElement.ownerDocument.defaultView || window;
+  const val = win.getComputedStyle(htmlElement).getPropertyValue(styleProperty);
+  return val ? parseFloat(val.replace('px', '')) : 0;
+}
+
+
+// TODO: what about outline width??
+export function getElementSize(htmlElement: HTMLElement) {
+  // const leftBorder = getPixelValue(htmlElement, 'border-left-width');
+  // const rightBorder = getPixelValue(htmlElement, 'border-right-width');
+  // const topBorder = getPixelValue(htmlElement, 'border-top-width');
+  // const bottomBorder = getPixelValue(htmlElement, 'border-bottom-width');  
+  // const width = htmlElement.clientWidth + leftBorder + rightBorder;
+  // const height = htmlElement.clientHeight + topBorder + bottomBorder;
+
+  let rect = htmlElement.getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height;
+
+  return { width, height };
+}
+
+
+// export async function cloneCanvasElement(canvas: HTMLCanvasElement) {
+//   const dataURL = canvas.toDataURL()
+//   if (dataURL === 'data:,') {
+//     return canvas.cloneNode(false) as HTMLCanvasElement
+//   }
+//   return createImage(dataURL)
+// }
+
+
+// export async function cloneVideoElement(video: HTMLVideoElement, options) {
+//   const poster = video.poster;
+//   const contentType = getMimeType(poster);
+//   const dataURL = await resourceToDataURL(poster, contentType, options);
+//   return createImage(dataURL);
+// }
+
+
+// export function cloneInputValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
+//   if (nativeNode instanceof HTMLTextAreaElement) {
+//     clonedNode.innerHTML = nativeNode.value
+//   }
+//   if (nativeNode instanceof HTMLInputElement) {
+//     clonedNode.setAttribute('value', nativeNode.value)
+//   }
+// }
+
+
+// export function cloneSelectValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
+//   if (nativeNode instanceof HTMLSelectElement) {
+//     const clonedSelect = clonedNode as any as HTMLSelectElement
+//     const selectedOption = Array.from(clonedSelect.children).find(
+//       (child) => nativeNode.value === child.getAttribute('value'),
+//     )
+
+//     if (selectedOption) {
+//       selectedOption.setAttribute('selected', '')
+//     }
+//   }
+// }
+
+
+export const isInstanceOfElement = (node, instance) => {
+  if (node instanceof instance) return true;
+  const nodePrototype = Object.getPrototypeOf(node);
+  if (!nodePrototype) return false;
+  return (nodePrototype.constructor.name === instance.name || isInstanceOfElement(nodePrototype, instance));
+}
+
+
+export async function svgToDataURL(svg: SVGElement): Promise<string> {
+  return Promise.resolve()
+    .then(() => new XMLSerializer().serializeToString(svg))
+    .then(encodeURIComponent)
+    .then((html) => `data:image/svg+xml;charset=utf-8,${html}`)
+}

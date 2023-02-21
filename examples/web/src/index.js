@@ -114,56 +114,17 @@ window.addEventListener('load', () => {
   /* Engine */
   const canvas = document.getElementById('viewport');
 
-  // Scene template 0 (built from the util func):
-  // let size = 30;
-  // let surfaces = ION.addDefaultSurfaces(null, 'ground_0', size);
-  // let surfaces = ION.addDefaultSurfaces(null, 'room_0', size);
+
+  let guiScene = ION.getTemplateScene({
+    type: 'ground_0',
+    gridHelper: false,
+    lights: true,
+  });
+
   
-  // let guiScene = ION.createGUITemplateScene({
-  //   lights: true,
-  //   fog: false,
-  //   size: 50, // size
-
-  //   // surfaces: surfaces,
-  // });
-
-  // // Scene template 0: built from the util func
-  // let size = 150;
-  // let guiScene = ION.createGUITemplateScene({
-  //   lights: false,
-  //   fog: false,
-  //   size: size,
-  // });
-
-  // Scene template 1:
-  // let size = 150;
-  // let guiScene = ION.createGUITemplateScene({
-  //   lights: false,
-  //   fog: new THREE.Fog(backgroundColor, size/4, size/2.5),
-  //   size: size,
-  //   background: new THREE.Color( '#1a1a1a' ),
-  //   surfaces: getSurfaces(size),
-  // });
-
-
-
-// Scene template 3: without any surfaces in space...
-
-
-
-// let guiScene = ION.getTemplateScene({
-//     width: 80, 
-//     height: 12,
-//     gridHelper: false,
-    
-//   });
-
-  let guiScene = new THREE.Scene();
-  guiScene.background = new THREE.Color('#313131');
-
   const engine = new ION.Engine({
-    canvas: canvas, 
-    scene: guiScene, 
+    canvas: canvas,
+    scene: guiScene,
     fullScreen: true,
     control: ION.SpaceControl,
     // control: ION.FirstPersonControl,
@@ -173,19 +134,19 @@ window.addEventListener('load', () => {
     controlOptions: {
       vrTeleportEnabled: false, 
       vrTeleportList: [], 
-      framebufferScaleFactor: 2, // 2.0 lower this for for higher performance
+      framebufferScaleFactor: 2.0, // lower this for for higher performance
     },
     vrEnabled: true,
 
     graphicsOptions: {
-      shadowMapEnabled: false,  // was true
+      shadowMapEnabled: true,  // was true // this lowers the vr fps from 90~ to 45~
       shadowMapType: null,
       outputEncoding: null, 
-      toneMapping: false, // was null
-      physicallyCorrectLights: false, // was true
+      toneMapping: null, // was null
+      physicallyCorrectLights: true, // was true
     },
-
   });
+
 
   // /* Component */
   // const rootElement = document.getElementById('root');
@@ -202,13 +163,13 @@ window.addEventListener('load', () => {
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 0.5,
-    transparent: true,
+    transparent: false,
     // renderTimeout: ,
   });
   guiComponent.position.y = 4;
   guiComponent.position.z = -1;
-  guiComponent.position.x = -3;
-  guiComponent.rotateY(0.2);
+  guiComponent.position.x = -1.5;
+  // guiComponent.rotateY(0.2);
 
   /* Entity */
   let guiEntity = new ION.Entity();
@@ -216,100 +177,41 @@ window.addEventListener('load', () => {
   engine.addEntity(guiEntity);
 
 
-
-  // const rootElement2 = document.getElementById('root');
-  // const guiComponent2 = new ION.GUIComponent({
-  //   rootElement: rootElement2,
-  //   ratio: 1,
-  // });
-  // guiComponent2.position.y = 5;
-  // guiComponent2.position.x = 4;
-  // guiComponent2.rotateY(-0.3);
-
-  // /* Entity */
-  // let guiEntity2 = new ION.Entity();
-  // guiEntity2.addComponent(guiComponent2);
-  // engine.addEntity(guiEntity2);
-
-
-
-
-  /* keyboard GUI Component */
-
-  // let Keyboard = window.SimpleKeyboard.default;
-
-  // let keyboard = new Keyboard({
-  //   onChange: input => onChange(input),
-  //   onKeyPress: button => onKeyPress(button)
-  // });
-
-  // keyboard.addButtonTheme(
-  //   "\` ` 1 2 3 4 5 6 7 8 9 0 - = {bksp} {tab} q w e r t y u i o p [ ] \\ {lock} a s d f g h j k l ; ' " 
-  //   + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}',
+  setTimeout(() => {
+    console.log('Appending span element');
+    const span = document.createElement('span');
+    span.innerHTML = 'HEY </br></br></br></br></br> SPAN';
+    // span.append('SPAN');
     
-  //   "customKeyboardBtnClass"
-  // );
+    rootElement.appendChild(span);
 
-  // // let layout = {
-  // //   'default': [
-  // //     '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
-  // //     '{tab} q w e r t y u i o p [ ] \\',
-  // //     '{lock} a s d f g h j k l ; \' {enter}',
-  // //     '{shift} z x c v b n m , . / {shift}',
-  // //     '.com @ {space}'
-  // //   ],
-  // //   'shift': [
-  // //     '~ ! @ # $ % ^ &amp; * ( ) _ + {bksp}',
-  // //     '{tab} Q W E R T Y U I O P { } |',
-  // //     '{lock} A S D F G H J K L : " {enter}',
-  // //     '{shift} Z X C V B N M &lt; &gt; ? {shift}',
-  // //     '.com @ {space}'
-  // //   ]
-  // // };
+    const div = document.createElement('div');
+    div.textContent = 'DIV INSIDE';
+    span.appendChild(div);
 
-  // // keyboard.setOptions({layout});
-
-
-  // keyboard.setOptions({
-  //   layoutName: 'appleIOS'
-  // });
+    
+    setTimeout(() => {
+      console.log('Dispatch mouseover event On btn_1');
+      dispatchMouseEvent(document.getElementById('btn_1'), 'mouseover', 1, 1);
   
+    }, (100));
+
+    setTimeout(() => div.remove(), 200);
+
+  }, (700));
 
 
-
-  // /**
-  //  * Update simple-keyboard when input is changed directly
-  //  */
-  // document.querySelector(".input").addEventListener("input", event => {
-  //   keyboard.setInput(event.target.value);
-  // });
-  // // console.log(keyboard);
-
-  // function onChange(input) {
-  //   document.querySelector(".input").value = input;
-  //   // console.log("Input changed", input);
-  // }
-
-  // function onKeyPress(button) {
-  //   // console.log("Button pressed", button);
-
-  //   /**
-  //    * If you want to handle the shift and caps lock buttons
-  //    */
-  //   if (button === "{shift}" || button === "{lock}") handleShift();
-  // }
-
-  // function handleShift() {
-  //   let currentLayout = keyboard.options.layoutName;
-  //   let shiftToggle = currentLayout === "default" ? "shift" : "default";
-
-  //   keyboard.setOptions({
-  //     layoutName: shiftToggle
-  //   });
-  // }
-
-  
-
+  function dispatchMouseEvent(element, event, clientX, clientY) {    
+    const mouseEvent = new MouseEvent(event, {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        // https://stackoverflow.com/a/63611994
+        clientX,
+        clientY,
+    });
+    element.dispatchEvent(mouseEvent);
+  }
 
 
   let Keyboard = window.SimpleKeyboard.default;
@@ -417,7 +319,6 @@ window.addEventListener('load', () => {
   
 
 
-
   keyboard.addButtonTheme(
     "\` ` 1 2 3 4 5 6 7 8 9 0 - = {bksp} {tab} q w e r t y u i o p [ ] \\ {lock} a s d f g h j k l ; ' " 
     + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}',
@@ -433,8 +334,6 @@ window.addEventListener('load', () => {
 
 
 
-
-
   const simpleKeyboardElm = document.getElementsByClassName('simple-keyboard')[0];
   // rootElement.style.background = '#000000';
   const simpleKeyboardComp = new ION.GUIComponent({
@@ -444,8 +343,8 @@ window.addEventListener('load', () => {
   });
   simpleKeyboardComp.position.y = 3;
   simpleKeyboardComp.position.z = -1;
-  simpleKeyboardComp.position.x = 1;
-  // simpleKeyboardComp.rotateY(0.2);
+  simpleKeyboardComp.position.x = 1.9;
+  simpleKeyboardComp.rotateY(-0.2);
 
   /* Entity */
   let simpleKeyboardEntity = new ION.Entity();
@@ -462,17 +361,13 @@ window.addEventListener('load', () => {
   });
   keyboardInputComp.position.y = 4;
   keyboardInputComp.position.z = -1;
-  keyboardInputComp.position.x = 1;
-  // keyboardInputComp.rotateY(0.2);
+  keyboardInputComp.position.x = 1.9;
+  keyboardInputComp.rotateY(-0.2);
 
   /* Entity */
   let keyboardInputEntity = new ION.Entity();
   keyboardInputEntity.addComponent(keyboardInputComp);
   engine.addEntity(keyboardInputEntity);
-
-
-
-
 
 
   /* System */
@@ -481,125 +376,6 @@ window.addEventListener('load', () => {
   
   /* Engine Start */
   engine.start();
-
-
-  const unit = 0.1;
-
-  // x -> towards x
-  // y -> towards y
-  // z -> towards z
-
-
-
-
-
-
-
-
-
-
-  // const loader = new GLTFLoader();
-
-  // // Optional: Provide a DRACOLoader instance to decode compressed mesh data
-  // const dracoLoader = new DRACOLoader();
-  // dracoLoader.setDecoderPath('three/examples/js/libs/draco/');
-  // loader.setDRACOLoader( dracoLoader );
-  
-
-
-  // // Load a glTF resource
-  // loader.load(
-  //     // resource URL
-  //     '/mz_base.glb', 
-  //     // called when the resource is loaded
-  //     ( gltf ) => {
-
-  //       engine.scene.add( gltf.scene );
-          
-  //       gltf.animations; // Array<THREE.AnimationClip>
-  //       gltf.scene; // THREE.Group
-  //       gltf.scenes; // Array<THREE.Group>
-  //       gltf.cameras; // Array<THREE.Camera>
-  //       gltf.asset; // Object
-
-
-
-  //       // this.mixer = new THREE.AnimationMixer( gltf.scene );
-  //       // gltf.animations.forEach((clip) => {
-  //       //     console.log('heeeee');
-  //       //     this.mixer.clipAction( clip ).play();
-  //       // });
-
-
-  //       gltf.scene.position.set(0,-4,0);
-
-        
-  //       // gltf.scene.scale.set(2,2,2);
-
-  //       // const mesh = gltf.scene.children[0];
-  //       // const fooExtension = mesh.userData.gltfExtensions.EXT_foo;
-
-  //     // gltf.parser.getDependency( 'bufferView', fooExtension.bufferView )
-  //     //     .then( function ( fooBuffer ) { ... } );
-
-        
-  //       // Note: normals not needed since it's in the gltf file already!
-
-        
-  //       // for (let child of gltf.scene.children) {  this is not traversing all children (boundary)!!! 
-  //       gltf.scene.traverse((child) => {
-  //           // child.geometry
-  //           let meshName = child.userData.name;
-  //           // console.log(meshName);
-
-  //           // if(child.name.includes('next_btn')){
-  //           //     // this.nextBTNOriginalPos = new THREE.Vector3();
-  //           //     // this.nextBTNOriginalPos.copy(child.position);
-  //           //     // this.nextBTNMesh = child;
-                
-  //           //     this.sceneMeshes.push(child);
-  //           // }
-  //           // if(child.name.includes('pre_btn')){
-  //           //     this.preBTNOriginalPos = new THREE.Vector3();
-  //           //     this.preBTNOriginalPos.copy(child.position);
-  //           //     this.preBTNMesh = child;
-
-  //           //     this.sceneMeshes.push(child);
-  //           // }
-
-  //           // if (child.isMesh){
-                
-  //           //     // console.log(meshName);
-  //           //     // console.log(child);
-  //           //     // console.log(meshName);
-
-  //           //     // this.sceneMeshGroup.add(child);
-  //           //     this.sceneMeshes.push(child);
-  //           // }
-  //       });
-
-  //       // this.isMainSceneLoaded = true;
-  //       console.log('Main Scene loaded...');
-
-  //     },
-  //     // called while loading is progressing
-  //     function ( xhr ) {
-  //         // console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-  //     },
-  //     // called when loading has errors
-  //     function ( error ) {
-  //         console.log( 'An GLTF error happened: ' );
-  //         console.log(error);
-  //     }
-  // );
-
-  
-
-
-
-
-
-
 
 
 });

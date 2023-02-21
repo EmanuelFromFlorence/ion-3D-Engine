@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { concreteNormalDataURL } from '../core/constants';
+import { ionicTileImageURI, } from '../core/constants';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { setDefault } from '../core/utils/utils';
 
 
@@ -127,7 +129,7 @@ export const createCubicPoints = ({cubeSize = null, pointCount = null, noiseOffs
     const pointsGeometry = new THREE.BufferGeometry();
     pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pointPosisions, 3));
 
-    // THREE.Points INSTANCE UISNG THREE.PointsMaterial   
+    // THREE.Points INSTANCE UISNG THREE.PointsMaterial
     const pointsMaterial = new THREE.PointsMaterial({
         color: 0xf5bc0e,
         size: pointSize,
@@ -180,7 +182,6 @@ export const generateSprite = (gradientColors) => {
 }
 
 
-
 export const createCircleLine = (lineCircleRadius) => {
     let linePosisions = [];
     let lineColors = [];
@@ -214,7 +215,7 @@ export const createLine = (linePosisions, lineColors, lineMaterial) => {
     }
 
     if (!lineMaterial){
-        const lineMaterial = new THREE.LineBasicMaterial({
+        lineMaterial = new THREE.LineBasicMaterial({
             color: 0xffffff,
             linewidth: 1, // in world units with size attenuation, pixels otherwise
             vertexColors: true,
@@ -233,8 +234,9 @@ export const createLine = (linePosisions, lineColors, lineMaterial) => {
 
 
 export function getTemplateScene({
-        width = 80, 
-        height = 20, 
+        type = 'ground_0',
+        width = 60, 
+        height = 60, 
         surfaces = null,
         gridHelper = false, 
         lights = null,
@@ -247,140 +249,99 @@ export function getTemplateScene({
         },
     } = {}){
     
+    if (type === 'ground_0') {
+        return getGround0Scene({
+            type: type,
+            width: 60, 
+            height: height,
+            surfaces: surfaces,
+            lights: lights,
+        });
+    }
+
+}
+
+
+export function getGround0Scene({
+        type = 'ground_0',
+        width = 80,
+        height = 80,
+        background = true,
+        surfaces = true,
+        lights = null,
+        points = true,
+    } = {}){
     const templateScene = new THREE.Scene(); // new THREE.Object3D();
 
-    const backgroundColor = '#ffffff';
+    const backgroundColor = '#667176';
     templateScene.background = new THREE.Color(backgroundColor);
 
+    if (setDefault(background)) {
+        const loader = new THREE.CubeTextureLoader();
+        background = loader.load([
+            '../../resources/background/px.png',
+            '../../resources/background/nx.png',
+            '../../resources/background/py.png',
+            '../../resources/background/ny.png',
+            '../../resources/background/pz.png',
+            '../../resources/background/nz.png',
+        ]);
+    }
+    templateScene.background = background;
+
     if (setDefault(lights)) {
-        let dirLight = new THREE.DirectionalLight('#ffffff', 0.4);
-        dirLight.position.set(0, height/2, 0);
-        dirLight.target.position.set(0, 0, 0);
-        dirLight.castShadow = true;
-        // dirLight.shadow.autoUpdate = false;
-        templateScene.add(dirLight);
-
-        const pointLight = new THREE.PointLight( '#ffffff', 10, 200 );
-        pointLight.castShadow = true;
-        pointLight.position.set( width/10, height/3, width/10 );
-        templateScene.add(pointLight);
-
-        const pointLight2 = new THREE.PointLight( '#ffffff', 10, 200 );
-        pointLight2.castShadow = true;
-        pointLight2.position.set( -width/10, height/3, -width/10 );
-        templateScene.add(pointLight2);
-        
-        let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
-        // ambientLight.shadow.autoUpdate = false; // errored
+        let ambientLight = new THREE.AmbientLight('#fff2de', 4);
         templateScene.add(ambientLight);
-
     }
 
     if (setDefault(surfaces)) {
-        const normalMap = getRepeatingTexture(concreteNormalDataURL, width, height);
-        // const normalMap = new THREE.TextureLoader().load(concreteNormalDataURL);
-        normalMap.needsUpdate = true;
-
+        const texture = getRepeatingTexture(ionicTileImageURI, width/2, height/2);
         
-        const surfaceMaterial = new THREE.MeshStandardMaterial({
-            color: new THREE.Color('#9abeda'),
-            normalMap: normalMap,
-            normalScale: new THREE.Vector2(0.7, 0.7),
-            // lightMapIntensity : 1,
-            side: THREE.DoubleSide,
+        const floorMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color('#c2e9fa'), // You can change the texture color!
+            map: texture,
         });
-        // surfaceMaterial.receiveShadow = true;
-        surfaceMaterial.needsUpdate = true;
+        floorMaterial.receiveShadow = true;
 
-
-        const floorGeometry = new THREE.PlaneGeometry( width, width );
+        const floorGeometry = new THREE.PlaneGeometry( width, height );
         floorGeometry.rotateX( - Math.PI / 2 );
 
-        const floorMesh = new THREE.Mesh( floorGeometry, surfaceMaterial );
-        // floorMesh.castShadow = true; //default is false
-        floorMesh.receiveShadow = true; //default
+        const floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
         floorMesh.position.y = 0;
-        
 
         templateScene.add(floorMesh);
-
-
-        // Wall Material:   
-        const wallMaterial = new THREE.MeshStandardMaterial({
-            color: new THREE.Color('#466882'),
-            side: THREE.DoubleSide,
-        });
-
-
-        const backWallGeometry = new THREE.PlaneGeometry( width, height );
-        const backWallMesh = new THREE.Mesh( backWallGeometry, wallMaterial );
-        backWallMesh.position.set(0, height/2, width/2);
-        backWallMesh.rotation.x = Math.PI
-        templateScene.add(backWallMesh);
-
-
-        const frontWallMesh = backWallMesh.clone();
-        frontWallMesh.position.set(0, height/2, -width/2);
-        templateScene.add(frontWallMesh);
-
-
-        const rightWallMesh = backWallMesh.clone();
-        rightWallMesh.position.set(width/2, height/2, 0);
-        rightWallMesh.rotation.y = Math.PI/2;
-        templateScene.add(rightWallMesh);
-
-
-        const leftWallMesh = backWallMesh.clone();
-        leftWallMesh.position.set(-width/2, height/2, 0);
-        leftWallMesh.rotation.y = Math.PI/2;
-        templateScene.add(leftWallMesh);
-
-
-        const ceilingMaterial = new THREE.MeshStandardMaterial({
-            color: new THREE.Color('#ffffff'),
-        });
-        const ceilingMesh = floorMesh.clone();
-        ceilingMesh.material = ceilingMaterial;
-        ceilingMesh.position.set(0, height, 0);
-        const grid = new THREE.GridHelper( width/2, width/2, 0x000000, 0x000000 );
-        grid.material.opacity = 0.6;
-        grid.material.transparent = true;
-        grid.position.set(0, -height*0.001, 0);
-        grid.scale.set(2, 0, 2);
-        ceilingMesh.add(grid);
-        templateScene.add(ceilingMesh);
-
-
-        const geometry = new THREE.BoxGeometry( 2,2,2);
-        const box = new THREE.Mesh( geometry, surfaceMaterial );
-        box.castShadow = true;
-        // box.receiveShadow = true;
-        box.position.y = 2;
-        templateScene.add(box);
-
     }
 
-    if (setDefault(gridHelper)) {
-        const grid = new THREE.GridHelper( width, width, 0x000000, 0x000000 );
-        grid.material.opacity = 0.1;
-        grid.material.transparent = true;
-        grid.position.y = 0.01;
-        templateScene.add( grid );
-    }
+    if (setDefault(points)) {
+        const size = width;
+        let circleRadius = size/2;
+        let offset = size/6;
     
-    if (setDefault(platform)) {
-        platformOptions.radius = platformOptions.radius || Math.sqrt(width/2);
-        platformOptions.platformHeight = platformOptions.platformHeight || 0.4;
-        platformOptions.platformSegments = platformOptions.platformSegments || 64;
-        const platform = getPlatformMesh(platformOptions.platformMaterial, platformOptions.radius, platformOptions.platformHeight, platformOptions.platformSegments);
-        templateScene.add(platform);
+        const circlePointsMesh1 = createCirclePoints({
+            pointCircleRadius: circleRadius,
+            pointCount: 500,
+            noiseOffset: offset,
+            pointSize: 0.15,
+        });
+        circlePointsMesh1.rotateX( Math.PI / 2 );
+        circlePointsMesh1.position.y = size/3.8;
+        templateScene.add( circlePointsMesh1 );
+    
+        const cubicPointsMesh1 = createCubicPoints({
+            cubeSize: circleRadius,
+            pointCount: 70,
+            noiseOffset: offset,
+            pointSize: 0.15,
+        });
+        cubicPointsMesh1.position.set(0, size/4, 0);
+        templateScene.add( cubicPointsMesh1 );
+    }else {
+        templateScene.add(points);
     }
-
-
-    templateScene.fog = new THREE.Fog(backgroundColor, width/8, width/0.9);
-  
+ 
     return templateScene;
 }
+
 
 export function getRepeatingTexture(imgDataURI, width, height) {
     const texture = new THREE.TextureLoader().load(imgDataURI);
@@ -404,10 +365,18 @@ export function getPlatformMesh(platformMaterial, radius, platformHeight, platfo
     geometry.computeBoundingSphere();
     geometry.computeBoundingBox();
     
+    // const normalMap = new THREE.TextureLoader().load(concreteNormalDataURL);
+    // normalMap.repeat.set(radiusTop, radiusTop);
+    // normalMap.wrapS = THREE.RepeatWrapping;
+    // normalMap.wrapT = THREE.RepeatWrapping;
+    // // normalMap.needsUpdate = true;
+
     let material;
     if (!platformMaterial) {
         material = new THREE.MeshStandardMaterial({
-            color: new THREE.Color('#aac1d2'),
+            color: new THREE.Color('#bbbbbb'),
+            // normalMap: normalMap,
+            normalScale: new THREE.Vector2(0.06, 0.06),
             metalness: 0.6, // 0-1
             roughness: 0.2,
         });
@@ -449,7 +418,6 @@ export function getPlatformMesh(platformMaterial, radius, platformHeight, platfo
     // neon.position.set(0, platformHeight/2, 0);
     neon.rotateX(Math.PI/2);
     platform.add(neon);
-
 
     return platform;
 }
