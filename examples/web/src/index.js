@@ -63,52 +63,6 @@ function generateCanvasTexture() {
 }
 
 
-function getSurfaces(size) {
-  let surfaces = new THREE.Object3D();
-  
-
-  // const texture = new THREE.TextureLoader().load(textureImageData);
-  const texture = new THREE.Texture(generateCanvasTexture());
-  
-  // texture.image = img;
-  // texture.repeat.set(size, size); // (timesToRepeatHorizontally, timesToRepeatVertically)
-  // texture.wrapS = THREE.RepeatWrapping;
-  // texture.wrapT = THREE.RepeatWrapping;
-  texture.needsUpdate = true;  // important!
-
-  // const floorMaterial = new THREE.MeshBasicMaterial({
-  //   color: '#ffffff',
-  //   map: texture,
-  //   // side: THREE.DoubleSide
-  // });
-
-  // MeshStandardMaterial needs lights:
-  const floorMaterial = new THREE.MeshBasicMaterial({
-    // color: '#ffffff',
-    
-    map: texture,
-    aoMap: texture,
- 
-    // lightMap: texture,
-    
-    fog: true,
-
-  });
-  // floorMaterial.needsUpdate = true;
-
-  const floorGeometry = new THREE.PlaneGeometry( size, size );
-  floorGeometry.rotateX( - Math.PI / 2 );
-
-  const floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
-  // floorMesh.receiveShadow = true;
-  floorMesh.position.y = 0;
-  surfaces.add(floorMesh);
-
-  return surfaces;
-}
-
-
-
 window.addEventListener('load', () => {
   
   /* Engine */
@@ -121,7 +75,7 @@ window.addEventListener('load', () => {
     lights: true,
   });
 
-  
+
   const engine = new ION.Engine({
     canvas: canvas,
     scene: guiScene,
@@ -139,11 +93,11 @@ window.addEventListener('load', () => {
     vrEnabled: true,
 
     graphicsOptions: {
-      shadowMapEnabled: true,  // was true // this lowers the vr fps from 90~ to 45~
+      shadowMapEnabled: false,  // was true // this lowers the vr fps from 90~ to 45~
       shadowMapType: null,
       outputEncoding: null, 
       toneMapping: null, // was null
-      physicallyCorrectLights: true, // was true
+      physicallyCorrectLights: false, // was true
     },
   });
 
@@ -321,14 +275,16 @@ window.addEventListener('load', () => {
 
   keyboard.addButtonTheme(
     "\` ` 1 2 3 4 5 6 7 8 9 0 - = {bksp} {tab} q w e r t y u i o p [ ] \\ {lock} a s d f g h j k l ; ' " 
-    + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}',
-    
+    + '{enter} {shift} z x c v b n m , . / {shift} .com @ {space} ~ ! @ # $ % ^ & * ( ) _ + {bksp} {tab} Q W E R T Y U I O P { } | {lock} A S D F G H J K L : " {enter} {shift} Z X C V B N M < > ? {shift} .com @ {space}'
+    + " 😀 😊 😅 😂 🙂 😉 😍 😛 😠 😎 "
+    + " 😏 😬 😭 😓 😱 😪 😬 😴 😯 "
+    + " 😐 😇 🤣 😘 😚 😆 😡 😥 😓 🙄 ",
     'customKeyboardBtnClass'
   );
   // this.keyboard.addButtonTheme("a b c {enter}", "myClass1 myClass2");
 
   keyboard.addButtonTheme(
-    "{alt} {smileys} {altright} {downkeyboard}",
+    "{default} {alt} {smileys} {altright} {downkeyboard} {shiftactivated} {back}",
     'customKeyboardBtnClass1'
   );
 

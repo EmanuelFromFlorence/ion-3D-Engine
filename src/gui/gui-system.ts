@@ -6,6 +6,23 @@ import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
 
 
+
+function generateCanvasTexture() {
+    let size = 16;
+    let canvas2 = document.createElement("canvas");
+    canvas2.width = size;
+    canvas2.height = size;
+    let context = canvas2.getContext("2d");
+    context.rect(0, 0, size, size);
+    context.fillStyle = "white";
+    context.fill();
+
+    const texture = new THREE.CanvasTexture(canvas2);
+    return texture;
+  }
+
+
+
 export class GUISystem extends System{
     aimRaycaster: any;
     engine: Engine;
@@ -35,6 +52,7 @@ export class GUISystem extends System{
     throttledUpdateAim: () => void;
     throttledUpdateVRAim: () => void;
     throttledRenderGUIComponent: () => void;
+    texture: any;
 
 
     constructor(){ // {}: NamedParameters
@@ -49,6 +67,8 @@ export class GUISystem extends System{
         this.initTrottledMethods();
         this.initUIEvents();
         this.initRaycaster();
+
+        this.texture = generateCanvasTexture();
     }
 
 
@@ -170,8 +190,7 @@ export class GUISystem extends System{
             // guiComponent.material.dispose(); /////////// SHOULD Uncomment to solve the memoery leak but performance issue.
             guiComponent.throttledDisposeMaterialGUIComponent();
             guiComponent.htmlTexture = new THREE.Texture(image);
-            // guiComponent.htmlTexture.matrixAutoUpdate = true;
-            guiComponent.htmlTexture.generateMipmaps = true; // works like anti-aliasing default is true.
+            guiComponent.updateTextureConstants();
 
             if(!guiComponent.htmlTexture.needsUpdate || !guiComponent.material.needsUpdate){
                 guiComponent.htmlTexture.needsUpdate = true;
@@ -179,6 +198,10 @@ export class GUISystem extends System{
             }
         
             guiComponent.material.map = guiComponent.htmlTexture;
+
+            // TODO: a user Config to set this or not:
+            // guiComponent.material.lightMap = this.texture;
+            // guiComponent.material.lightMapIntensity = 1.1;
 
             image.remove();
             image = null;

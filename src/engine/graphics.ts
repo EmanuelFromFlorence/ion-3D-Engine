@@ -17,10 +17,10 @@ export const createWebGLRenderer = (canvas: HTMLCanvasElement, shadowMapEnabled,
     // This changes the colors dramatically and shadoes are not good too (although maybe needed for some of the post processing)!!!
     
     // Why to do this: https://stackoverflow.com/questions/69962432/when-do-we-need-to-use-renderer-outputencoding-three-srgbencoding
-    renderer.outputEncoding = outputEncoding || THREE.sRGBEncoding;
+    if (outputEncoding) renderer.outputEncoding =  outputEncoding; // || THREE.BasicDepthPacking;
     // Why to do this https://www.youtube.com/watch?v=6XvqaokjuYU
     // Docs: https://threejs.org/examples/#webgl_tonemapping
-    if (toneMapping !== false) renderer.toneMapping = toneMapping || THREE.ACESFilmicToneMapping; // not much performance diff...
+    if (toneMapping !== false) renderer.toneMapping = toneMapping || THREE.LinearToneMapping; // LinearToneMapping not much performance diff...
 
     renderer.physicallyCorrectLights = (physicallyCorrectLights === true)? true: false;
     return renderer;

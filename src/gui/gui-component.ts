@@ -10,6 +10,7 @@ interface NamedParameters {
     material: THREE.Material;
     transparent: boolean;
     renderTimeout: number;
+    textureConstants: any;
 }
 
 
@@ -33,6 +34,7 @@ export class GUIComponent extends MeshComponent{
     rootElementWidth: any;
     widthInWorldUnit: any;
     heightInWorldUnit: any;
+    textureConstants: any;
 
 
     constructor({
@@ -42,6 +44,7 @@ export class GUIComponent extends MeshComponent{
         material = null,
         transparent = false,
         renderTimeout = Infinity, // milliseconds
+        textureConstants = {},
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
@@ -55,10 +58,14 @@ export class GUIComponent extends MeshComponent{
         }
 
         if (!material) material = new THREE.MeshBasicMaterial({
-            // color: '#ffffff', // no need
+            // color: '#fff', // no need
             side: THREE.DoubleSide,
             transparent: transparent,
             fog: false,
+
+            // refractionRatio: 0.1,
+            // combine: THREE.MixOperation,
+            // reflectivity: 0.2,
         }); // #282c34
 
         if (!renderTimeout || typeof renderTimeout !== 'number') throw new TypeError('Invalid renderTimeout is passed!');
@@ -69,6 +76,7 @@ export class GUIComponent extends MeshComponent{
             htmlFilter,
             material,
             renderTimeout,
+            textureConstants,
         });
     }
 
@@ -82,6 +90,7 @@ export class GUIComponent extends MeshComponent{
         this.compId = THREE.MathUtils.generateUUID();
         this.guiStyleMap = new Map();
         this.setSizeFromHTMLNode(this.rootElement);
+        this.textureConstants = props.textureConstants;
 
         this.isAiming = false;
         this.lastProcess = 0;
@@ -143,7 +152,7 @@ export class GUIComponent extends MeshComponent{
     }
 
 
-    public setSizeFromHTMLNode = (htmlNode) => {        
+    public setSizeFromHTMLNode = (htmlNode) => {
         const rect = htmlNode.getBoundingClientRect();
         let width = rect.width;
         let height = rect.height;
@@ -167,6 +176,73 @@ export class GUIComponent extends MeshComponent{
         this.heightInWorldUnit = heightInWorldUnit;
 
         return true;
+    }
+
+
+    public updateTextureConstants = () => {
+        // https://threejs.org/docs/index.html#api/en/constants/Textures
+
+        // How the texture is sampled when a texel covers more than one pixel.
+        // NearestFilter returns the value of the texture element that is nearest (in Manhattan distance) 
+        // to the specified texture coordinates.
+        // LinearFilter is the default and returns the weighted average of the four texture elements that 
+        // are closest to the specified texture coordinates.
+        // THREE.NearestFilter
+        // THREE.LinearFilter
+        this.htmlTexture.magFilter  = this.textureConstants.magFilter || THREE.LinearFilter;
+
+        // THREE.NearestFilter
+        // THREE.NearestMipmapNearestFilter
+        // THREE.NearestMipmapLinearFilter
+        // THREE.LinearFilter
+        // THREE.LinearMipmapNearestFilter
+        // THREE.LinearMipmapLinearFilter
+        this.htmlTexture.minFilter  = this.textureConstants.minFilter || THREE.LinearMipmapLinearFilter;
+
+        // THREE.UVMapping
+        // THREE.CubeReflectionMapping
+        // THREE.CubeRefractionMapping
+        // THREE.EquirectangularReflectionMapping
+        // THREE.EquirectangularRefractionMapping
+        // THREE.CubeUVReflectionMapping
+        if (this.textureConstants.mapping) this.htmlTexture.mapping = this.textureConstants.mapping;
+
+        // Whether to update the texture's uv-transform .matrix from the texture properties 
+        // .offset, .repeat, .rotation, and .center. True by default. Set this to false 
+        // if you are specifying the uv-transform matrix directly.
+        if (this.textureConstants.matrixAutoUpdate) this.htmlTexture.matrixAutoUpdate = this.textureConstants.matrixAutoUpdate;
+
+        // Whether to generate mipmaps (if possible) for a texture. True by default. 
+        // Set this to false if you are creating mipmaps manually.
+        // works sort of like anti-aliasing
+        if (this.textureConstants.generateMipmaps) this.htmlTexture.generateMipmaps = this.textureConstants.generateMipmaps;
+
+        // If set to true, the alpha channel, if present, is multiplied into the color channels 
+        // when the texture is uploaded to the GPU. Default is false.
+        if (this.textureConstants.premultiplyAlpha) this.htmlTexture.premultiplyAlpha  = this.textureConstants.premultiplyAlpha;
+
+        // If set to true, the texture is flipped along the vertical axis when uploaded to the GPU. 
+        // Default is true.
+        if (this.textureConstants.flipY) this.htmlTexture.flipY  = this.textureConstants.flipY;
+
+        // 4 by default.
+        if (this.textureConstants.unpackAlignment) this.htmlTexture.unpackAlignment  = this.textureConstants.unpackAlignment;
+        
+        // THREE.LinearEncoding is the THREE.js' default. See the texture constants page for details of other formats.
+        // THREE.LinearEncoding
+        // THREE.sRGBEncoding
+        // THREE.BasicDepthPacking
+        // THREE.RGBADepthPacking
+        if (this.textureConstants.encoding) this.htmlTexture.encoding  = this.textureConstants.encoding;
+
+        // A callback function, called when the texture is updated (e.g., when needsUpdate 
+        // has been set to true and then the texture is used).
+        if (this.textureConstants.onUpdate) this.htmlTexture.onUpdate  = this.textureConstants.onUpdate;
+        
+        // The data definition of a texture. A reference to the data source can be shared across textures. 
+        // This is often useful in context of spritesheets where multiple textures render the same data 
+        // but with different texture transformations.
+        if (this.textureConstants.source) this.htmlTexture.source  = this.textureConstants.source;
     }
 
 }

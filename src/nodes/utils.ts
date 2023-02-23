@@ -290,7 +290,16 @@ export function getGround0Scene({
     templateScene.background = background;
 
     if (setDefault(lights)) {
-        let ambientLight = new THREE.AmbientLight('#fff2de', 4);
+        // let dirLight = new THREE.DirectionalLight(0xFFFFFF, .5);
+        // // let pos = new THREE.Vector3(100, 1000, 100);
+        // dirLight.position.set(0, 20, 0);
+        // dirLight.target.position.set(0, 0, 0);
+        // // dirLight.castShadow = true;
+        // // dirLight.shadow.autoUpdate = false;
+        // templateScene.add(dirLight);
+
+
+        let ambientLight = new THREE.AmbientLight('#ffffff', 3);
         templateScene.add(ambientLight);
     }
 
@@ -298,7 +307,7 @@ export function getGround0Scene({
         const texture = getRepeatingTexture(ionicTileImageURI, width/2, height/2);
         
         const floorMaterial = new THREE.MeshStandardMaterial({
-            color: new THREE.Color('#c2e9fa'), // You can change the texture color!
+            color: new THREE.Color('#e3f0fb'), // You can change the texture color!
             map: texture,
         });
         floorMaterial.receiveShadow = true;
