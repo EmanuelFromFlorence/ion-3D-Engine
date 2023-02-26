@@ -11,14 +11,6 @@ const CHECKED_REGXP = /.*:.*checked/;
 const ENABLED_REGXP = /.*:.*enabled/;
 
 
-function convertPseudoCSSStyleRule(cssRule: any, pseudoClass: string): any{
-    let originalSelector = cssRule.selectorText.split(':')[0];
-    let newRule = '';
-    let ionClass = `ion__${getRandomInt(100, 10000000)}__${pseudoClass}`;
-    newRule = `.${ionClass} { ${cssRule.style.cssText} }`;
-    return [originalSelector, ionClass, newRule];
-}
-
 
 function copyStyleObject(style: CSSStyleDeclaration) {
     let styleCopy = {};
@@ -68,30 +60,37 @@ function setStylesOneByOne(element, style: any) {
 }
 
 
-function bindToggleEvents(originalSelector: string, ionClass: string, cssRule: CSSStyleRule, onEvent: string, offEvent: string): void{
+function bindToggleEvents(originalSelector: string, pseudoName: string, pseudoCSSRule: CSSStyleRule, onEvent: string, offEvent: string): void{
     let elements = document.querySelectorAll(originalSelector);
+    if (!elements || elements.length === 0) return;
     // saving original values for each element:
     let oldStyleMapList = [[...Array(elements.length).keys()].map(() => null)];
-    let newStyleMap = getNewStyleMap(cssRule.style);
+    let newStyleMap = getNewStyleMap(pseudoCSSRule.style); // newStyleMap is pseudo css rules...
+
+    let randIntDebug = getRandomInt(1, 1000);
 
     for (let [i, element] of elements.entries()) {
-        oldStyleMapList[i] = getOldStyleMap(newStyleMap, element.style); // window.getComputedStyle(element)
+        // skip if already processed
+        if (element.dataset['ion_pseudo__' + pseudoName]) continue;
         
+        oldStyleMapList[i] = getOldStyleMap(newStyleMap, element.style);
+
         element.addEventListener(onEvent, (e: any) => {
+            // console.debug(originalSelector + ' - ' + randIntDebug);
+            
             setStylesOneByOne(element, newStyleMap);
-            element.classList.add(ionClass);            
         });
         element.addEventListener(offEvent, (e: any) => {
             setStylesOneByOne(element, oldStyleMapList[i]);
-            element.classList.remove(ionClass);
         });
+
+        element.dataset['ion_pseudo__' + pseudoName] = true;
     }
 }
 
 
 export function bindCSSEvents(){ // <T extends HTMLElement>
     for (let stylesheet of document.styleSheets){
-        let newCSSRules = [];
         for (let cssRule of stylesheet.cssRules){
             // cssRule.selectorText
             // cssRule.cssText
@@ -102,56 +101,50 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
             // https://davidwalsh.name/dom-events-javascript
             // https://www.w3schools.com/jsref/obj_mouseevent.asp
             // https://www.w3schools.com/jsref/obj_uievent.asp
+            let originalSelector;
             switch ( true ) {
                 case cssRule instanceof CSSStyleRule && HOVER_REGXP.test(cssRule.selectorText):
-                    let [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'hover');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // (mouseenter/mouseleave) = (mouseover/mouseout)
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'mouseover', 'mouseout');
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'pointerover', 'pointerout');
+                    bindToggleEvents(originalSelector, 'hover', cssRule, 'mouseover', 'mouseout');
+                    bindToggleEvents(originalSelector, 'hover', cssRule, 'pointerover', 'pointerout');
                     break;
 
                 case cssRule instanceof CSSStyleRule && ACTIVE_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'active');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // DOMActivate which is Deprecated in favor of click
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'mousedown', 'mouseup');
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'pointerdown', 'pointerup');
+                    bindToggleEvents(originalSelector, 'active', cssRule, 'mousedown', 'mouseup');
+                    bindToggleEvents(originalSelector, 'active', cssRule, 'pointerdown', 'pointerup');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && VISITED_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'visited');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'visited', 'undovisited');
+                    bindToggleEvents(originalSelector, 'visited', cssRule, 'visited', 'undovisited');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && LINK_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'link');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'link', 'unlink');
+                    bindToggleEvents(originalSelector, 'link', cssRule, 'link', 'unlink');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && FOCUS_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'focus');
-                    newCSSRules.push(newRule);
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'focus', 'blur');
-                    // bindDOMCaptureToggleEvents(originalSelector, ionClass, 'focus', 'blur');
+                    originalSelector = cssRule.selectorText.split(':')[0];
+                    bindToggleEvents(originalSelector, 'focus', cssRule, 'focus', 'blur');
+                    // bindDOMCaptureToggleEvents(originalSelector, 'focus', 'focus', 'blur');
                     break;
                                 
                 case cssRule instanceof CSSStyleRule && CHECKED_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'checked');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // Custom events:
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'checked', 'unchecked');
+                    bindToggleEvents(originalSelector, 'checked', cssRule, 'checked', 'unchecked');
                     break;
                 
                 case cssRule instanceof CSSStyleRule && ENABLED_REGXP.test(cssRule.selectorText):
-                    [originalSelector, ionClass, newRule] = convertPseudoCSSStyleRule(cssRule, 'enabled');
-                    newCSSRules.push(newRule);
+                    originalSelector = cssRule.selectorText.split(':')[0];
                     // Custom events for users to send these in case want to enable or disable input element:
-                    bindToggleEvents(originalSelector, ionClass, cssRule, 'enabled', 'disabled');
+                    bindToggleEvents(originalSelector, 'enabled', cssRule, 'enabled', 'disabled');
                     break;
                 
                 // All CSSRule types: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule
@@ -162,13 +155,9 @@ export function bindCSSEvents(){ // <T extends HTMLElement>
 
                 default:
                     console.debug('DEFAULT in bindCSSEvents!!');
-                    // console.log(cssRule);
                     break;
             };
         }
-        newCSSRules.forEach((newRule) => {
-            stylesheet.insertRule(newRule);
-        });
     }
 }
 

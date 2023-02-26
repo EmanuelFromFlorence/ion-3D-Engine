@@ -151,13 +151,29 @@ export class GUISystem extends System{
 
         guiComponent.throttledDisposeMaterialGUIComponent = throttle(() => guiComponent.material.dispose(), 10000);
 
+        guiComponent.onAddRemoveFlagMutation = (mutationList, observer) => {
+            for (const mutation of mutationList) {
+                if (mutation.type === 'childList') {
+
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach((htmlNode) => {
+                            if (isInstanceOfElement(htmlNode, HTMLElement)) guiComponent.addedNodeProcessed = false;
+                        });
+                    }
+                }
+            }
+        };
+        const addRemoveFlagObserver = new MutationObserver(guiComponent.onAddRemoveFlagMutation);
+        const config = { attributes: false, childList: true, subtree: true };
+        addRemoveFlagObserver.observe(guiComponent.rootElement, config);
+
         await this.createGUIComponentSVG(guiComponent);
     }
 
 
     public createGUIComponentSVG = async (guiComponent) => {
         const svg = createGUISVGWrapper(guiComponent);
-        
+
         appendSVGStyle(svg, this.pageStyle);
         guiComponent.svg = svg;
         guiComponent.updateMeshAndSVGSize();
@@ -168,6 +184,11 @@ export class GUISystem extends System{
         // document.getElementById('input_11').value = this.engine.fps.toFixed(0); //////// Doesn't work!!!!!!!!!!!
         document.getElementById('input_11').setAttribute('value', this.engine.fps.toFixed(0));
         
+        if (!guiComponent.addedNodeProcessed) {
+            bindCSSEvents();
+            guiComponent.addedNodeProcessed = true;
+        }
+
         processHTMLNodeTree(guiComponent.rootElement);
         guiComponent.updateMeshAndSVGSize();
         await this.updateGUIComponentTexture(guiComponent);
