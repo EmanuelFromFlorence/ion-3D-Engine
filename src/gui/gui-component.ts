@@ -43,7 +43,7 @@ export class GUIComponent extends MeshComponent{
         ratio = 1,
         material = null,
         transparent = false,
-        renderTimeout = Infinity, // milliseconds
+        renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
         textureConstants = {},
     }: NamedParameters){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { CompleteStyleList, ExcluderKey } from '../core/constants';
+import { resourceToDataURL } from './html-to-image/dataurl';
+import { getMimeType } from './html-to-image/mimes';
 
 
 export const GUI_COMPONENT_TYPE  = 'gui_1000'
@@ -275,11 +277,23 @@ export const processHTMLNodeTree = (htmlNode) => {
   for (let childNode of htmlNode.childNodes) {
     processHTMLNodeTree(childNode);
   }
-
 }
 
 
-export const processSingleHTMLNode = (htmlNode) => {
+export const processSingleHTMLNode = async (htmlNode) => {
+
+  // TODO: should handle embedded SVGImageElement as well:
+  // !(clonedNode instanceof SVGImageElement && !isDataUrl(clonedNode.href.baseVal))
+
+  // if isDataUrl then already processed or no need to.
+  if (isInstanceOfElement(htmlNode, HTMLImageElement) && !isDataUrl(htmlNode.src)) {
+    let options = {};
+    let url = htmlNode.src;
+    const dataURL = await resourceToDataURL(url, getMimeType(url), options);
+    htmlNode.src = dataURL;    
+  }
+
+
   if (isInstanceOfElement(htmlNode, HTMLInputElement)) {
     // svg needs to have 'value' attribute
     let attrValue = htmlNode.getAttribute('value');
@@ -306,6 +320,9 @@ const concatStyle = (preCssText, style, styleName, value) => ` ${preCssText} ${s
 
 
 const isSlotElement = (node: HTMLElement): node is HTMLSlotElement => node.tagName != null && node.tagName.toUpperCase() === 'SLOT';
+
+
+export const isDataUrl = (url: string) => url.search(/^(data:)/) !== -1;
 
 
 export function getPixelValue(htmlElement: HTMLElement, styleProperty: string) {

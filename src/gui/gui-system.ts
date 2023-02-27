@@ -114,19 +114,16 @@ export class GUISystem extends System{
             let guiComponent = entity.getComponent(GUI_COMPONENT_TYPE);
 
             await this.initGUIComponent(guiComponent);
-            guiComponent.throttledUpdateGUIComponent(guiComponent);
-        
+            await guiComponent.throttledUpdateGUIComponent(guiComponent);
+
+            // Moved this into updateGUIComponent...
             // // updating and rendering gui texture for a duration after not aiming to the gui components
             // let currentTime = new Date().getTime();
-            // if (!guiComponent.lastProcess) guiComponent.lastProcess = new Date().getTime();
-            // let duration = currentTime - guiComponent.lastProcess;
-            // // runs for initially for the duration too. (if not needed change the initial value in guiComponent init func)
-            // // isAiming and lastProcess are now associated with each component
+            // if (!guiComponent.lastAimedProcess) guiComponent.lastAimedProcess = new Date().getTime();
+            // let duration = currentTime - guiComponent.lastAimedProcess;
 
-            // if (guiComponent.renderTimeout > 1000000000) {
-            //     guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
-            // } else if (!guiComponent.isAiming && duration < guiComponent.renderTimeout ) {            
-            //     guiComponent.throttledUpdateHTMLImage(guiComponent, guiComponent.rootElement, { filter: guiComponent.htmlFilter, addId: false }, { 'pageStyleMap': this.pageStyleMap, });
+            // if (duration < guiComponent.renderTimeout || guiComponent.doRender) {
+            //     await guiComponent.throttledUpdateGUIComponent(guiComponent);
             // }
 
             meshesToIntersect.push(guiComponent);
@@ -145,16 +142,21 @@ export class GUISystem extends System{
         if(guiComponent.guiSystemInitialized) return;
         guiComponent.guiSystemInitialized = true;
 
+        guiComponent.doRender = true;
+        if (!guiComponent.renderTimeout) guiComponent.renderTimeout = 5000; // user sets to infinite for constant rendering
+
         guiComponent.convertHTMLNodeOptions = { filter: guiComponent.htmlFilter };
 
         guiComponent.throttledUpdateGUIComponent = throttle((guiCompArg) => this.updateGUIComponent(guiCompArg), 60); // 20> for 60 fps
 
         guiComponent.throttledDisposeMaterialGUIComponent = throttle(() => guiComponent.material.dispose(), 10000);
 
-        guiComponent.onAddRemoveFlagMutation = (mutationList, observer) => {
+        guiComponent.onRootElementMutation = (mutationList, observer) => {
+            
+            guiComponent.doRender = true;
+
             for (const mutation of mutationList) {
                 if (mutation.type === 'childList') {
-
                     if (mutation.addedNodes.length) {
                         mutation.addedNodes.forEach((htmlNode) => {
                             if (isInstanceOfElement(htmlNode, HTMLElement)) guiComponent.addedNodeProcessed = false;
@@ -163,8 +165,8 @@ export class GUISystem extends System{
                 }
             }
         };
-        const addRemoveFlagObserver = new MutationObserver(guiComponent.onAddRemoveFlagMutation);
-        const config = { attributes: false, childList: true, subtree: true };
+        const addRemoveFlagObserver = new MutationObserver(guiComponent.onRootElementMutation);
+        const config = { attributes: true, childList: true, subtree: true };
         addRemoveFlagObserver.observe(guiComponent.rootElement, config);
 
         await this.createGUIComponentSVG(guiComponent);
@@ -184,14 +186,26 @@ export class GUISystem extends System{
         // document.getElementById('input_11').value = this.engine.fps.toFixed(0); //////// Doesn't work!!!!!!!!!!!
         document.getElementById('input_11').setAttribute('value', this.engine.fps.toFixed(0));
         
+
+        processHTMLNodeTree(guiComponent.rootElement);
+
+        // updating and rendering gui texture for a duration after not aiming to the gui components
+        let currentTime = new Date().getTime();
+        if (!guiComponent.lastAimedProcess) guiComponent.lastAimedProcess = new Date().getTime();
+        let duration = currentTime - guiComponent.lastAimedProcess;
+        if (duration > guiComponent.renderTimeout && !guiComponent.doRender) {
+            return;
+        }
+
         if (!guiComponent.addedNodeProcessed) {
             bindCSSEvents();
             guiComponent.addedNodeProcessed = true;
         }
-
-        processHTMLNodeTree(guiComponent.rootElement);
+        
         guiComponent.updateMeshAndSVGSize();
         await this.updateGUIComponentTexture(guiComponent);
+
+        guiComponent.doRender = false;
     }
 
 
@@ -208,7 +222,7 @@ export class GUISystem extends System{
         image.onload = () =>  {
             // Should dispose and solved the memeory leak:
             guiComponent.htmlTexture.dispose(); 
-            // guiComponent.material.dispose(); /////////// SHOULD Uncomment to solve the memoery leak but performance issue.
+            // guiComponent.material.dispose(); /////////// SHOULD Uncomment to solve the memory leak but performance issue.
             guiComponent.throttledDisposeMaterialGUIComponent();
             guiComponent.htmlTexture = new THREE.Texture(image);
             guiComponent.updateTextureConstants();
@@ -308,7 +322,7 @@ export class GUISystem extends System{
     public processAimEvents = (aimType, newAimingGuiComponent, pointerVector2, meshesToIntersect) => {
 
         newAimingGuiComponent.isAiming = true;
-        newAimingGuiComponent.lastProcess = new Date().getTime();
+        newAimingGuiComponent.lastAimedProcess = new Date().getTime();
 
         if (aimType === 'hamster'){
             this.aimingGuiComponent = newAimingGuiComponent;

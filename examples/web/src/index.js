@@ -25,42 +25,6 @@ root.render(
 
 
 
-function generateCanvasTexture() {
-  let size = 512;
-
-  // create canvas
-  let canvas2 = document.createElement("canvas");
-  canvas2.width = size;
-  canvas2.height = size;
-
-  // get context
-  let context = canvas2.getContext("2d");
-
-  // draw gradient
-  context.rect(0, 0, size, size);
-  let gradient = context.createLinearGradient(0, 0, size, size);
-  // Create a radial gradient
-  // The inner circle is at x=110, y=90, with radius=30
-  // The outer circle is at x=100, y=100, with radius=70
-  // const gradient = context.createRadialGradient(110, 90, 30, 100, 100, 70);
-  
-  
-  // let color1 = 'rgb(23, 20, 75)';
-  // let color2 = 'rgb(55, 19, 19)';
-
-  let color1 = 'rgb(41, 37, 118)';
-  let color2 = 'rgb(114, 32, 32)';
-
-  gradient.addColorStop(0, color1);
-  gradient.addColorStop(0.44, color1);
-  gradient.addColorStop(0.58, color2);
-  gradient.addColorStop(1, color2);
-
-  context.fillStyle = gradient;
-  context.fill();
-
-  return canvas2;
-}
 
 
 window.addEventListener('load', () => {
@@ -102,23 +66,84 @@ window.addEventListener('load', () => {
   });
 
 
-  // /* Component */
-  // const rootElement = document.getElementById('root');
-  // // should do these in GUIComponent init step:
-  // rootElement.style.position = 'fixed';
-  // rootElement.style.width = `512px`;
-  // rootElement.style.height = `512px`;
-  // rootElement.style.overflow = 'hidden'; // This will not allow the content to exceed the container
-  // // rootElement.style.overflow = 'auto'; // This will automatically add scrollbars to the container when...
-  // rootElement.style.margin = '0 auto';
 
+
+
+
+  /* React Component */
+  const reactRootElement = document.getElementById('root');
+  reactRootElement.style.width = `720px`;
+  reactRootElement.style.height = `720px`;
+  
+  const reactGuiComponent = new ION.GUIComponent({
+    rootElement: reactRootElement,
+    ratio: 0.5,
+    transparent: false,
+  });
+  // reactGuiComponent.rotateY(0.2);
+  reactGuiComponent.position.set(-2, 5, -10);
+
+  /* Entity */
+  let reactGuiEntity = new ION.Entity();
+  reactGuiEntity.addComponent(reactGuiComponent);
+  engine.addEntity(reactGuiEntity);
+
+
+  let degree = 10; 
+  const logoELm = document.getElementById('logo');
+  setInterval(() => {
+    degree = degree + 1;
+    // logoELm.style.transform = `rotate(${degree}deg)`;
+    logoELm.style.setProperty('transform', `rotate(${degree}deg)`);
+  }, 40);
+
+
+
+
+
+
+
+
+
+
+
+
+  /* React Component */
+  const sliderRootElement = document.getElementsByClassName('slider')[0];
+  
+  const sliderGuiComponent = new ION.GUIComponent({
+    rootElement: sliderRootElement,
+    ratio: 0.5,
+    transparent: true,
+  });
+  sliderGuiComponent.rotateY(-0.2);
+  sliderGuiComponent.position.set(+4, 5, -8);
+
+  /* Entity */
+  let sliderGuiEntity = new ION.Entity();
+  sliderGuiEntity.addComponent(sliderGuiComponent);
+  engine.addEntity(sliderGuiEntity);
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* Form Component */
   const rootElement = document.getElementById('container');
   // rootElement.style.background = '#000000';
   const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
     ratio: 0.5,
     transparent: false,
-    // renderTimeout: ,
+    // renderTimeout: Infinity,
   });
   guiComponent.position.y = 4;
   guiComponent.position.z = -1;
@@ -166,6 +191,14 @@ window.addEventListener('load', () => {
     });
     element.dispatchEvent(mouseEvent);
   }
+
+
+
+
+
+
+
+
 
 
   let Keyboard = window.SimpleKeyboard.default;
@@ -219,14 +252,15 @@ window.addEventListener('load', () => {
    * Update simple-keyboard when input is changed directly
    */
   document.querySelector(".keyboard-input").addEventListener("input", event => {
+    console.log('helakdflasdjflsdjflksjdflkj');
     keyboard.setInput(event.target.value);
   });
-  
-  // console.log(keyboard);
+
   
   function onChange(input) {
     console.log("Input changed", input);
     document.querySelector(".keyboard-input").value = input;
+    // document.querySelector(".keyboard-input").setAttribute('value', input);
   }
   
   function onKeyPress(button) {
@@ -324,6 +358,19 @@ window.addEventListener('load', () => {
   let keyboardInputEntity = new ION.Entity();
   keyboardInputEntity.addComponent(keyboardInputComp);
   engine.addEntity(keyboardInputEntity);
+
+
+
+
+
+
+  
+
+
+
+
+
+
 
 
   /* System */
