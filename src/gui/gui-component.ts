@@ -3,17 +3,6 @@ import { MeshComponent } from '../core/components/mesh-component';
 import { GUI_COMPONENT_TYPE, getElementSize, fixElementTopLeft, get2DSizeInWorldUnit, getPixelValue } from './utils';
 
 
-interface NamedParameters {
-    rootElement: HTMLElement;
-    htmlFilter: Function;
-    ratio: number;
-    material: THREE.Material;
-    transparent: boolean;
-    renderTimeout: number;
-    textureConstants: any;
-}
-
-
 export class GUIComponent extends MeshComponent{
     rootElement: any;
     htmlTexture: any;
@@ -45,7 +34,7 @@ export class GUIComponent extends MeshComponent{
         transparent = false,
         renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
         textureConstants = {},
-    }: NamedParameters){
+    }){
         super({type: GUI_COMPONENT_TYPE}); // new.target.name
         
         if (!rootElement) throw new TypeError('Invalid rootElement is passed!');

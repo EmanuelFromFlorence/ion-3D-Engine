@@ -3,6 +3,7 @@ export { Entity } from './core/entity';
 export { GUIComponent } from './gui/gui-component';
 export { GUISystem } from './gui/gui-system';
 export { getTemplateScene } from './nodes/utils';
+export { createGUIEntityById } from './gui/utils';
 export { zIndex, 
         SpaceControl, 
         FirstPersonControl, 

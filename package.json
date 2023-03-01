@@ -2,13 +2,18 @@
   "name": "ion-3d-engine",
   "version": "1.0.0",
   "description": "A Web3 Utility",
-  "main": "./src/index.ts",
+  "main": "./dist/ion-3d-engine.js",
+  "types": "./dist/ion-3d-engine.d.ts",
+  "files": [
+    "dist"
+  ],
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode development",
-    "start": "webpack-dev-server --mode development --https --config webpack.config.js",
+    "startdev": "webpack-dev-server --mode development --https --config dev-webpack.config.js",
+    "builddev": "webpack --config dev-webpack.config.js --mode development",
+    "package": "webpack --config prod-webpack.config.js --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,12 +21,14 @@
     "url": "git+https://github.com/5amrun/ion-3D-Engine.git"
   },
   "keywords": [
-    "Web3",
-    "NFT",
-    "Blockchain",
-    "Metaverse",
-    "Three.js",
-    "3D"
+    "3D",
+    "three.js",
+    "ui",
+    "user-interface",
+    "vr",
+    "ar",
+    "virtual reality",
+    "webXR"
   ],
   "author": "Samrun",
   "license": "Apache-2.0",
@@ -40,31 +47,32 @@
     "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.19.3",
     "@babel/preset-react": "^7.18.6",
+    "@reduxjs/toolkit": "^1.8.6",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
+    "express": "^4.18.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "ion-3d-engine": "^1.0.0",
     "nodemon": "^2.0.20",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
     "sass": "^1.55.0",
     "script-loader": "^0.7.2",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.8.3",
+    "web-vitals": "^2.1.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.11.1"
   },
-  "dependencies": {
-    "@reduxjs/toolkit": "^1.8.6",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "express": "^4.18.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "three": "^0.145.0",
-    "web-vitals": "^2.1.4"
+  "peerDependencies": {
+    "three": ">=0.145.0"
   }
 }

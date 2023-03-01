@@ -1,10 +1,27 @@
 import * as THREE from 'three';
 import { CompleteStyleList, ExcluderKey } from '../core/constants';
+import { Entity } from '../core/entity';
+import { Engine } from '../engine/engine';
+import { GUIComponent } from './gui-component';
 import { resourceToDataURL } from './html-to-image/dataurl';
 import { getMimeType } from './html-to-image/mimes';
 
 
 export const GUI_COMPONENT_TYPE  = 'gui_1000'
+
+
+// export function createGUIEntityById(rootElementId, guiCompOptions = {}) {
+//   const rootElement = document.getElementById(rootElementId);
+//   if (!rootElement) throw new TypeError(`HTML element did not found with the provided ID! ID=${rootElementId}`);
+
+//   const guiComponent = new GUIComponent({ rootElement, ...guiCompOptions });
+//   guiComponent.position.set(0, 4, -2);
+
+//   const guiEntity = new Entity();
+//   guiEntity.addComponent(guiComponent);
+  
+//   return guiEntity;
+// }
 
 
 export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {

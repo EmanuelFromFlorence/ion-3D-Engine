@@ -8,7 +8,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 
-import * as ION from '../../../src/ion-3d-engine'
+// import * as ION from '../../../src/ion-3d-engine';
+import * as ION from 'ion-3d-engine';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

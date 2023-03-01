@@ -19,7 +19,7 @@ function generateCanvasTexture() {
 
     const texture = new THREE.CanvasTexture(canvas2);
     return texture;
-  }
+}
 
 
 
