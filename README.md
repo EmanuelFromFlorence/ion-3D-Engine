@@ -14,7 +14,7 @@
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-- [Fundamentals] (#fundamentals) 
+- [Fundamentals](#fundamentals)
 - [Getting started](#getting-started) 
 	- [GUI Components](#gui-components) 
 - [Examples](#examples) 
@@ -25,10 +25,6 @@
 
 
 Please visit ion-3D-Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
-
-
-
-
 
 
 
@@ -59,12 +55,57 @@ npm install three
 ```
 
 
+## Getting started
+
+
+
+### GUI Components
+
+There are only a few steps to setup the engine and render HTML in a 3D scene:
+
+- **Step 1:** create an instance of ION Engine:
+- **Step 2:** create a GUI component with a `rootElement` and add it to an entity. The HTML element is root of the DOM tree that we want to render in 3D.
+- **Step 3:** add the GUI system and start the engine.
+
+
+```js
+/* Engine */
+const engine = new ION.Engine({
+    canvas: canvas,
+    fullScreen: true,
+    control: ION.SpaceControl, 
+    vrEnabled: true,
+});
+
+/* GUI Component */
+const rootElement = document.getElementById('sample');
+const guiComponent = new ION.GUIComponent({
+    rootElement: rootElement,
+    ratio: 0.5,
+    transparent: true,
+});
+
+/* Entity */
+const guiEntity = new ION.Entity();
+guiEntity.addComponent(guiComponent);
+engine.addEntity(guiEntity);
+
+/* System */
+const guiSystem = new ION.GUISystem();
+engine.addSystem(guiSystem);
+ 
+/* Engine Start */
+engine.start();
+
+```
 
 
 
 
 ## Fundamentals
 
+
+### Entity-component-system (ECS)
 
 ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/wiki/Entity_component_system) architecture which is a popular and powerful pattern to develop 3D applications. The building blocks of this model are:
 
@@ -75,19 +116,21 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 - **Systems:** a system is a process which acts on the entities. For example, a GUI system queries the entities with a GUI Component and handles the GUI related operations and renders them into the 3D scene.
 
 
-
-## Getting started
-
+### ion Engine and ThreeJS
 
 
 
 
-### GUI Components
+
+
 
 
 
 
 ## Examples
+
+
+
 
 
 
