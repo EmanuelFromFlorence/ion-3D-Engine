@@ -40,6 +40,7 @@ A simple and easy to use library to create 3D user interfaces that is also capab
 
 
 
+
 ## Installation
 
 ion 3D Engine is available as an [npm package](https://www.npmjs.com/package/ion-3d-engine).
@@ -100,6 +101,32 @@ engine.start();
 ```
 
 
+ion Engine API is consistent with ThreeJS API so you can simply add the GUI components to your existing ThreeJS scene. 
+
+```js
+/* Renderer: */
+const canvas = document.querySelector('#viewport');
+const renderer = new THREE.WebGLRenderer({canvas});
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+/* Scene: */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color( 0xffffff );
+
+/* Camera: */
+const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
+
+/* Render: */
+function render(time) {
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+```
+
+
+
+
 
 
 ## Fundamentals
@@ -116,12 +143,8 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 - **Systems:** a system is a process which acts on the entities. For example, a GUI system queries the entities with a GUI Component and handles the GUI related operations and renders them into the 3D scene.
 
 
+
 ### ion Engine and ThreeJS
-
-
-
-
-
 
 
 
