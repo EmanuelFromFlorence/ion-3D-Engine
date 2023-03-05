@@ -8,6 +8,7 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } from '../core/constants';
 import { VRControls } from './control/vr-control';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { getTemplateScene } from '../ion-3d-engine';
 
 
 export class Engine{
@@ -25,14 +26,31 @@ export class Engine{
     stats: any;
     vrTeleMeshesToIntersect: any[];
     fps: number;
+    prevTime: number;
+    runtimeCallbacks: any[];
     
 
-    constructor({canvas = null, scene = null, control = null, controlOptions = {vrTeleportEnabled: false, vrTeleportList: [], framebufferScaleFactor: 2.0}, vrEnabled = false, graphicsOptions = {}, fullScreen = false} = {}){
+    constructor({
+        canvas = null, 
+        scene = null, 
+        control = null, 
+        controlOptions = {
+            vrTeleportEnabled: false, 
+            vrTeleportList: [], 
+            framebufferScaleFactor: 2.0
+        }, 
+        vrEnabled = false, 
+        graphicsOptions = {}, 
+        fullScreen = true,
+        stats = true,
+        camera = null,
+    } = {}){
         this.entityRegistry = {};
         this.systemRegistry = [];
         this.canvas = canvas;
+        this.runtimeCallbacks = [];
 
-        this.initGraphics(canvas, fullScreen, graphicsOptions);
+        this.initGraphics(canvas, fullScreen, graphicsOptions, camera);
         
         this.setScene(scene);
 
@@ -40,10 +58,11 @@ export class Engine{
         this.controlOptions = controlOptions;
         this.setControl(control);
 
-        this.stats = Stats();
-        this.stats.dom.style.zIndex = zIndex + 1;
-
-        document.body.appendChild( this.stats.dom )
+        if (stats) {
+            this.stats = Stats();
+            this.stats.dom.style.zIndex = zIndex + 1;
+            document.body.appendChild( this.stats.dom )
+        }
     }
 
 
@@ -89,7 +108,6 @@ export class Engine{
                 if (fpsArr.length>60) fpsArr = fpsArr.slice(1);
                 this.fps = fpsArr.reduce((sum, x) => sum + x, 0)/fpsArr.length;
                 
-    
                 // TODO::
                 // this.scene.updateMatrixWorld();
     
@@ -100,30 +118,30 @@ export class Engine{
                 // TODO:
                 // this.renderer.clearDepth(); // important!
                 
-                
                 /* Controls */
-                this.control.updateControl(delta);
+                if (this.control) this.control.updateControl(delta);
                 if(this.vrEnabled ){ // this.renderer.xr.isPresenting
                     this.vrControl.updateControl(delta, this.controlOptions['vrTeleportList']);
                 }
 
-                this.stats.update();
+                if (this.stats) this.stats.update();
+
+                this.runtimeCallbacks.forEach((runtimeCallback) => runtimeCallback());
                 
                 prevTime = time;
             } catch (err) {
                 this.renderer.setAnimationLoop( null );
-                console.error('ION Engine Stopped.');
-                console.error(err);
+                console.error('ION Engine Stopped! Error:', err);
             }
         }
         this.renderer.setAnimationLoop( animate );
     }
 
 
-    public initGraphics = (canvas: HTMLCanvasElement, fullScreen: boolean, graphicsOptions): any => {
+    public initGraphics = (canvas: HTMLCanvasElement, fullScreen: boolean, graphicsOptions, camera): any => {
         
         this.renderer = createWebGLRenderer(canvas, graphicsOptions.shadowMapEnabled, graphicsOptions.shadowMapType, graphicsOptions.outputEncoding, graphicsOptions.toneMapping, graphicsOptions.physicallyCorrectLights);
-        this.camera = getCamera(canvas.offsetWidth / canvas.offsetHeight);
+        this.camera = camera || getCamera(canvas.offsetWidth / canvas.offsetHeight);
         
 
         // const onCanvasResize = () => {
@@ -172,9 +190,24 @@ export class Engine{
 
     
     public createScene = (): any => {
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color( 0xffffff );
+        // const scene = new THREE.Scene();
+        // scene.background = new THREE.Color( 0xffffff );
+        const scene = getTemplateScene({
+            type: 'ground_0',
+            gridHelper: false,
+            lights: true,
+        });
         return scene;
+    }
+
+
+    public setRuntimeCallback = (cb: Function): any => {
+        const runtimeCallback = function() {
+            const context = this;
+            const args = arguments;
+            cb.apply(context, args);
+        }
+        this.runtimeCallbacks.push(runtimeCallback); 
     }
 
 

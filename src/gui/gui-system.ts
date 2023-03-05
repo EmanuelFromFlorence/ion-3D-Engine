@@ -221,7 +221,7 @@ export class GUISystem extends System{
 
         image.onload = () =>  {
             // Should dispose and solved the memeory leak:
-            guiComponent.htmlTexture.dispose(); 
+            guiComponent.htmlTexture.dispose();
             // guiComponent.material.dispose(); /////////// SHOULD Uncomment to solve the memory leak but performance issue.
             guiComponent.throttledDisposeMaterialGUIComponent();
             guiComponent.htmlTexture = new THREE.Texture(image);

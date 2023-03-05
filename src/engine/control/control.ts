@@ -28,6 +28,8 @@ export class SpaceControls {
     typingMode: boolean;
 
     constructor(camera, renderer){
+        if (!camera) throw new TypeError('Camera object is not defined!');
+        if (!renderer) throw new TypeError('Renderer object is not defined!');
         this.camera = camera;
         this.renderer = renderer;
 
@@ -215,6 +217,8 @@ export class FirstPersonControls {
 
 
     constructor(camera, scene){
+        if (!camera) throw new TypeError('Camera object is not defined in FirstPersonControls!');
+        if (!scene) throw new TypeError('Scene object is not defined in FirstPersonControls!');
         this.camera = camera;
         this.scene = scene;
         this.controls = new PointerLockControls( this.camera, document.body );
@@ -510,6 +514,9 @@ export class ArcBallControls {
     controls: any;
 
     constructor(camera, renderer, scene){
+        if (!camera) throw new TypeError('Camera object is not defined in ArcBallControls!');
+        if (!renderer) throw new TypeError('Renderer object is not defined in ArcBallControls!');
+        if (!scene) throw new TypeError('Scene object is not defined in ArcBallControls!');
         this.camera = camera;
         this.scene = scene;
         
@@ -550,6 +557,8 @@ export class FlyieControls {
     controls: any;
 
     constructor(camera, renderer){
+        if (!camera) throw new TypeError('Camera object is not defined in FlyieControls!');
+        if (!renderer) throw new TypeError('Renderer object is not defined in FlyieControls!');
         this.camera = camera;
         
         this.controls = new FlyControls( camera, renderer.domElement );

@@ -80,6 +80,7 @@ export class GUIComponent extends MeshComponent{
         this.guiStyleMap = new Map();
         this.setSizeFromHTMLNode(this.rootElement);
         this.textureConstants = props.textureConstants;
+        this.setDefaultPosition();
 
         this.isAiming = false;
         this.lastProcess = 0;
@@ -165,6 +166,11 @@ export class GUIComponent extends MeshComponent{
         this.heightInWorldUnit = heightInWorldUnit;
 
         return true;
+    }
+
+
+    public setDefaultPosition = () => {
+        this.position.set(0, 2, 0);
     }
 
 

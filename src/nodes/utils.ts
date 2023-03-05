@@ -273,21 +273,21 @@ export function getGround0Scene({
     } = {}){
     const templateScene = new THREE.Scene(); // new THREE.Object3D();
 
-    const backgroundColor = '#667176';
+    const backgroundColor = '#68b5d8';
     templateScene.background = new THREE.Color(backgroundColor);
 
     if (setDefault(background)) {
-        const loader = new THREE.CubeTextureLoader();
-        background = loader.load([
-            '../../resources/background/px.png',
-            '../../resources/background/nx.png',
-            '../../resources/background/py.png',
-            '../../resources/background/ny.png',
-            '../../resources/background/pz.png',
-            '../../resources/background/nz.png',
-        ]);
+        // const loader = new THREE.CubeTextureLoader();
+        // background = loader.load([
+        //     '../../resources/background/px.png',
+        //     '../../resources/background/nx.png',
+        //     '../../resources/background/py.png',
+        //     '../../resources/background/ny.png',
+        //     '../../resources/background/pz.png',
+        //     '../../resources/background/nz.png',
+        // ]);
+        // templateScene.background = background;
     }
-    templateScene.background = background;
 
     if (setDefault(lights)) {
         // let dirLight = new THREE.DirectionalLight(0xFFFFFF, .5);
