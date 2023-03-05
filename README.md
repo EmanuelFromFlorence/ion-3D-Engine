@@ -17,6 +17,7 @@
 - [Fundamentals](#fundamentals)
 - [Getting started](#getting-started) 
 	- [GUI Components](#gui-components) 
+	- [Integrate With Your Project](#integrate-with-your-project)
 - [Examples](#examples) 
 - [API Reference](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) 
 - [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) 
@@ -35,7 +36,9 @@ Demo
 
 
 
-A simple and easy to use library to create 3D user interfaces that is also capable to be lauched in VR headsets. This library is powered by [Three.js](https://threejs.org/). As a result, the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
+A simple and easy to use library to create 3D user interfaces that is also capable to be lauched in VR headsets. 
+
+This library is powered by [Three.js](https://threejs.org/). As a result, the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
 
 
 
@@ -101,31 +104,38 @@ engine.start();
 ```
 
 
-ion Engine API is consistent with ThreeJS API so you can simply add the GUI components to your existing ThreeJS scene. 
+### Integrate With Your Project
+
+You can use your own custom ThreeJS scene and camera when creating an engine instance:
 
 ```js
-/* Renderer: */
-const canvas = document.querySelector('#viewport');
-const renderer = new THREE.WebGLRenderer({canvas});
-renderer.setSize( window.innerWidth, window.innerHeight );
-
 /* Scene: */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
-
+ 
 /* Camera: */
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
 
-/* Render: */
-function render(time) {
-    renderer.render(scene, camera);
-    requestAnimationFrame(render);
-}
-requestAnimationFrame(render);
+/* Engine: */
+const canvas = document.querySelector('#viewport');
+const engine = new ION.Engine({
+    canvas,
+    scene,
+    camera,
+    control: ION.SpaceControl, 
+    vrEnabled: true,
+});
+
+engine.start();
 ```
 
+Setting runtime callbacks gives you the ability to execute your own update functions in the animation loop at each frame:
 
-
+```js
+engine.setRuntimeCallback(() => {
+    console.log('Running at each frame...');
+});
+```
 
 
 
@@ -153,6 +163,10 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 ## Examples
 
 
+| Example | Demo |
+| --- | --- |
+| git status | List all new or modified files |
+| git diff | Show file differences that haven't been staged |
 
 
 
@@ -163,23 +177,6 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 
 
 
-
-
-
-```js
-// mod.cjs
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-```
-
-
-
-
-
-
-| Example | Demo |
-| --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
 
 
 
