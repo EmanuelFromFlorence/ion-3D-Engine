@@ -177,7 +177,7 @@ export class Engine{
         /* WebXR */
         this.VRButtonElm = VRButton.createButton( this.renderer );
         // document.body.appendChild( this.VRButtonElm );
-        const aim = document.getElementsByClassName( 'aim' )[0];
+        const aim = document.getElementById( 'aim-id' );
         aim.after(this.VRButtonElm);
 
         this.renderer.xr.enabled = true;

@@ -4,6 +4,7 @@ import { ArcballControls } from 'three/examples/jsm/controls/ArcballControls.js'
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { TransformControls } from 'three/examples/jsm//controls/TransformControls.js';
 import { OrbitControls } from 'three/examples/jsm//controls/OrbitControls.js';
+import { createAimElement } from '../../core/utils/utils';
 
 
 /* Integrated the FlyControls code with PointerLockControls */
@@ -32,6 +33,8 @@ export class SpaceControls {
         if (!renderer) throw new TypeError('Renderer object is not defined!');
         this.camera = camera;
         this.renderer = renderer;
+
+        createAimElement();
 
         this.typingMode = false;
         
@@ -221,6 +224,9 @@ export class FirstPersonControls {
         if (!scene) throw new TypeError('Scene object is not defined in FirstPersonControls!');
         this.camera = camera;
         this.scene = scene;
+
+        createAimElement();
+
         this.controls = new PointerLockControls( this.camera, document.body );
 
         this.moveForward = false;

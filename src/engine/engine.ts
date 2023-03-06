@@ -92,7 +92,7 @@ export class Engine{
 
 
     public start = (): any => {
-        this.runEngine();   
+        this.runEngine();
     }
 
 
@@ -167,8 +167,8 @@ export class Engine{
             canvas.style.display = 'block';
             canvas.style.width = `${window.innerWidth}px`; // '100%';
             canvas.style.height = `${window.innerHeight}px`; // '100%';
-            canvas.style.minHeight = '100%'; 
-            canvas.style.minWidth = '100%'; 
+            canvas.style.minHeight = '100%';
+            canvas.style.minWidth = '100%';
             canvas.style.margin = '0';
             const onWindowResize = () => {
                 this.camera.aspect = window.innerWidth / window.innerHeight;

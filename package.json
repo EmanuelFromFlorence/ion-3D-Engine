@@ -21,6 +21,8 @@
     "url": "git+https://github.com/5amrun/ion-3D-Engine.git"
   },
   "keywords": [
+    "ion",
+    "engine",
     "3D",
     "three.js",
     "ui",

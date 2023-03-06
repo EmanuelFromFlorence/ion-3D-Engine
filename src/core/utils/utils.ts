@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { aimImageURI } from '../constants';
 
 
 // export function generateUUID() {
@@ -7,6 +8,29 @@ import * as THREE from 'three';
 //         return v.toString(16);
 //     });
 // }
+
+
+export function createAimElement() {
+    if (document.getElementById('aim-id')) return;
+    const image = new Image();
+    image.id = 'aim-id';
+    image.setAttribute('decoding', 'async');
+    image.setAttribute('rel', 'prefetch');
+    image.setAttribute('alt', 'x');
+    image.src = aimImageURI;
+    image.style.position = 'fixed';
+    image.style.margin = 'auto';
+    image.style.top = 'fixed';
+    image.style.left = 'fixed';
+    image.style.right = 'fixed';
+    image.style.bottom = 'fixed';
+    image.style.width = '3%';
+    image.style.alignItems = 'center';
+    image.style.textAlign = 'center';
+    image.style.zIndex = '1000000';
+
+    document.body.appendChild(image);
+}
 
 
 export function getRandomInt(min: number, max: number): number {
