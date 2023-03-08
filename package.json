@@ -1,9 +1,13 @@
 {
   "name": "ion-3d-engine",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "A Web3 Utility",
-  "main": "./dist/ion-3d-engine.js",
-  "types": "./dist/ion-3d-engine.d.ts",
+  "main": "dist/ion-3d-engine.js",
+  "module": "dist/ion-3d-engine.module.js",
+  "types": "dist/ion-3d-engine.d.ts",
+  "engines": {
+    "node": "x.x.x"
+  },
   "files": [
     "dist"
   ],
@@ -11,14 +15,14 @@
     "example": "examples"
   },
   "scripts": {
-    "startdev": "webpack-dev-server --mode development --https --config dev-webpack.config.js",
-    "builddev": "webpack --config dev-webpack.config.js --mode development",
-    "package": "webpack --config prod-webpack.config.js --mode production",
+    "start-dev": "webpack-dev-server --mode development --https --config dev-webpack.config.js",
+    "build-dev": "webpack --config dev-webpack.config.js --mode development",
+    "build-prod": "webpack --config prod-webpack.config.js --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/5amrun/ion-3D-Engine.git"
+    "url": "git+https://github.com/samrun0/ion-3D-Engine.git"
   },
   "keywords": [
     "ion",
@@ -59,7 +63,7 @@
     "express": "^4.18.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
-    "ion-3d-engine": "^1.0.0",
+    "ion-3d-engine": "latest",
     "nodemon": "^2.0.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

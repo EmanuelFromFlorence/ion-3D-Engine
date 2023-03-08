@@ -1,30 +1,33 @@
 const path = require('path');
 
-module.exports = {
-  entry: './src/ion-3d-engine.ts',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'ion-3d-engine.js',
-   globalObject: 'this',
-   library: {
-     name: 'ion-3d-engine',
-     type: 'umd',
-   },
-  },
+const baseConfig = {
+  mode: 'production',
 
-  // https://webpack.js.org/configuration/externals/
-  // This is so it does not bundle dependencies along with the library
+//   entry: './src/ion-3d-engine.ts',
+  // Previous config:
+//   output: {
+//     path: path.resolve(__dirname, 'dist'),
+//     filename: 'ion-3d-engine.js',
+//    globalObject: 'this',
+//    library: {
+//      name: 'ion-3d-engine',
+//      type: 'umd',
+//    },
+//   },
+
+//   // https://webpack.js.org/configuration/externals/
+//   // This is so it does not bundle dependencies along with the library
   
-  // externalsType: 'module',
-  externals: {
-    three: {
-    //   commonjs: 'three',
-    //   commonjs2: 'three',
-      umd: 'three',
-      
-    //   root: '_',
-    },
-  },
+//   // externalsType: 'module',
+//   externals: {
+//     three: {
+//         commonjs: 'three',
+//         commonjs2: 'three',
+//         module: 'three',
+//         umd: 'three',
+//         // root: '_',
+//     },
+//   },
 
   resolve: {
     extensions: ['*', '.js', '.ts'],
@@ -49,3 +52,49 @@ module.exports = {
   },
 
 };
+
+
+
+const moduleConfig = {
+	target: 'node',
+
+	entry: {
+		'../dist/ion-3d-engine.module': './src/ion-3d-engine.ts',
+	},
+
+	experiments: {
+		outputModule: true,
+	},
+	output: {
+		filename: '[name].js',
+		chunkFormat: 'module',
+		library: {
+			type: 'module',
+		},
+	},
+
+	// Do not export three.js
+	externals: {
+		three: 'three',
+	},
+
+	...baseConfig
+};
+
+const browserConfig = {
+	target: 'web',
+
+	entry: {
+        '../dist/ion-3d-engine': './src/ion-3d-engine.ts',
+	},
+
+	// Do not export three.js
+	externals: {
+		three: 'THREE',
+	},
+
+	...baseConfig
+};
+
+
+module.exports = [ moduleConfig, browserConfig ];
