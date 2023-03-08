@@ -20,10 +20,10 @@ export function createAimElement() {
     image.src = aimImageURI;
     image.style.position = 'fixed';
     image.style.margin = 'auto';
-    image.style.top = 'fixed';
-    image.style.left = 'fixed';
-    image.style.right = 'fixed';
-    image.style.bottom = 'fixed';
+    image.style.top = '0';
+    image.style.left = '0';
+    image.style.right = '0';
+    image.style.bottom = '0';
     image.style.width = '3%';
     image.style.alignItems = 'center';
     image.style.textAlign = 'center';

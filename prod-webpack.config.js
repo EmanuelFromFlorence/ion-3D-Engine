@@ -14,11 +14,14 @@ module.exports = {
 
   // https://webpack.js.org/configuration/externals/
   // This is so it does not bundle dependencies along with the library
+  
+  // externalsType: 'module',
   externals: {
     three: {
-      commonjs: 'three',
-      commonjs2: 'three',
-      amd: 'three',
+    //   commonjs: 'three',
+    //   commonjs2: 'three',
+      umd: 'three',
+      
     //   root: '_',
     },
   },
