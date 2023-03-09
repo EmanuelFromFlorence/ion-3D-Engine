@@ -42,7 +42,7 @@ export class Engine{
         vrEnabled = false, 
         graphicsOptions = {}, 
         fullScreen = true,
-        stats = true,
+        stats = false,
         camera = null,
     } = {}){
         this.entityRegistry = {};
@@ -162,6 +162,8 @@ export class Engine{
         // This one for later: new ResizeObserver(onCanvasResize).observe(canvas);
         
         if (fullScreen) {
+            document.body.style.margin = '0';
+            
             canvas.style.zIndex = '100000';
             canvas.style.position = 'fixed';
             canvas.style.display = 'block';

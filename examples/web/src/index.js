@@ -31,14 +31,12 @@ root.render(
 window.addEventListener('load', () => {
 
 
-
-  
-  
   // const engine = new ION.Engine({
   //   canvas: canvas,
   //   fullScreen: true,
   //   control: ION.SpaceControl, 
   //   vrEnabled: true,
+  //   stats: true,
   // });
 
   
@@ -101,6 +99,8 @@ window.addEventListener('load', () => {
     // control: ION.ArcBallControl,
     // control: ION.FlyControl,
     
+    stats: true,
+
     controlOptions: {
       vrTeleportEnabled: false, 
       vrTeleportList: [], 

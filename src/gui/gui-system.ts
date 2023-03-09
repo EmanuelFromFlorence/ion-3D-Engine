@@ -183,9 +183,8 @@ export class GUISystem extends System{
 
 
     public updateGUIComponent = async (guiComponent) => {
-        // document.getElementById('input_11').value = this.engine.fps.toFixed(0); //////// Doesn't work!!!!!!!!!!!
-        document.getElementById('input_11').setAttribute('value', this.engine.fps.toFixed(0));
-        
+        const elmFPS = document.getElementById('input_11');
+        if (elmFPS) elmFPS.setAttribute('value', this.engine.fps.toFixed(0));
 
         processHTMLNodeTree(guiComponent.rootElement);
 
