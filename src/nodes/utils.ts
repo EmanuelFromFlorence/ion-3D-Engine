@@ -273,7 +273,7 @@ export function getGround0Scene({
     } = {}){
     const templateScene = new THREE.Scene(); // new THREE.Object3D();
 
-    const backgroundColor = '#68b5d8';
+    const backgroundColor = '#24282b'; // #68b5d8
     templateScene.background = new THREE.Color(backgroundColor);
 
     if (setDefault(background)) {
