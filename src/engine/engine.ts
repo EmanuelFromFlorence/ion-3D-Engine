@@ -162,7 +162,7 @@ export class Engine{
         // This one for later: new ResizeObserver(onCanvasResize).observe(canvas);
         
         if (fullScreen) {
-            document.body.style.margin = '0';
+            window.addEventListener('load', () => document.body.style.margin = '0');
             
             canvas.style.zIndex = '100000';
             canvas.style.position = 'fixed';
