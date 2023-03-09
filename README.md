@@ -133,6 +133,7 @@ const engine = new ION.Engine({
     fullScreen: true,
     control: ION.SpaceControl, 
     vrEnabled: true,
+    stats: true,
 });
 
 /* GUI Component */
