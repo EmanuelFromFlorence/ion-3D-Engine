@@ -46,7 +46,9 @@ This library is powered by [Three.js](https://threejs.org/). As a result, the Sc
 
 ## Installation
 
-ion 3D Engine is available as an [npm package](https://www.npmjs.com/package/ion-3d-engine).
+#### NPM (as module)
+
+ion 3D Engine is available as an [npm package](https://www.npmjs.com/package/ion-3d-engine):
 
 ```sh
 npm install ion-3d-engine
@@ -57,6 +59,58 @@ This library depends on Three.js:
 ```sh
 npm install three
 ```
+
+NPM instiallation is recommended to be used with a bundler such as [Webpack](https://webpack.js.org/).
+
+ES6 style import:
+
+```js
+import ION from 'ion-3d-engine';
+```
+
+CommonJS style import:
+
+```js
+const ION = require('ion-3d-engine');
+```
+
+Using the module in a script tag:
+
+```html
+<!-- Since import maps are not yet supported by all browsers, it is necessary to add the polyfill es-module-shims.js. -->
+<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+<script type="importmap">
+    {
+        "imports": { 
+            "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+            "ion-3d-engine": "https://unpkg.com/ion-3d-engine/dist/ion-3d-engine.module.js"
+        }
+    }
+</script>
+
+<script type="module">
+    import * as THREE from "three";
+    import * as ION from "ion-3d-engine";
+
+    // code...
+</script>
+
+```
+
+
+#### Browser CDN (as script)
+
+```html
+<!-- three.js:1 Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives -->
+<script src="https://unpkg.com/three@0.150.0/build/three.min.js"></script>
+<script src="https://unpkg.com/ion-3d-engine/dist/ion-3d-engine.js"></script>
+
+<script>
+	// THREE and ION available globally...
+</script>
+```
+
+
 
 
 ## Getting started
