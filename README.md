@@ -106,7 +106,7 @@ Using the module in a script tag:
 <script src="https://unpkg.com/ion-3d-engine/dist/ion-3d-engine.js"></script>
 
 <script>
-	// THREE and ION available globally...
+    // THREE and ION available globally...
 </script>
 ```
 
