@@ -154,7 +154,7 @@ window.addEventListener('load', () => {
 
 
 
-  // /* React Component */
+  // /* Slider Component */
   // const sliderRootElement = document.getElementsByClassName('slider')[0];
   
   // const sliderGuiComponent = new ION.GUIComponent({

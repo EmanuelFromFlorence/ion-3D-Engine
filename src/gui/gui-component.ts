@@ -31,7 +31,7 @@ export class GUIComponent extends MeshComponent{
         htmlFilter,
         ratio = 1,
         material = null,
-        transparent = false,
+        transparent = true,
         renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
         textureConstants = {},
     }){
