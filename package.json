@@ -1,6 +1,6 @@
 {
   "name": "ion-3d-engine",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A Web3 Utility",
   "main": "dist/ion-3d-engine.js",
   "module": "dist/ion-3d-engine.module.js",
