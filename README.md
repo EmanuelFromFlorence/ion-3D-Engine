@@ -46,7 +46,7 @@ This library is powered by [Three.js](https://threejs.org/). As a result, the Sc
 
 ## Installation
 
-#### NPM (as module)
+#### As NPM Module
 
 ion 3D Engine is available as an [npm package](https://www.npmjs.com/package/ion-3d-engine):
 
@@ -77,7 +77,7 @@ const ION = require('ion-3d-engine');
 Using the module in a script tag:
 
 ```html
-<!-- Since import maps are not yet supported by all browsers, it is necessary to add the polyfill es-module-shims.js. -->
+<!-- Add the polyfill es-module-shims.js because the import maps are not yet supported by all browsers -->
 <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 <script type="importmap">
     {
@@ -98,10 +98,10 @@ Using the module in a script tag:
 ```
 
 
-#### Browser CDN (as script)
+#### As Browser Script (CDN)
 
 ```html
-<!-- three.js:1 Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives -->
+<!-- ThreeJS Scripts deprecated with r150+, and will be removed with r160. Please use ES Modules. -->
 <script src="https://unpkg.com/three@0.150.0/build/three.min.js"></script>
 <script src="https://unpkg.com/ion-3d-engine/dist/ion-3d-engine.js"></script>
 
