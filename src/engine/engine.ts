@@ -163,6 +163,7 @@ export class Engine{
         
         if (fullScreen) {
             window.addEventListener('load', () => document.body.style.margin = '0');
+            document.body.style.margin = '0';
             
             canvas.style.zIndex = '100000';
             canvas.style.position = 'fixed';
