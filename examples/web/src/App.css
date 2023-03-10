@@ -98,39 +98,6 @@
   z-index: 1000000;
 } */
 
-#VRButton{
-  border:0.1em solid #383862 !important;
-  border-radius:1.42em !important;
-  text-decoration: none;
-  font-family: "Lucida Console", "Courier New", monospace !important;
-  color:rgb(54, 53, 95) !important;
-  font-weight: bold !important;
-  font-size: 1em !important;
-  transition: all 0.5s !important;
-  
-  width: 22% !important;
-  left: calc(50% - 11%) !important;
-  
-  /* margin-bottom: 13% !important; */
-  /* padding-left: 30px !important;
-  padding-right: 30px !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important; */
-
-  position: fixed !important;
-  /* margin: 100px; */
-
-
-}
-
-#VRButton:hover{
-  background-color: #fefefeab !important;
-  box-shadow: 0 0 5px #fefefeab !important;
-  color:#1e1d35 !important;
-
-  cursor: pointer;
-}
-
 
 #root {
   width: 720px;

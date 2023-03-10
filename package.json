@@ -1,7 +1,7 @@
 {
   "name": "ion-3d-engine",
   "version": "1.0.14",
-  "description": "A Web3 Utility",
+  "description": "A Javascript library for building 3D websites and virtual reality experiences.",
   "main": "dist/ion-3d-engine.js",
   "module": "dist/ion-3d-engine.module.js",
   "types": "dist/ion-3d-engine.d.ts",

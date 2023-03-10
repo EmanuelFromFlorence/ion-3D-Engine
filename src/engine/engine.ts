@@ -7,7 +7,6 @@ import { createWebGLRenderer, getCamera } from './graphics'
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } from '../core/constants';
 import { VRControls } from './control/vr-control';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { getTemplateScene } from '../ion-3d-engine';
 
 
@@ -49,6 +48,8 @@ export class Engine{
         this.systemRegistry = [];
         this.canvas = canvas;
         this.runtimeCallbacks = [];
+
+        if (!canvas) throw new TypeError('No canvas element!');
 
         this.initGraphics(canvas, fullScreen, graphicsOptions, camera);
         

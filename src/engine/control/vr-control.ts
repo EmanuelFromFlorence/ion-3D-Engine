@@ -56,9 +56,8 @@ export class VRControls {
 
         /* WebXR */
         
-        // this is attached to the doc by engine or user
-        this.vrButtonElm = VRButton.createButton( this.renderer );
-        
+        this.initVRButton();
+
 
         this.renderer.xr.enabled = true;
         this.renderer.xr.addEventListener( 'sessionstart', () => {
@@ -278,4 +277,35 @@ export class VRControls {
         this.teleMarkerMesh.visible = this.vrTeleIntersectPoint !== undefined;
     }
 
+
+    initVRButton = () => {
+        this.vrButtonElm = VRButton.createButton( this.renderer );
+
+        const styleElm = document.createElement("style");
+        const vrBtnCSSText = `
+            #VRButton{
+                border:1px solid #e8e8e8 !important;
+                text-decoration: none;
+                font-family: "Lucida Console", "Courier New", monospace !important;
+                color:#e8e8e8 !important;
+                font-weight: bold !important;
+                font-size: 15px !important;
+                transition: all 0.5s !important;
+                width: 15% !important;
+                left: calc(50% - 11%) !important;
+                position: fixed !important;
+                opacity: 0.9 !important;
+            }
+            #VRButton:hover{
+                background-color: #e8e8e8 !important;
+                box-shadow: 0 0 5px #e8e8e8 !important;
+                color:#6f6f6f !important;
+                cursor: pointer;
+                opacity: 0.8 !important;
+            }
+        `;
+        styleElm.innerText = vrBtnCSSText;
+        document.body.appendChild(styleElm);
+    }
+    
 }
