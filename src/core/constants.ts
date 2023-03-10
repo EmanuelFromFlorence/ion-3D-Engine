@@ -1,5 +1,5 @@
 
-export const zIndex = 1000000000;
+export const zIndex = 100000;
 
 export const SpaceControl = 'SpaceControl';
 export const FirstPersonControl = 'FirstPersonControl';

@@ -25,10 +25,11 @@ root.render(
 // reportWebVitals();
 
 
-
+ION.showLoadingScreen();
 
 
 window.addEventListener('load', () => {
+
 
 
   // const engine = new ION.Engine({
@@ -430,6 +431,8 @@ window.addEventListener('load', () => {
   /* Engine Start */
   engine.start();
 
+
+  ION.hideLoadingScreen();
 
 });
 

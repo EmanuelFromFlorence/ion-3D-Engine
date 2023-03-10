@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { aimImageURI } from '../constants';
+import { aimImageURI, zIndex } from '../constants';
 
 
 // export function generateUUID() {
@@ -27,9 +27,77 @@ export function createAimElement() {
     image.style.width = '3%';
     image.style.alignItems = 'center';
     image.style.textAlign = 'center';
-    image.style.zIndex = '1000000';
+    image.style.zIndex = `${zIndex + 1}`;
 
     document.body.appendChild(image);
+}
+
+
+export function showLoadingScreen(loadingText = 'loading...') {
+    const elm = document.getElementById('ion-loading-bg');
+    if (elm) return;
+
+    const loadingICONElm = document.createElement('div');
+    loadingICONElm.id = 'ion-loading-icon';
+
+    loadingICONElm.style.position = 'fixed';
+    loadingICONElm.style.border = '4px solid #dfdede';
+    loadingICONElm.style.borderTop = '4px solid #5eb5f0';
+    loadingICONElm.style.borderRadius = '50%';
+    loadingICONElm.style.margin = 'auto';
+    loadingICONElm.style.width = '25px';
+    loadingICONElm.style.height = '25px';
+    loadingICONElm.style.zIndex = `${zIndex + 10}`;
+
+    const loadingBGElm = document.createElement('div');
+    loadingBGElm.id = 'ion-loading-bg';
+    loadingBGElm.appendChild(loadingICONElm);
+
+    loadingBGElm.style.position = 'fixed';
+    loadingBGElm.style.margin = '0';
+    loadingBGElm.style.top = '0';
+    loadingBGElm.style.left = '0';
+    loadingBGElm.style.right = '0';
+    loadingBGElm.style.bottom = '0';
+    loadingBGElm.style.width = '100%';
+    loadingBGElm.style.height = '100%';
+    loadingBGElm.style.backgroundColor = '#2a2e3f';
+    loadingBGElm.style.display = 'flex';
+    loadingBGElm.style.flexDirection = 'column';
+    loadingBGElm.style.alignItems = 'center';
+    loadingBGElm.style.justifyContent = 'center';
+    loadingBGElm.style.zIndex = `${zIndex + 10}`;
+
+    document.body.appendChild(loadingBGElm);
+
+    let degree = 0;
+    const intervalId = setInterval(() => {
+        degree = degree + 10;
+        loadingICONElm.style.transform = `rotate(${degree}deg)`;
+    }, 20);
+    
+    loadingICONElm.dataset.intervalId = `${intervalId}`;
+
+
+    const loadingTextElm = document.createElement('div');
+    loadingTextElm.innerText = loadingText || 'loading...';
+    loadingTextElm.style.color = '#d1d1d1';
+    loadingTextElm.style.paddingTop = '80px';
+    loadingBGElm.appendChild(loadingTextElm);
+}
+
+
+export function hideLoadingScreen() {
+    const iconElm = document.getElementById('ion-loading-icon');
+    if (iconElm) {
+        const intervalId = iconElm.dataset.intervalId;
+        clearInterval(parseInt(intervalId));
+        iconElm.remove();
+        
+    }
+
+    const elm = document.getElementById('ion-loading-bg');
+    if (elm) elm.remove();
 }
 
 

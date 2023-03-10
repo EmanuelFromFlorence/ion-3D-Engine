@@ -573,8 +573,6 @@ export class GUISystem extends System{
             dispatchMouseEvent(aimingHTMLElement, 'pointerup', aimX, aimY); // TODO: should add more events such as touchend?
             dispatchMouseEvent(aimingHTMLElement, 'click', aimX, aimY);
             // this.this.aimingHTMLElement.click(); // no need for this
-
-            // this.aimingGuiComponent.rootElement.style.zIndex = 10000000000000;
         }
     }
 }

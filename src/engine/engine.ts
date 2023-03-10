@@ -8,6 +8,7 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } from '../core/constants';
 import { VRControls } from './control/vr-control';
 import { getTemplateScene } from '../ion-3d-engine';
+import { hideLoadingScreen, showLoadingScreen } from '../core/utils/utils';
 
 
 export class Engine{
@@ -61,7 +62,7 @@ export class Engine{
 
         if (stats) {
             this.stats = Stats();
-            this.stats.dom.style.zIndex = zIndex + 1;
+            this.stats.dom.style.zIndex = `${zIndex + 1}`;
             document.body.appendChild( this.stats.dom )
         }
     }
@@ -166,7 +167,7 @@ export class Engine{
             window.addEventListener('load', () => document.body.style.margin = '0');
             document.body.style.margin = '0';
             
-            canvas.style.zIndex = '100000';
+            canvas.style.zIndex = `${zIndex}`;
             canvas.style.position = 'fixed';
             canvas.style.display = 'block';
             canvas.style.width = `${window.innerWidth}px`; // '100%';
@@ -180,7 +181,7 @@ export class Engine{
                 this.renderer.setSize( window.innerWidth, window.innerHeight );
             }
             window.addEventListener( 'resize', onWindowResize );
-            onWindowResize();
+            onWindowResize();            
         }
     }
 
@@ -248,10 +249,6 @@ export class Engine{
             this.renderer.xr.setFramebufferScaleFactor( this.controlOptions.framebufferScaleFactor ); //double xr resolution default is 1 and we set 2.0
 
             this.vrControl = new VRControls(this, this.scene, this.camera, this.renderer);
-
-            // Attaching vrButton to UI:
-            this.vrControl.vrButtonElm.style.zIndex = zIndex + 1;
-            document.body.appendChild(this.vrControl.vrButtonElm);
         }
 
     }

@@ -1,5 +1,6 @@
 import { Engine } from './engine/engine';
 import { Entity } from './core/entity';
+import { showLoadingScreen, hideLoadingScreen } from './core/utils/utils';
 import { GUIComponent } from './gui/gui-component';
 import { GUISystem } from './gui/gui-system';
 import { getTemplateScene } from './nodes/utils';
@@ -16,6 +17,8 @@ const ION = {
         GUIComponent,
         GUISystem,
         getTemplateScene,
+        showLoadingScreen,
+        hideLoadingScreen,
 
         // Constants:
         zIndex,
@@ -35,6 +38,7 @@ export { Entity };
 export { GUIComponent };
 export { GUISystem };
 export { getTemplateScene };
+export { showLoadingScreen, hideLoadingScreen };
 export { zIndex,
         SpaceControl,
         FirstPersonControl, 

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+import { zIndex } from '../../core/constants';
 import { resetCameraPosition } from '../../core/utils/utils';
 
 
@@ -295,6 +296,7 @@ export class VRControls {
                 left: calc(50% - 11%) !important;
                 position: fixed !important;
                 opacity: 0.9 !important;
+                zIndex: ${zIndex + 1} !important;
             }
             #VRButton:hover{
                 background-color: #e8e8e8 !important;
@@ -307,5 +309,5 @@ export class VRControls {
         styleElm.innerText = vrBtnCSSText;
         document.body.appendChild(styleElm);
     }
-    
+
 }
