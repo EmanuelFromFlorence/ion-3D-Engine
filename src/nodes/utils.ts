@@ -317,6 +317,7 @@ export function getGround0Scene({
 
         const floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
         floorMesh.position.y = 0;
+        floorMesh.name = 'ground_0';
 
         templateScene.add(floorMesh);
     }

@@ -134,7 +134,7 @@ export class VRControls {
         /* teleMarkerMesh */
         this.teleMarkerMesh = new THREE.Mesh(
             new THREE.CircleGeometry( 0.25, 32 ).rotateX( - Math.PI / 2 ),
-            new THREE.MeshBasicMaterial( { color: 0x808080 } )
+            new THREE.MeshBasicMaterial( { color: '#cbfdfd' } )
         );
         this.teleMarkerMesh.visible = false;
         this.scene.add( this.teleMarkerMesh );
@@ -281,6 +281,8 @@ export class VRControls {
 
     initVRButton = () => {
         this.vrButtonElm = VRButton.createButton( this.renderer );
+        document.body.appendChild(this.vrButtonElm);
+        this.vrButtonElm.style.zIndex = `${zIndex + 1}`;
 
         const styleElm = document.createElement("style");
         const vrBtnCSSText = `

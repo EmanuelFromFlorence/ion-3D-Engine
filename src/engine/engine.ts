@@ -22,7 +22,6 @@ export class Engine{
     controlOptions: {};
     vrEnabled: boolean;
     vrControl: any;
-    vrButtonElm: any;
     stats: any;
     vrTeleMeshesToIntersect: any[];
     fps: number;
@@ -164,6 +163,9 @@ export class Engine{
         // This one for later: new ResizeObserver(onCanvasResize).observe(canvas);
         
         if (fullScreen) {
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+
             window.addEventListener('load', () => document.body.style.margin = '0');
             document.body.style.margin = '0';
             
@@ -181,7 +183,7 @@ export class Engine{
                 this.renderer.setSize( window.innerWidth, window.innerHeight );
             }
             window.addEventListener( 'resize', onWindowResize );
-            onWindowResize();            
+            onWindowResize();    
         }
     }
 

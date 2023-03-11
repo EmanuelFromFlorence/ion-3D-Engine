@@ -103,7 +103,7 @@ window.addEventListener('load', () => {
     stats: true,
 
     controlOptions: {
-      vrTeleportEnabled: false, 
+      vrTeleportEnabled: true, 
       vrTeleportList: [], 
       framebufferScaleFactor: 2.0, // lower this for for higher performance
     },
@@ -118,6 +118,9 @@ window.addEventListener('load', () => {
     },
   });
 
+
+  const floorMesh = engine.scene.getObjectByName('ground_0');
+  engine.setVRTeleportList([floorMesh]);
 
 
 

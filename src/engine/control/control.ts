@@ -239,7 +239,7 @@ export class FirstPersonControls {
         this.direction = new THREE.Vector3();
 
         this.personHeight = 2;
-        this.speed = 0.4;
+        this.speed = 0.2;
         this.boundaryLimit = 2.5;
 
         this.sceneMeshes = [];
