@@ -120,6 +120,7 @@ window.addEventListener('load', () => {
 
 
   const floorMesh = engine.scene.getObjectByName('ground_0');
+  // floorMesh.position.y =- 2;
   engine.setVRTeleportList([floorMesh]);
 
 
@@ -135,7 +136,7 @@ window.addEventListener('load', () => {
   //   transparent: false,
   // });
   // // reactGuiComponent.rotateY(0.2);
-  // reactGuiComponent.position.set(-2, 5, -10);
+  // reactGuiComponent.position.set(0, 0, -1);
 
   // /* Entity */
   // let reactGuiEntity = new ION.Entity();
@@ -149,7 +150,7 @@ window.addEventListener('load', () => {
   //   degree = degree + 1;
   //   // logoELm.style.transform = `rotate(${degree}deg)`;
   //   logoELm.style.setProperty('transform', `rotate(${degree}deg)`);
-  // }, 40);
+  // }, 30);
 
 
 
@@ -177,21 +178,21 @@ window.addEventListener('load', () => {
 
 
 
-    /* Sample Component */
-    const rootElement = document.getElementById('sample');
+    // /* Sample Component */
+    // const rootElement = document.getElementById('sample');
   
-    const guiComponent = new ION.GUIComponent({
-      rootElement: rootElement,
-      ratio: 0.5,
-      transparent: true,
-    });
-    // guiComponent.rotateY(-0.2);
-    // guiComponent.position.set(+4, 2, -8);
+    // const guiComponent = new ION.GUIComponent({
+    //   rootElement: rootElement,
+    //   ratio: 0.5,
+    //   transparent: true,
+    // });
+    // guiComponent.rotateX(-0.1);
+    // guiComponent.position.set(0, 2.5, -2);
   
-    /* Entity */
-    const guiEntity = new ION.Entity();
-    guiEntity.addComponent(guiComponent);
-    engine.addEntity(guiEntity);
+    // /* Entity */
+    // const guiEntity = new ION.Entity();
+    // guiEntity.addComponent(guiComponent);
+    // engine.addEntity(guiEntity);
   
 
 
@@ -393,10 +394,8 @@ window.addEventListener('load', () => {
     ratio: 0.5,
     transparent: true,
   });
-  simpleKeyboardComp.position.y = 3;
-  simpleKeyboardComp.position.z = -1;
-  simpleKeyboardComp.position.x = 1.9;
-  simpleKeyboardComp.rotateY(-0.2);
+  // simpleKeyboardComp.position.set();
+  // simpleKeyboardComp.rotateX(-0.2);
 
   /* Entity */
   let simpleKeyboardEntity = new ION.Entity();
@@ -411,10 +410,10 @@ window.addEventListener('load', () => {
     ratio: 0.5,
     transparent: true,
   });
-  keyboardInputComp.position.y = 4;
-  keyboardInputComp.position.z = -1;
-  keyboardInputComp.position.x = 1.9;
-  keyboardInputComp.rotateY(-0.2);
+  // keyboardInputComp.position.y = 4;
+  // keyboardInputComp.position.z = -1;
+  // keyboardInputComp.position.x = 1.9;
+  // simpleKeyboardComp.rotateX(-0.2);
 
   /* Entity */
   let keyboardInputEntity = new ION.Entity();
@@ -423,6 +422,15 @@ window.addEventListener('load', () => {
 
 
 
+
+  simpleKeyboardComp.position.set(0, 2.5, 0);
+  simpleKeyboardComp.rotateX(-0.4);
+
+  
+  keyboardInputComp.position.set(0, 3.5, -0.25);
+
+  engine.camera.position.z = 4.5;
+  engine.camera.position.y = 3.5;
 
 
 

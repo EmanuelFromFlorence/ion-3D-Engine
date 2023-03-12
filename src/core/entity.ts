@@ -22,14 +22,14 @@ export class Entity{
     
 
     public addComponent = (component: Component): any => {
-        // this.components.set(component.type, component);
-        this.components[component.type] = component;
+        // this.components.set(component.compType, component);
+        this.components[component.compType] = component;
     }
 
 
-    public getComponent = (type: string): Component => {
-        // return this.components.get(type);
-        return this.components[type];
+    public getComponent = (compType: string): Component => {
+        // return this.components.get(compType);
+        return this.components[compType];
     }
 
 }

@@ -68,13 +68,16 @@ export class Engine{
 
 
     public addEntity = (entity: Entity): any => {
-        for (let [type, component] of Object.entries(entity.components)){
+        for (let [compType, component] of Object.entries(entity.components)){
             component.registerComponent({scene: this.scene});
 
-            if (!this.entityRegistry.hasOwnProperty(type)) {
-                this.entityRegistry[type] = {};
+            // Adding gui components so ignores it when tryingt o teleport in VR mode...
+            if (compType.includes('gui')) this.controlOptions['vrTeleportList'].push(component);
+
+            if (!this.entityRegistry.hasOwnProperty(compType)) {
+                this.entityRegistry[compType] = {};
             }
-            this.entityRegistry[type][entity.id] = entity; // overwriting if exists!!
+            this.entityRegistry[compType][entity.id] = entity; // overwriting if exists!!
         }
     }
 

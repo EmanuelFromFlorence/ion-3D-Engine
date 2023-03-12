@@ -2,15 +2,15 @@ import * as THREE from 'three';
 
 
 interface NamedParameters {
-    type: string;
+    compType: string;
 }
 
 
 export abstract class MeshComponent extends THREE.Mesh {
-    type: string;
+    compType: string;
 
 
-    constructor({type=null}: NamedParameters){
+    constructor({compType=null}: NamedParameters){
         const vertices = new Float32Array([]);
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
@@ -18,7 +18,7 @@ export abstract class MeshComponent extends THREE.Mesh {
         
         super(geometry, material);
 
-        this.type = type;
+        this.compType = compType;
     }
     
 

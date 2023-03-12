@@ -5,6 +5,7 @@ import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { TransformControls } from 'three/examples/jsm//controls/TransformControls.js';
 import { OrbitControls } from 'three/examples/jsm//controls/OrbitControls.js';
 import { createAimElement } from '../../core/utils/utils';
+import { defaultPersonHeight } from '../../core/constants';
 
 
 /* Integrated the FlyControls code with PointerLockControls */
@@ -238,7 +239,7 @@ export class FirstPersonControls {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
 
-        this.personHeight = 2;
+        this.personHeight = defaultPersonHeight;
         this.speed = 0.2;
         this.boundaryLimit = 2.5;
 
@@ -533,8 +534,9 @@ export class ArcBallControls {
             renderer.render(scene, camera);
         });
 
+        // https://threejs.org/docs/#examples/en/controls/ArcballControls
         this.controls.enabled = true;
-        this.controls.enableGrid;
+        this.controls.enableGrid = false;
         this.controls.enableRotate;
         this.controls.enablePan;
         this.controls.enableZoom;
@@ -549,6 +551,8 @@ export class ArcBallControls {
         this.controls.enableAnimations;
         this.controls.dampingFactor;
         this.controls.wMax;
+
+        this.controls.setGizmosVisible(false);
     }
 
     updateControl = (delta) => {

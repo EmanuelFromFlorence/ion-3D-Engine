@@ -35,7 +35,7 @@ export class GUIComponent extends MeshComponent{
         renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
         textureConstants = {},
     }){
-        super({type: GUI_COMPONENT_TYPE}); // new.target.name
+        super({compType: GUI_COMPONENT_TYPE}); // new.target.name
         
         if (!rootElement) throw new TypeError('Invalid rootElement is passed!');
 

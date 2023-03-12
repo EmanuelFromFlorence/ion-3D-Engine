@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-import { zIndex } from '../../core/constants';
+import { defaultPersonHeight, zIndex } from '../../core/constants';
 import { resetCameraPosition } from '../../core/utils/utils';
 
 
@@ -124,11 +124,11 @@ export class VRControls {
         this.controller2.add( line.clone() );
 
 
-        // const raycasterOrigin = new THREE.Vector3(0, 0, 0);
-        // const raycasterDirection = new THREE.Vector3(0, - 2, 0);
-        // const near = 0;
-        // const far = 200;
-        this.vrRaycaster = new THREE.Raycaster();
+        const raycasterOrigin = new THREE.Vector3(0, 0, 0);
+        const raycasterDirection = new THREE.Vector3(0, - 2, 0);
+        const near = 0;
+        const far = 20;
+        this.vrRaycaster = new THREE.Raycaster(raycasterOrigin, raycasterDirection, near, far);
 
 
         /* teleMarkerMesh */
@@ -178,7 +178,7 @@ export class VRControls {
             
             // this.renderer.xr.setReferenceSpace( teleportSpaceOffset );
 
-            this.setVRCameraPosition(this.vrTeleIntersectPoint, 1.9);
+            this.setVRCameraPosition(this.vrTeleIntersectPoint, defaultPersonHeight);
         }
     }
 
@@ -254,7 +254,12 @@ export class VRControls {
             this.vrSelectIntersects = this.vrRaycaster.intersectObjects( vrTeleportList, false);
             
             if ( this.vrSelectIntersects.length > 0 ) {
-                this.vrTeleIntersectPoint = this.vrSelectIntersects[ 0 ].point;
+                const firstIntersect = this.vrSelectIntersects[ 0 ];
+                
+                // skip if gui component
+                if (firstIntersect.object && firstIntersect.object.compType && firstIntersect.object.compType.includes('gui')) return;
+                
+                this.vrTeleIntersectPoint = firstIntersect.point;
             }
     
         } else if ( this.controller2.userData.isSelecting === true ) {
@@ -268,7 +273,12 @@ export class VRControls {
             this.vrSelectIntersects = this.vrRaycaster.intersectObjects( vrTeleportList, false);
     
             if ( this.vrSelectIntersects.length > 0 ) {
-                this.vrTeleIntersectPoint = this.vrSelectIntersects[ 0 ].point;
+                const firstIntersect = this.vrSelectIntersects[ 0 ];
+
+                // skip if gui component
+                if (firstIntersect.object && firstIntersect.object.compType && firstIntersect.object.compType.includes('gui')) return;
+                
+                this.vrTeleIntersectPoint = firstIntersect.point;
             }
     
         }
@@ -287,16 +297,17 @@ export class VRControls {
         const styleElm = document.createElement("style");
         const vrBtnCSSText = `
             #VRButton{
-                border:1px solid #e8e8e8 !important;
+                border: 1px solid #e8e8e8 !important;
                 text-decoration: none;
                 font-family: "Lucida Console", "Courier New", monospace !important;
                 color:#e8e8e8 !important;
                 font-weight: bold !important;
                 font-size: 15px !important;
                 transition: all 0.5s !important;
-                width: 15% !important;
-                left: calc(50% - 11%) !important;
+                width: 100px !important;
                 position: fixed !important;
+                left: calc(50% - 50px);
+
                 opacity: 0.9 !important;
                 zIndex: ${zIndex + 1} !important;
             }
