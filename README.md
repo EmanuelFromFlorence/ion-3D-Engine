@@ -218,7 +218,7 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 
 ## Examples
 
-All the examples and live demos are listed in [the examples page](https://github.com/samrun0/ion-3D-Engine/wiki/Examples).
+All the examples and live demos are listed in [examples page](https://github.com/samrun0/ion-3D-Engine/wiki/Examples).
 
 
 
