@@ -17,7 +17,7 @@
 - [Fundamentals](#fundamentals)
 - [Getting started](#getting-started) 
 	- [GUI Components](#gui-components) 
-	- [Integrate With Your Project](#integrate-with-your-project)
+	- [Integrate With Your ThreeJS Project](#integrate-with-your-threejs-project)
 - [Examples](#examples) 
 - [API Reference](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) 
 - [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) 
@@ -160,9 +160,9 @@ engine.start();
 ```
 
 
-### Integrate With Your Project
+### Integrate With Your ThreeJS Project
 
-You can use your own custom ThreeJS scene and camera when creating an engine instance:
+You can use your own custom ThreeJS scene and camera when creating the engine instance:
 
 ```js
 /* Scene: */
@@ -170,7 +170,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
  
 /* Camera: */
-const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
+const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
 
 /* Engine: */
 const canvas = document.querySelector('#viewport');
@@ -178,7 +178,7 @@ const engine = new ION.Engine({
     canvas,
     scene,
     camera,
-    control: ION.SpaceControl, 
+    control: ION.SpaceControl,
     vrEnabled: true,
 });
 
@@ -192,6 +192,17 @@ engine.setRuntimeCallback(() => {
     console.log('Running at each frame...');
 });
 ```
+
+
+| ![integrate-example.png](https://samrun0.github.io/resources/examples-preview/integrate-example.png) |
+|:--:|
+| *image_caption* |
+
+
+<div align="left" class="testie">
+<p>See the <a href="https://samrun0.github.io/other-examples/integrate-example.html">live demo</a> of such integration.</p>
+	<a href="https://samrun0.github.io/other-examples/integrate-example.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/integrate-example.png" width="24%"></a>
+</div>
 
 
 
@@ -218,12 +229,7 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 
 ## Examples
 
-
-| Example | Demo |
-| --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
-
+All the examples and live demos are listed in [the examples page](https://github.com/samrun0/ion-3D-Engine/wiki/Examples).
 
 
 
