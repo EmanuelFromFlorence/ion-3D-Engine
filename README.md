@@ -193,16 +193,7 @@ engine.setRuntimeCallback(() => {
 });
 ```
 
-
-| ![integrate-example.png](https://samrun0.github.io/resources/examples-preview/integrate-example.png) |
-|:--:|
-| *image_caption* |
-
-
-<div align="left" class="testie">
-<p>See the <a href="https://samrun0.github.io/other-examples/integrate-example.html">live demo</a> of such integration.</p>
-	<a href="https://samrun0.github.io/other-examples/integrate-example.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/integrate-example.png" width="24%"></a>
-</div>
+See the [live demo](https://samrun0.github.io/other-examples/integrate-example.html) of such integration.
 
 
 
