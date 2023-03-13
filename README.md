@@ -193,9 +193,7 @@ engine.setRuntimeCallback(() => {
 });
 ```
 
-See the [live demo](https://samrun0.github.io/other-examples/integrate-example.html) of such integration.
-
-
+See the [live demo](https://samrun0.github.io/other-examples/integrate-example.html) and [full source code](https://github.com/samrun0/samrun0.github.io/blob/main/other-examples/integrate-example.html) of such integration.
 
 ## Fundamentals
 
