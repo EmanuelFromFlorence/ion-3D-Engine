@@ -21,6 +21,7 @@
 - [Examples](https://github.com/samrun0/ion-3D-Engine/wiki/Examples) 
 - [API Reference](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) 
 - [Roadmap and Contributing](#roadmap-and-contributing) 
+- [License](#license)
 
 <!-- /TOC -->
 
@@ -230,4 +231,20 @@ For the complete API documentation visit [API page](https://github.com/samrun0/i
 
 ## Roadmap and Contributing
 
+Let's build together! We'd love to have your input and try to maintain a low response time. This can be:
 
+- Reporting a bug
+- Submitting a fix or a code change
+- Proposing new features
+- Discussing about the project
+- Modifying the documentation
+
+See [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) for more information.
+
+
+
+
+
+## License
+
+[Apache License Version 2.0](https://github.com/samrun0/ion-3D-Engine/blob/main/LICENSE)
