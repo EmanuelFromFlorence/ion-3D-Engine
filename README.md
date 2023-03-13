@@ -18,14 +18,14 @@
 - [Getting started](#getting-started) 
 	- [GUI Components](#gui-components) 
 	- [Integrate With Your ThreeJS Project](#integrate-with-your-threejs-project)
-- [Examples](#examples) 
+- [Examples](https://github.com/samrun0/ion-3D-Engine/wiki/Examples) 
 - [API Reference](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) 
-- [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) 
+- [Roadmap and Contributing](#roadmap-and-contributing) 
 
 <!-- /TOC -->
 
 
-Please visit ion-3D-Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
+Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
 
 
@@ -197,6 +197,7 @@ See the [live demo](https://samrun0.github.io/other-examples/integrate-example.h
 
 ## Fundamentals
 
+Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
 ### Entity-component-system (ECS)
 
@@ -215,11 +216,9 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 
 
 
-
 ## Examples
 
 All the examples and live demos are listed in [examples page](https://github.com/samrun0/ion-3D-Engine/wiki/Examples).
-
 
 
 
@@ -229,5 +228,6 @@ For the complete API documentation visit [API page](https://github.com/samrun0/i
 
 
 
+## Roadmap and Contributing
 
 
