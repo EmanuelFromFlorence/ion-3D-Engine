@@ -225,7 +225,7 @@ All the examples and live demos are listed in [the examples page](https://github
 
 ## API Reference
 
-
+For the complete API documentation visit [API page](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference).
 
 
 
