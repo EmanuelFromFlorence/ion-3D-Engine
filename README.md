@@ -37,10 +37,10 @@ A simple and easy to use library to create 3D user interfaces that is also capab
 This library is powered by [Three.js](https://threejs.org/). As a result, the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
 
 <div align="center">
-	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/gui-sample.gif" width="35%" ></a>
-	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/gui-keyboard.gif" width="35%"></a>
-	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/gui-slider.gif" width="35%"></a>
-	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/reactjs.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-sample.gif" width="35%" ></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-keyboard.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-slider.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/reactjs.gif" width="35%"></a>
 </div>
 
 
