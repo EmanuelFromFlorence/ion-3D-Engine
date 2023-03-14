@@ -132,7 +132,7 @@ window.addEventListener('load', () => {
   
   // const reactGuiComponent = new ION.GUIComponent({
   //   rootElement: reactRootElement,
-  //   ratio: 50,
+  //   pixelRatio: 150,
   //   transparent: false,
   // });
   // // reactGuiComponent.rotateY(0.2);
@@ -164,7 +164,7 @@ window.addEventListener('load', () => {
   
   const sliderGuiComponent = new ION.GUIComponent({
     rootElement: sliderRootElement,
-    ratio: 50,
+    pixelRatio: 150,
     transparent: true,
   });
   sliderGuiComponent.rotateX(-0.18);
@@ -183,7 +183,7 @@ window.addEventListener('load', () => {
   
     // const guiComponent = new ION.GUIComponent({
     //   rootElement: rootElement,
-    //   ratio: 50,
+    //   pixelRatio: 150,
     //   transparent: true,
     // });
     // guiComponent.rotateX(-0.1);
@@ -204,7 +204,7 @@ window.addEventListener('load', () => {
   // // rootElement.style.background = '#000000';
   // const guiComponent = new ION.GUIComponent({
   //   rootElement: rootElement,
-  //   ratio: 50,
+  //   pixelRatio: 150,
   //   transparent: false,
   //   // renderTimeout: Infinity,
   // });
@@ -391,7 +391,7 @@ window.addEventListener('load', () => {
   // rootElement.style.background = '#000000';
   const simpleKeyboardComp = new ION.GUIComponent({
     rootElement: simpleKeyboardElm,
-    ratio: 50,
+    pixelRatio: 150,
     transparent: true,
   });
   // simpleKeyboardComp.position.set();
@@ -407,7 +407,7 @@ window.addEventListener('load', () => {
   const keyboardInputElm = document.getElementsByClassName('keyboard-input')[0];
   const keyboardInputComp = new ION.GUIComponent({
     rootElement: keyboardInputElm,
-    ratio: 50,
+    pixelRatio: 150,
     transparent: true,
   });
   // keyboardInputComp.position.y = 4;
