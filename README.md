@@ -142,7 +142,7 @@ const engine = new ION.Engine({
 const rootElement = document.getElementById('sample');
 const guiComponent = new ION.GUIComponent({
     rootElement: rootElement,
-    ratio: 0.5,
+    pixelRatio: 150,
     transparent: true,
 });
 
