@@ -307,6 +307,7 @@ export class VRControls {
                 width: 100px !important;
                 position: fixed !important;
                 left: calc(50% - 50px);
+                background-color: #999999 !important;
 
                 opacity: 0.9 !important;
                 zIndex: ${zIndex + 1} !important;
