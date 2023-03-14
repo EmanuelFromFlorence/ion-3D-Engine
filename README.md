@@ -1,6 +1,7 @@
 
 <div align="center">
 	<img src="docs/logo_0.png" alt="ion 3D Engine"/>
+	<p></p>
 	<p>A <b>Javascript</b> library for building 3D websites and virtual reality experiences.</p>
 </div>
 
