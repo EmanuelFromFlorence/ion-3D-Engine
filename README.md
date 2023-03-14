@@ -17,30 +17,32 @@
 - [Fundamentals](#fundamentals)
 - [Getting started](#getting-started) 
 	- [GUI Components](#gui-components) 
-	- [Integrate With Your Project](#integrate-with-your-project)
-- [Examples](#examples) 
+	- [Integrate With Your ThreeJS Project](#integrate-with-your-threejs-project)
+- [Examples](https://github.com/samrun0/ion-3D-Engine/wiki/Examples) 
 - [API Reference](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) 
-- [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) 
+- [Roadmap and Contributing](#roadmap-and-contributing) 
+- [License](#license)
 
 <!-- /TOC -->
 
 
-Please visit ion-3D-Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
+Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
 
 
 
 ## Introduction
 
-Demo
-
-
-
 A simple and easy to use library to create 3D user interfaces that is also capable to be lauched in VR headsets. 
 
 This library is powered by [Three.js](https://threejs.org/). As a result, the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
 
-
+<div align="center">
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-sample.gif" width="35%" ></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-keyboard.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-slider.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-sample.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/reactjs.gif" width="35%"></a>
+</div>
 
 
 
@@ -159,9 +161,9 @@ engine.start();
 ```
 
 
-### Integrate With Your Project
+### Integrate With Your ThreeJS Project
 
-You can use your own custom ThreeJS scene and camera when creating an engine instance:
+You can use your own custom ThreeJS scene and camera when creating the engine instance:
 
 ```js
 /* Scene: */
@@ -169,7 +171,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
  
 /* Camera: */
-const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
+const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
 
 /* Engine: */
 const canvas = document.querySelector('#viewport');
@@ -177,7 +179,7 @@ const engine = new ION.Engine({
     canvas,
     scene,
     camera,
-    control: ION.SpaceControl, 
+    control: ION.SpaceControl,
     vrEnabled: true,
 });
 
@@ -192,16 +194,17 @@ engine.setRuntimeCallback(() => {
 });
 ```
 
-
+See the [live demo](https://samrun0.github.io/other-examples/integrate-example.html) and [full source code](https://github.com/samrun0/samrun0.github.io/blob/main/other-examples/integrate-example.html) of such integration.
 
 ## Fundamentals
 
+Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
 ### Entity-component-system (ECS)
 
 ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/wiki/Entity_component_system) architecture which is a popular and powerful pattern to develop 3D applications. The building blocks of this model are:
 
-- **Components:** they are encapsulated data holders and decoupled from the application logic. Components can be attached to entities to describe their attributes and how to be treated by the systems.
+- **Components:** they are encapsulated data holders and decoupled from the application logic. Components can be attached to entities to describe their attributes and how to be treated by systems.
 
 - **Entities:** each entity represents a different conceptual object with the desired components in the 3D scene. For example, an entity with a GUI component can be rendered as a 3D user interface.
 
@@ -214,24 +217,34 @@ ion Engine is based on [entity-component-system (ECS)](https://en.wikipedia.org/
 
 
 
-
 ## Examples
 
-
-| Example | Demo |
-| --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
-
-
+All the examples and live demos are listed in [examples page](https://github.com/samrun0/ion-3D-Engine/wiki/Examples).
 
 
 
 ## API Reference
 
+For the complete API documentation visit [API page](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference).
+
+
+
+## Roadmap and Contributing
+
+Let's build together! We'd love to have your input and try to maintain a low response time. This can be:
+
+- Reporting a bug
+- Submitting a fix or a code change
+- Proposing new features
+- Discussing about the project
+- Modifying the documentation
+
+See [Roadmap and Contributing](https://github.com/samrun0/ion-3D-Engine/wiki/Roadmap-and-Contributing) for more information.
 
 
 
 
 
+## License
 
+[Apache License Version 2.0](https://github.com/samrun0/ion-3D-Engine/blob/main/LICENSE)
