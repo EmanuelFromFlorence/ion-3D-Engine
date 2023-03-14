@@ -266,15 +266,22 @@ export const fixElementTopLeft = (htmlNode) => {
 };
 
 
-export const get2DSizeInWorldUnit = (width, height, ratio): any => {
-  let unitPX = 100;
-  unitPX = unitPX / ratio;
-
-  let widthInWorldUnit = width / unitPX;
-  let heightInWorldUnit = height / unitPX;
+export const get2DSizeInWorldUnit = (width, height, pixelRatio): any => {
+  let widthInWorldUnit = width / pixelRatio;
+  let heightInWorldUnit = height / pixelRatio;
 
   return [widthInWorldUnit, heightInWorldUnit];
 }
+
+// export const get2DSizeInWorldUnit = (width, height, ratio): any => {
+//   let unitPX = 100;
+//   unitPX = unitPX / ratio;
+
+//   let widthInWorldUnit = width / unitPX;
+//   let heightInWorldUnit = height / unitPX;
+
+//   return [widthInWorldUnit, heightInWorldUnit];
+// }
 
 
 export const processHTMLNodeTree = (htmlNode) => {

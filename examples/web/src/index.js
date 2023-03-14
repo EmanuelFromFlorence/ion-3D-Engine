@@ -95,8 +95,8 @@ window.addEventListener('load', () => {
     canvas: canvas,
     // scene: guiScene,
     fullScreen: true,
-    control: ION.SpaceControl,
-    // control: ION.FirstPersonControl,
+    // control: ION.SpaceControl,
+    control: ION.FirstPersonControl,
     // control: ION.ArcBallControl,
     // control: ION.FlyControl,
     
@@ -132,7 +132,7 @@ window.addEventListener('load', () => {
   
   // const reactGuiComponent = new ION.GUIComponent({
   //   rootElement: reactRootElement,
-  //   ratio: 0.5,
+  //   ratio: 50,
   //   transparent: false,
   // });
   // // reactGuiComponent.rotateY(0.2);
@@ -159,21 +159,21 @@ window.addEventListener('load', () => {
 
 
 
-  // /* Slider Component */
-  // const sliderRootElement = document.getElementsByClassName('slider')[0];
+  /* Slider Component */
+  const sliderRootElement = document.getElementsByClassName('slider')[0];
   
-  // const sliderGuiComponent = new ION.GUIComponent({
-  //   rootElement: sliderRootElement,
-  //   ratio: 0.5,
-  //   transparent: true,
-  // });
-  // sliderGuiComponent.rotateY(-0.2);
-  // sliderGuiComponent.position.set(+4, 5, -8);
+  const sliderGuiComponent = new ION.GUIComponent({
+    rootElement: sliderRootElement,
+    ratio: 50,
+    transparent: true,
+  });
+  sliderGuiComponent.rotateX(-0.18);
+  sliderGuiComponent.position.set(0, 2.5, -1);
 
-  // /* Entity */
-  // let sliderGuiEntity = new ION.Entity();
-  // sliderGuiEntity.addComponent(sliderGuiComponent);
-  // engine.addEntity(sliderGuiEntity);
+  /* Entity */
+  let sliderGuiEntity = new ION.Entity();
+  sliderGuiEntity.addComponent(sliderGuiComponent);
+  engine.addEntity(sliderGuiEntity);
 
 
 
@@ -183,7 +183,7 @@ window.addEventListener('load', () => {
   
     // const guiComponent = new ION.GUIComponent({
     //   rootElement: rootElement,
-    //   ratio: 0.5,
+    //   ratio: 50,
     //   transparent: true,
     // });
     // guiComponent.rotateX(-0.1);
@@ -204,7 +204,7 @@ window.addEventListener('load', () => {
   // // rootElement.style.background = '#000000';
   // const guiComponent = new ION.GUIComponent({
   //   rootElement: rootElement,
-  //   ratio: 0.5,
+  //   ratio: 50,
   //   transparent: false,
   //   // renderTimeout: Infinity,
   // });
@@ -391,7 +391,7 @@ window.addEventListener('load', () => {
   // rootElement.style.background = '#000000';
   const simpleKeyboardComp = new ION.GUIComponent({
     rootElement: simpleKeyboardElm,
-    ratio: 0.5,
+    ratio: 50,
     transparent: true,
   });
   // simpleKeyboardComp.position.set();
@@ -400,14 +400,14 @@ window.addEventListener('load', () => {
   /* Entity */
   let simpleKeyboardEntity = new ION.Entity();
   simpleKeyboardEntity.addComponent(simpleKeyboardComp);
-  engine.addEntity(simpleKeyboardEntity);
+  // engine.addEntity(simpleKeyboardEntity);
 
 
   
   const keyboardInputElm = document.getElementsByClassName('keyboard-input')[0];
   const keyboardInputComp = new ION.GUIComponent({
     rootElement: keyboardInputElm,
-    ratio: 0.5,
+    ratio: 50,
     transparent: true,
   });
   // keyboardInputComp.position.y = 4;
@@ -418,8 +418,7 @@ window.addEventListener('load', () => {
   /* Entity */
   let keyboardInputEntity = new ION.Entity();
   keyboardInputEntity.addComponent(keyboardInputComp);
-  engine.addEntity(keyboardInputEntity);
-
+  // engine.addEntity(keyboardInputEntity);
 
 
 

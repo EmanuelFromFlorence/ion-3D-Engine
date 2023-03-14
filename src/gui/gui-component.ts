@@ -3,10 +3,20 @@ import { MeshComponent } from '../core/components/mesh-component';
 import { GUI_COMPONENT_TYPE, getElementSize, fixElementTopLeft, get2DSizeInWorldUnit, getPixelValue } from './utils';
 
 
+interface GUIComponentInterface {
+    rootElement: HTMLElement,
+    htmlFilter: () => boolean,
+    pixelRatio: number,
+    material: THREE.Material,
+    transparent: boolean,
+    renderTimeout: number,
+    textureConstants: object,
+}
+
 export class GUIComponent extends MeshComponent{
     rootElement: any;
     htmlTexture: any;
-    ratio: number;
+    pixelRatio: number;
     material: any;
     htmlFilter: any;
     compId: string;
@@ -28,13 +38,14 @@ export class GUIComponent extends MeshComponent{
 
     constructor({
         rootElement,
-        htmlFilter,
-        ratio = 1,
+        pixelRatio = 100,
         material = null,
         transparent = true,
         renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
+        htmlFilter,
         textureConstants = {},
-    }){
+    }: GUIComponentInterface){
+
         super({compType: GUI_COMPONENT_TYPE}); // new.target.name
         
         if (!rootElement) throw new TypeError('Invalid rootElement is passed!');
@@ -61,7 +72,7 @@ export class GUIComponent extends MeshComponent{
         
         this.initComponent({
             rootElement,
-            ratio,
+            pixelRatio,
             htmlFilter,
             material,
             renderTimeout,
@@ -74,7 +85,7 @@ export class GUIComponent extends MeshComponent{
         this.rootElement = props.rootElement;
         this.htmlFilter = props.htmlFilter;
         this.material = props.material;
-        this.ratio = props.ratio;
+        this.pixelRatio = props.pixelRatio;
         this.renderTimeout = props.renderTimeout;
         this.compId = THREE.MathUtils.generateUUID();
         this.guiStyleMap = new Map();
@@ -160,7 +171,7 @@ export class GUIComponent extends MeshComponent{
         this.rootElementWidth = width;
         this.rootElementHeight = height;
 
-        let [widthInWorldUnit, heightInWorldUnit] = get2DSizeInWorldUnit(this.rootElementWidth, this.rootElementHeight, this.ratio);
+        let [widthInWorldUnit, heightInWorldUnit] = get2DSizeInWorldUnit(this.rootElementWidth, this.rootElementHeight, this.pixelRatio);
         
         this.widthInWorldUnit = widthInWorldUnit;
         this.heightInWorldUnit = heightInWorldUnit;
