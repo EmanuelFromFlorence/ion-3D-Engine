@@ -41,10 +41,18 @@ export class GUIComponent extends MeshComponent{
         pixelRatio = 100,
         material = null,
         transparent = true,
-        renderTimeout = 2000, // milliseconds (Infinity for constant rendering)
+        renderTimeout = 2000,
         htmlFilter,
         textureConstants = {},
-    }: GUIComponentInterface){
+    }: GUIComponentInterface = {
+        rootElement: null,
+        pixelRatio: 100,
+        material: null,
+        transparent: true,
+        renderTimeout: 2000, // milliseconds (Infinity for constant rendering)
+        htmlFilter: null,
+        textureConstants: {},
+    }){
 
         super({compType: GUI_COMPONENT_TYPE}); // new.target.name
         
@@ -62,11 +70,8 @@ export class GUIComponent extends MeshComponent{
             side: THREE.DoubleSide,
             transparent: transparent,
             fog: false,
-
-            // refractionRatio: 0.1,
-            // combine: THREE.MixOperation,
-            // reflectivity: 0.2,
-        }); // #282c34
+        });
+        if (material.transparent) material.transparent = transparent;
 
         if (!renderTimeout || typeof renderTimeout !== 'number') throw new TypeError('Invalid renderTimeout is passed!');
         
@@ -77,6 +82,7 @@ export class GUIComponent extends MeshComponent{
             material,
             renderTimeout,
             textureConstants,
+            transparent,
         });
     }
 

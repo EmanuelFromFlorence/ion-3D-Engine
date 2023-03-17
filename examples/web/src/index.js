@@ -171,11 +171,11 @@ window.addEventListener('load', () => {
   sliderGuiComponent.position.set(0, 2.5, -1);
 
   /* Entity */
-  let sliderGuiEntity = new ION.Entity();
+  let sliderGuiEntity = new ION.Entity({name: ''});
   sliderGuiEntity.addComponent(sliderGuiComponent);
   engine.addEntity(sliderGuiEntity);
 
-
+  console.log('sliderGuiEntity.name::: ', sliderGuiEntity.name);
 
 
     // /* Sample Component */

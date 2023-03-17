@@ -9,21 +9,21 @@ import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } 
 import { VRControls } from './control/vr-control';
 import { getTemplateScene } from '../ion-3d-engine';
 import { hideLoadingScreen, showLoadingScreen } from '../core/utils/utils';
+import { isInstanceOfElement } from '../gui/utils';
 
 
 export class Engine{
     canvas: HTMLCanvasElement;
     entityRegistry: any;
     systemRegistry: System[];
-    renderer: any;
-    camera: any;
+    renderer: THREE.Renderer;
+    camera: THREE.Camera;
     scene: THREE.Scene;
     control: any;
     controlOptions: {};
     vrEnabled: boolean;
     vrControl: any;
     stats: any;
-    vrTeleMeshesToIntersect: any[];
     fps: number;
     prevTime: number;
     runtimeCallbacks: any[];
@@ -49,7 +49,7 @@ export class Engine{
         this.canvas = canvas;
         this.runtimeCallbacks = [];
 
-        if (!canvas) throw new TypeError('No canvas element!');
+        if (!canvas || !isInstanceOfElement(canvas, HTMLCanvasElement)) throw new TypeError('No valid canvas element!');
 
         this.initGraphics(canvas, fullScreen, graphicsOptions, camera);
         
@@ -67,7 +67,7 @@ export class Engine{
     }
 
 
-    public addEntity = (entity: Entity): any => {
+    public addEntity = (entity: Entity): void => {
         for (let [compType, component] of Object.entries(entity.components)){
             component.registerComponent({scene: this.scene});
 
@@ -82,7 +82,7 @@ export class Engine{
     }
 
 
-    public addSystem = (system: System): any => {
+    public addSystem = (system: System): void => {
         this.systemRegistry.push(system);
     }
 
@@ -95,12 +95,12 @@ export class Engine{
     }
 
 
-    public start = (): any => {
+    public start = (): void => {
         this.runEngine();
     }
 
 
-    protected runEngine = (): any => {
+    protected runEngine = (): void => {
         let prevTime = performance.now();
         this.fps = 0;
         let fpsArr = [];
@@ -191,7 +191,7 @@ export class Engine{
     }
 
 
-    public setScene = (scene: THREE.Scene): any => {
+    public setScene = (scene: THREE.Scene): void => {
         if (!scene) {
             scene = this.createScene();
         }
@@ -211,7 +211,7 @@ export class Engine{
     }
 
 
-    public setRuntimeCallback = (cb: Function): any => {
+    public setRuntimeCallback = (cb: Function): void => {
         const runtimeCallback = function() {
             const context = this;
             const args = arguments;
@@ -221,7 +221,7 @@ export class Engine{
     }
 
 
-    public setControl = (control: any): any => {
+    public setControl = (control: any): void => {
         if (!this.scene) throw new Error('Scene must be initialized before setting control.');
         switch(control) {
             case SpaceControl:
@@ -259,7 +259,7 @@ export class Engine{
     }
 
 
-    public setVRTeleportList = (vrTeleportList: any[]): any => {
+    public setVRTeleportList = (vrTeleportList: THREE.Mesh[]): void => {
         this.controlOptions['vrTeleportList'] = vrTeleportList;
     }
 

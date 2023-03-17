@@ -1,26 +1,12 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleMap, callbackOnNodesRecursive, createGUISVGWrapper, appendSVGStyle, fixElementTopLeft, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
+import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleMap, createGUISVGWrapper, appendSVGStyle, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
 import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
 
 
-
-function generateCanvasTexture() {
-    let size = 16;
-    let canvas2 = document.createElement("canvas");
-    canvas2.width = size;
-    canvas2.height = size;
-    let context = canvas2.getContext("2d");
-    context.rect(0, 0, size, size);
-    context.fillStyle = "white";
-    context.fill();
-
-    const texture = new THREE.CanvasTexture(canvas2);
-    return texture;
-}
-
+interface GUISystemInterface {};
 
 
 export class GUISystem extends System{
@@ -55,7 +41,7 @@ export class GUISystem extends System{
     texture: any;
 
 
-    constructor(){ // {}: NamedParameters
+    constructor({}: GUISystemInterface = {}){
         super();
 
         this.engine = null;
@@ -575,4 +561,18 @@ export class GUISystem extends System{
             // this.this.aimingHTMLElement.click(); // no need for this
         }
     }
+}
+
+function generateCanvasTexture() {
+    let size = 16;
+    let canvas2 = document.createElement("canvas");
+    canvas2.width = size;
+    canvas2.height = size;
+    let context = canvas2.getContext("2d");
+    context.rect(0, 0, size, size);
+    context.fillStyle = "white";
+    context.fill();
+
+    const texture = new THREE.CanvasTexture(canvas2);
+    return texture;
 }
