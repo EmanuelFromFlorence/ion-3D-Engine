@@ -1,6 +1,7 @@
 
 <div align="center">
 	<img src="docs/logo_0.png" alt="ion 3D Engine"/>
+	<p></p>
 	<p>A <b>Javascript</b> library for building 3D websites and virtual reality experiences.</p>
 </div>
 
@@ -198,7 +199,7 @@ See the [live demo](https://samrun0.github.io/other-examples/integrate-example.h
 
 ## Fundamentals
 
-Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
+Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki/Funamentals) for the full documentation!
 
 ### Entity-component-system (ECS)
 
