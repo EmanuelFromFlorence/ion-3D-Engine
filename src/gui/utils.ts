@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CompleteStyleList, ExcluderKey } from '../core/constants';
 import { Entity } from '../core/entity';
+import { getRandomInt } from '../core/utils/utils';
 import { Engine } from '../engine/engine';
 import { GUIComponent } from './gui-component';
 import { resourceToDataURL } from './html-to-image/dataurl';
@@ -249,6 +250,7 @@ export const appendSVGStyle = (svg, pageStyle) => {
   }
 
   const style = document.createElement('style');
+  style.id = 'asdfasdfasdf';
   style.textContent = pageStyle;
   foreignObject.append(style);
 
@@ -306,6 +308,8 @@ export const processHTMLNodeTree = (htmlNode) => {
 
 export const processSingleHTMLNode = async (htmlNode) => {
 
+  setIONClass(htmlNode);
+
   // TODO: should handle embedded SVGImageElement as well:
   // !(clonedNode instanceof SVGImageElement && !isDataUrl(clonedNode.href.baseVal))
 
@@ -314,7 +318,7 @@ export const processSingleHTMLNode = async (htmlNode) => {
     let options = {};
     let url = htmlNode.src;
     const dataURL = await resourceToDataURL(url, getMimeType(url), options);
-    htmlNode.src = dataURL;    
+    htmlNode.src = dataURL;
   }
 
 
@@ -336,6 +340,16 @@ export const processSingleHTMLNode = async (htmlNode) => {
       }
     }
 
+  }
+};
+
+
+export const setIONClass = (htmlNode) => {
+  if (isInstanceOfElement(htmlNode, HTMLElement)) {
+    if (htmlNode.className.includes('ion_class_')) return;
+    const ionClass = `ion_class_${getRandomInt(1, 100000)}`;
+    htmlNode.className = `${htmlNode.className} ${ionClass}`;
+    htmlNode.dataset['ion_class'] = ionClass;
   }
 };
 
@@ -422,9 +436,39 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
-export async function svgToDataURL(svg: SVGElement): Promise<string> {
+export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap): Promise<string> {
   return Promise.resolve()
     .then(() => new XMLSerializer().serializeToString(svg))
-    .then(encodeURIComponent)
+    .then(() => {
+      let svgString = new XMLSerializer().serializeToString(svg);
+
+      let cssText = '';
+      for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
+        let htmlElement = document.getElementsByClassName(ionClass)[0];
+
+        let computedStyle = getComputedStyle(htmlElement);
+        let computedStyleText = '';
+
+        styleMap.forEach((value, propName) => {
+          let propValue = computedStyle.getPropertyValue(propName);
+          // TODO: had to force !important and not working with propPriority
+          // let propPriority = computedStyle.getPropertyPriority(propName);
+          computedStyleText = ` ${computedStyleText} ${propName}: ${propValue} !important; `;
+        });
+        
+        computedStyleText = ` .${ionClass} {${computedStyleText}} `;
+
+        cssText = ` ${cssText} ${computedStyleText} `;
+      }
+
+      const regex = /<\/style><\/foreignObject>/i;
+      svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
+
+
+      console.log(svgString);
+
+
+      return encodeURIComponent(svgString);
+    })
     .then((html) => `data:image/svg+xml;charset=utf-8,${html}`)
 }

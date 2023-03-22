@@ -34,11 +34,14 @@ export class GUISystem extends System{
     guiWorker: Worker;
     pageStyle: string;
     pageStyleMap: Map<string, any>;
+
     throttledUpdateHTMLImage: () => void;
     throttledUpdateAim: () => void;
     throttledUpdateVRAim: () => void;
     throttledRenderGUIComponent: () => void;
     texture: any;
+    pageSVGStyleMap: Map<any, any>;
+    callbackPageSVGStyleMap: (element: any, newStyleMap: any, status: any) => void;
 
 
     constructor({}: GUISystemInterface = {}){
@@ -74,7 +77,16 @@ export class GUISystem extends System{
 
 
     public initUIEvents = () => {
-        bindCSSEvents();
+        this.pageSVGStyleMap = new Map();
+        this.callbackPageSVGStyleMap = (element, newStyleMap) => {
+            const ionClass = element.dataset['ion_class'];
+            if (!ionClass) throw Error('ion class is not set for svg style to be processed');
+            // It might be cause multiple times with different style maps:
+            let preStyleMap = this.pageSVGStyleMap.get(ionClass);
+            preStyleMap = preStyleMap || new Map();
+            this.pageSVGStyleMap.set(ionClass, new Map([...preStyleMap, ...Object.entries(newStyleMap)]));
+        };
+        bindCSSEvents(this.callbackPageSVGStyleMap);
         this.pageStyle = buildPageStyleString();
 
         // TODO: later should only add style map to the gui components and specific to their dom
@@ -101,6 +113,10 @@ export class GUISystem extends System{
 
             await this.initGUIComponent(guiComponent);
             await guiComponent.throttledUpdateGUIComponent(guiComponent);
+
+            
+            // console.log(guiComponent.rootElement.scrollTop);
+            
 
             // Moved this into updateGUIComponent...
             // // updating and rendering gui texture for a duration after not aiming to the gui components
@@ -183,7 +199,7 @@ export class GUISystem extends System{
         }
 
         if (!guiComponent.addedNodeProcessed) {
-            bindCSSEvents();
+            bindCSSEvents(this.callbackPageSVGStyleMap);
             guiComponent.addedNodeProcessed = true;
         }
         
@@ -197,7 +213,7 @@ export class GUISystem extends System{
     // Source: https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_as_an_Image
     // External resources (e.g. images, stylesheets) cannot be loaded, though they can be used if inlined through data: Ls.
     public updateGUIComponentTexture = async (guiComponent) => {
-        const svgDataUrl = await svgToDataURL(guiComponent.svg);
+        let svgDataUrl = await svgToDataURL(guiComponent.svg, this.pageSVGStyleMap);
 
         let image = new Image();
         // image.setAttribute('loading', 'lazy');

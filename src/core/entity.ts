@@ -24,7 +24,7 @@ export class Entity{
     }
     
 
-    public addComponent = (component: Component): any => {
+    public addComponent = (component: Component): void => {
         this.components[component.compType] = component;
     }
 
