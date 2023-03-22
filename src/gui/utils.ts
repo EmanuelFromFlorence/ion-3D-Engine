@@ -436,37 +436,39 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
-export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap): Promise<string> {
+
+
+
+export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode): Promise<string> {
   return Promise.resolve()
-    .then(() => new XMLSerializer().serializeToString(svg))
     .then(() => {
       let svgString = new XMLSerializer().serializeToString(svg);
 
-      let cssText = '';
-      for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
-        let htmlElement = document.getElementsByClassName(ionClass)[0];
-
-        let computedStyle = getComputedStyle(htmlElement);
-        let computedStyleText = '';
-
-        styleMap.forEach((value, propName) => {
-          let propValue = computedStyle.getPropertyValue(propName);
-          // TODO: had to force !important and not working with propPriority
-          // let propPriority = computedStyle.getPropertyPriority(propName);
-          computedStyleText = ` ${computedStyleText} ${propName}: ${propValue} !important; `;
-        });
+      if (inVRMode) {
         
-        computedStyleText = ` .${ionClass} {${computedStyleText}} `;
-
-        cssText = ` ${cssText} ${computedStyleText} `;
+        let cssText = '';
+        for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
+          let htmlElement = document.getElementsByClassName(ionClass)[0];
+  
+          let computedStyle = getComputedStyle(htmlElement);
+          let computedStyleText = '';
+  
+          styleMap.forEach((value, propName) => {
+            let propValue = computedStyle.getPropertyValue(propName);
+            // TODO: had to force !important and not working with propPriority
+            // let propPriority = computedStyle.getPropertyPriority(propName);
+            computedStyleText = ` ${computedStyleText} ${propName}: ${propValue} !important; `;
+          });
+          
+          computedStyleText = ` .${ionClass} {${computedStyleText}} `;
+          cssText = ` ${cssText} ${computedStyleText} `;
+        }
+  
+        // TODO: better way replace in svgString
+        const regex = /<\/style><\/foreignObject>/i;
+        svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
+    
       }
-
-      const regex = /<\/style><\/foreignObject>/i;
-      svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
-
-
-      console.log(svgString);
-
 
       return encodeURIComponent(svgString);
     })
