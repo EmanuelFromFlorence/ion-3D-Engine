@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { GUI_COMPONENT_TYPE, isTextBox, buildPageStyleString, buildPageStyleMap, createGUISVGWrapper, appendSVGStyle, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
+import { isTextBox, buildPageStyleString, buildPageStyleMap, createGUISVGWrapper, appendSVGStyle, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
 import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
+import { GUI_COMPONENT_TYPE } from '../core/constants';
 
 
 interface GUISystemInterface {};
@@ -154,6 +155,7 @@ export class GUISystem extends System{
         guiComponent.throttledDisposeMaterialGUIComponent = throttle(() => guiComponent.material.dispose(), 10000);
 
         guiComponent.onRootElementMutation = (mutationList, observer) => {
+            // console.log(mutationList);
             
             guiComponent.doRender = true;
 
@@ -213,7 +215,7 @@ export class GUISystem extends System{
     // Source: https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_as_an_Image
     // External resources (e.g. images, stylesheets) cannot be loaded, though they can be used if inlined through data: Ls.
     public updateGUIComponentTexture = async (guiComponent) => {
-        let svgDataUrl = await svgToDataURL(guiComponent.svg, this.pageSVGStyleMap);
+        let svgDataUrl = await svgToDataURL(guiComponent.svg, this.pageSVGStyleMap, this.engine.vrEnabled && this.engine.renderer.xr.isPresenting, this.pageStyleMap);
 
         let image = new Image();
         // image.setAttribute('loading', 'lazy');
@@ -567,7 +569,7 @@ export class GUISystem extends System{
     }
 
 
-    public sendUpEvent = (aimingHTMLElement, aimX, aimY) => {
+    public sendUpEvent = (aimingHTMLElement, aimX, aimY) => {        
 
         if (this.engine && aimingHTMLElement) { // click not captured until gui system executed
             this.upEventSent = true;

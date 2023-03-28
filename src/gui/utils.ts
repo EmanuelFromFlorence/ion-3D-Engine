@@ -8,22 +8,6 @@ import { resourceToDataURL } from './html-to-image/dataurl';
 import { getMimeType } from './html-to-image/mimes';
 
 
-export const GUI_COMPONENT_TYPE  = 'gui_1000'
-
-
-// export function createGUIEntityById(rootElementId, guiCompOptions = {}) {
-//   const rootElement = document.getElementById(rootElementId);
-//   if (!rootElement) throw new TypeError(`HTML element did not found with the provided ID! ID=${rootElementId}`);
-
-//   const guiComponent = new GUIComponent({ rootElement, ...guiCompOptions });
-//   guiComponent.position.set(0, 4, -2);
-
-//   const guiEntity = new Entity();
-//   guiEntity.addComponent(guiComponent);
-  
-//   return guiEntity;
-// }
-
 
 export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {
   const texture = new THREE.TextureLoader().load(imgDataURI);
@@ -275,16 +259,6 @@ export const get2DSizeInWorldUnit = (width, height, pixelRatio): any => {
   return [widthInWorldUnit, heightInWorldUnit];
 }
 
-// export const get2DSizeInWorldUnit = (width, height, ratio): any => {
-//   let unitPX = 100;
-//   unitPX = unitPX / ratio;
-
-//   let widthInWorldUnit = width / unitPX;
-//   let heightInWorldUnit = height / unitPX;
-
-//   return [widthInWorldUnit, heightInWorldUnit];
-// }
-
 
 export const processHTMLNodeTree = (htmlNode) => {
   
@@ -387,46 +361,6 @@ export function getElementSize(htmlElement: HTMLElement) {
 }
 
 
-// export async function cloneCanvasElement(canvas: HTMLCanvasElement) {
-//   const dataURL = canvas.toDataURL()
-//   if (dataURL === 'data:,') {
-//     return canvas.cloneNode(false) as HTMLCanvasElement
-//   }
-//   return createImage(dataURL)
-// }
-
-
-// export async function cloneVideoElement(video: HTMLVideoElement, options) {
-//   const poster = video.poster;
-//   const contentType = getMimeType(poster);
-//   const dataURL = await resourceToDataURL(poster, contentType, options);
-//   return createImage(dataURL);
-// }
-
-
-// export function cloneInputValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
-//   if (nativeNode instanceof HTMLTextAreaElement) {
-//     clonedNode.innerHTML = nativeNode.value
-//   }
-//   if (nativeNode instanceof HTMLInputElement) {
-//     clonedNode.setAttribute('value', nativeNode.value)
-//   }
-// }
-
-
-// export function cloneSelectValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
-//   if (nativeNode instanceof HTMLSelectElement) {
-//     const clonedSelect = clonedNode as any as HTMLSelectElement
-//     const selectedOption = Array.from(clonedSelect.children).find(
-//       (child) => nativeNode.value === child.getAttribute('value'),
-//     )
-
-//     if (selectedOption) {
-//       selectedOption.setAttribute('selected', '')
-//     }
-//   }
-// }
-
 
 export const isInstanceOfElement = (node, instance) => {
   if (node instanceof instance) return true;
@@ -436,16 +370,71 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
+function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
+  let cssText = '';
+
+  if(styleList) {
+    for(let propName of styleList) {
+      let propValue = style.getPropertyValue(propName);
+      let propPriority = style.getPropertyPriority(propName);
+      cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
+    }
+  } else {
+    for (let i = 0; i<style.length; i++) {
+      let propName = style.item(i);
+      let propValue = style.getPropertyValue(propName);
+      let propPriority = style.getPropertyPriority(propName);
+      cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
+    }
+  }
+
+  if(selector) {
+    cssText = `${selector} {${cssText}}`;
+  }
+
+  return cssText;
+}
 
 
-
-export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode): Promise<string> {
+export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, pageStyleMap): Promise<string> {
   return Promise.resolve()
-    .then(() => {
+    .then(async () => {
+
+      // TODO: optimization in svg to string by caching the queries...
+
+      /* Canvas Conversion */
+      const canvasElements = svg.getElementsByTagName('canvas');
+      const imgStringList = [];
+      for(let i=0; i< canvasElements.length; i++) {
+        const canvasElement = canvasElements[i];
+        const dataURL = canvasElement.toDataURL();
+
+        let styleList = pageStyleMap ? Array.from(pageStyleMap.keys()) : null;
+        const canvasStyle = getComputedStyle(canvasElement);
+        let canvasCSSText = buildCSSText(canvasStyle, null, styleList);
+        const imgString = `<img src="${dataURL}" alt="Canvas Element" width="${canvasElement.width}" height="${canvasElement.height}" style="display:${canvasCSSText}"/>`;
+        imgStringList.push(imgString);
+      }
+
+
+      /* Converting SVG to string */
       let svgString = new XMLSerializer().serializeToString(svg);
 
-      if (inVRMode) {
-        
+
+      /* Canvas Conversion */
+      for(let i=0; i< canvasElements.length; i++) {
+        const canvasElement = canvasElements[i];
+        const ionClass = canvasElement.dataset['ion_class'];
+        // Canvas element cannot have children.
+        const regex = new RegExp(`<canvas.* data-ion_class="${ionClass}[^>]*>[^<]*</canvas>`);
+        // if (!matches || matches.length !== 1) continue;
+        svgString = svgString.replace(regex, imgStringList[i]);
+      }
+
+
+      // Not in VR mode since VR doesn't render CSS in bg so this causes style constant overriding issue 
+      if (!inVRMode) {
+
         let cssText = '';
         for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
           let htmlElement = document.getElementsByClassName(ionClass)[0];
@@ -467,8 +456,9 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode): 
         // TODO: better way replace in svgString
         const regex = /<\/style><\/foreignObject>/i;
         svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
-    
+
       }
+
 
       return encodeURIComponent(svgString);
     })

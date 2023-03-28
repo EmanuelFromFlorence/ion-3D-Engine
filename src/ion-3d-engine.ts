@@ -4,7 +4,9 @@ import { showLoadingScreen, hideLoadingScreen } from './core/utils/utils';
 import { GUIComponent } from './gui/gui-component';
 import { GUISystem } from './gui/gui-system';
 import { getTemplateScene } from './nodes/utils';
+import { positionInFront } from './engine/utils';
 import { zIndex, 
+        GUI_COMPONENT_TYPE,
         SpaceControl, 
         FirstPersonControl, 
         ArcBallControl, 
@@ -17,11 +19,13 @@ const ION = {
         GUIComponent,
         GUISystem,
         getTemplateScene,
+        positionInFront,
         showLoadingScreen,
         hideLoadingScreen,
 
         // Constants:
         zIndex,
+        GUI_COMPONENT_TYPE,
         SpaceControl,
         FirstPersonControl,
         ArcBallControl,
@@ -38,8 +42,10 @@ export { Entity };
 export { GUIComponent };
 export { GUISystem };
 export { getTemplateScene };
+export { positionInFront };
 export { showLoadingScreen, hideLoadingScreen };
 export { zIndex,
+        GUI_COMPONENT_TYPE,
         SpaceControl,
         FirstPersonControl, 
         ArcBallControl,

@@ -6,6 +6,8 @@ export const FirstPersonControl = 'FirstPersonControl';
 export const ArcBallControl = 'ArcBallControl';
 export const FlyControl = 'FlyControl';
 
+export const GUI_COMPONENT_TYPE  = 'gui_1000';
+
 export const defaultPersonHeight = 3;
 
 export const ExcluderKey = 'khanj';

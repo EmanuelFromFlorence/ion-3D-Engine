@@ -94,12 +94,15 @@ window.addEventListener('load', () => {
     canvas: canvas,
     // scene: guiScene,
     fullScreen: true,
-    // control: ION.SpaceControl,
-    control: ION.FirstPersonControl,
+    control: ION.SpaceControl,
+    // control: ION.FirstPersonControl,
     // control: ION.ArcBallControl,
     // control: ION.FlyControl,
     
     stats: true,
+    statsOptions: {
+      stats3D: true,
+    },
 
     controlOptions: {
       vrTeleportEnabled: true, 
@@ -121,6 +124,15 @@ window.addEventListener('load', () => {
   const floorMesh = engine.scene.getObjectByName('ground_0');
   // floorMesh.position.y =- 2;
   engine.setVRTeleportList([floorMesh]);
+
+  const statsComponent = engine.engineStats.statsEntity.getComponent(ION.GUI_COMPONENT_TYPE);
+  
+  engine.setRuntimeCallback(() => {
+    ION.positionInFront(engine.camera, statsComponent, -2.5, 2.5, -6);
+  });
+
+
+  
 
 
 
@@ -202,22 +214,22 @@ window.addEventListener('load', () => {
   
 
     
-    /* Sample Component */
-    const rootElement = document.getElementById('sample');
+    // /* Sample Component */
+    // const rootElement = document.getElementById('sample');
   
-    const guiComponent = new ION.GUIComponent({
-      rootElement: rootElement,
-      pixelRatio: 150,
-      transparent: true,
-      renderTimeout: Infinity,
-    });
-    guiComponent.rotateX(-0.1);
-    guiComponent.position.set(0, 2.5, -2);
+    // const guiComponent = new ION.GUIComponent({
+    //   rootElement: rootElement,
+    //   pixelRatio: 150,
+    //   transparent: true,
+    //   renderTimeout: Infinity,
+    // });
+    // guiComponent.rotateX(-0.1);
+    // guiComponent.position.set(0, 2.5, -2);
   
-    /* Entity */
-    const guiEntity = new ION.Entity();
-    guiEntity.addComponent(guiComponent);
-    engine.addEntity(guiEntity);
+    // /* Entity */
+    // const guiEntity = new ION.Entity();
+    // guiEntity.addComponent(guiComponent);
+    // engine.addEntity(guiEntity);
 
 
     // let ss = 0;
