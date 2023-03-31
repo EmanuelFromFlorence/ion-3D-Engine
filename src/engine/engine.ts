@@ -4,12 +4,12 @@ import { Entity } from '../core/entity';
 import { System } from '../core/systems/system';
 import { ArcBallControls, FirstPersonControls, FlyieControls, SpaceControls } from './control/control';
 import { createWebGLRenderer, getCamera } from './graphics'
-import Stats from 'three/examples/jsm/libs/stats.module'
 import { ArcBallControl, FirstPersonControl, FlyControl, SpaceControl, zIndex } from '../core/constants';
 import { VRControls } from './control/vr-control';
 import { getTemplateScene } from '../ion-3d-engine';
 import { hideLoadingScreen, showLoadingScreen } from '../core/utils/utils';
 import { isInstanceOfElement } from '../gui/utils';
+import { createEngineStats, updateEngineStats } from './utils';
 
 
 export class Engine{
@@ -23,10 +23,12 @@ export class Engine{
     controlOptions: {};
     vrEnabled: boolean;
     vrControl: any;
+    engineStats: object;
     stats: any;
     fps: number;
     prevTime: number;
     runtimeCallbacks: any[];
+    statsOptions: { stats3D: boolean; };
     
 
     constructor({
@@ -42,6 +44,9 @@ export class Engine{
         graphicsOptions = {}, 
         fullScreen = true,
         stats = false,
+        statsOptions = {
+            stats3D: false,
+        },
         camera = null,
     } = {}){
         this.entityRegistry = {};
@@ -58,12 +63,10 @@ export class Engine{
         this.vrEnabled = vrEnabled;
         this.controlOptions = controlOptions;
         this.setControl(control);
-
-        if (stats) {
-            this.stats = Stats();
-            this.stats.dom.style.zIndex = `${zIndex + 1}`;
-            document.body.appendChild( this.stats.dom )
-        }
+        
+        this.stats = stats;
+        this.statsOptions = statsOptions;
+        if (stats) this.engineStats = createEngineStats(this);
     }
 
 
@@ -111,6 +114,9 @@ export class Engine{
                 fpsArr.push(1/delta);
                 if (fpsArr.length>60) fpsArr = fpsArr.slice(1);
                 this.fps = fpsArr.reduce((sum, x) => sum + x, 0)/fpsArr.length;
+
+                // Has to precede other operations
+                this.runtimeCallbacks.forEach((runtimeCallback) => runtimeCallback());
                 
                 // TODO::
                 // this.scene.updateMatrixWorld();
@@ -128,9 +134,7 @@ export class Engine{
                     this.vrControl.updateControl(delta, this.controlOptions['vrTeleportList']);
                 }
 
-                if (this.stats) this.stats.update();
-
-                this.runtimeCallbacks.forEach((runtimeCallback) => runtimeCallback());
+                if(this.stats) updateEngineStats(this);
                 
                 prevTime = time;
             } catch (err) {

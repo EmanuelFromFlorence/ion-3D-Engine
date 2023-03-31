@@ -1,27 +1,12 @@
 import * as THREE from 'three';
 import { CompleteStyleList, ExcluderKey } from '../core/constants';
 import { Entity } from '../core/entity';
+import { getRandomInt } from '../core/utils/utils';
 import { Engine } from '../engine/engine';
 import { GUIComponent } from './gui-component';
 import { resourceToDataURL } from './html-to-image/dataurl';
 import { getMimeType } from './html-to-image/mimes';
 
-
-export const GUI_COMPONENT_TYPE  = 'gui_1000'
-
-
-// export function createGUIEntityById(rootElementId, guiCompOptions = {}) {
-//   const rootElement = document.getElementById(rootElementId);
-//   if (!rootElement) throw new TypeError(`HTML element did not found with the provided ID! ID=${rootElementId}`);
-
-//   const guiComponent = new GUIComponent({ rootElement, ...guiCompOptions });
-//   guiComponent.position.set(0, 4, -2);
-
-//   const guiEntity = new Entity();
-//   guiEntity.addComponent(guiComponent);
-  
-//   return guiEntity;
-// }
 
 
 export function getRepeatingTexture(imgDataURI, surfWidth, surfHeight) {
@@ -249,6 +234,7 @@ export const appendSVGStyle = (svg, pageStyle) => {
   }
 
   const style = document.createElement('style');
+  style.id = 'asdfasdfasdf';
   style.textContent = pageStyle;
   foreignObject.append(style);
 
@@ -273,16 +259,6 @@ export const get2DSizeInWorldUnit = (width, height, pixelRatio): any => {
   return [widthInWorldUnit, heightInWorldUnit];
 }
 
-// export const get2DSizeInWorldUnit = (width, height, ratio): any => {
-//   let unitPX = 100;
-//   unitPX = unitPX / ratio;
-
-//   let widthInWorldUnit = width / unitPX;
-//   let heightInWorldUnit = height / unitPX;
-
-//   return [widthInWorldUnit, heightInWorldUnit];
-// }
-
 
 export const processHTMLNodeTree = (htmlNode) => {
   
@@ -306,6 +282,8 @@ export const processHTMLNodeTree = (htmlNode) => {
 
 export const processSingleHTMLNode = async (htmlNode) => {
 
+  setIONClass(htmlNode);
+
   // TODO: should handle embedded SVGImageElement as well:
   // !(clonedNode instanceof SVGImageElement && !isDataUrl(clonedNode.href.baseVal))
 
@@ -314,7 +292,7 @@ export const processSingleHTMLNode = async (htmlNode) => {
     let options = {};
     let url = htmlNode.src;
     const dataURL = await resourceToDataURL(url, getMimeType(url), options);
-    htmlNode.src = dataURL;    
+    htmlNode.src = dataURL;
   }
 
 
@@ -336,6 +314,16 @@ export const processSingleHTMLNode = async (htmlNode) => {
       }
     }
 
+  }
+};
+
+
+export const setIONClass = (htmlNode) => {
+  if (isInstanceOfElement(htmlNode, HTMLElement)) {
+    if (htmlNode.className.includes('ion_class_')) return;
+    const ionClass = `ion_class_${getRandomInt(1, 100000)}`;
+    htmlNode.className = `${htmlNode.className} ${ionClass}`;
+    htmlNode.dataset['ion_class'] = ionClass;
   }
 };
 
@@ -373,46 +361,6 @@ export function getElementSize(htmlElement: HTMLElement) {
 }
 
 
-// export async function cloneCanvasElement(canvas: HTMLCanvasElement) {
-//   const dataURL = canvas.toDataURL()
-//   if (dataURL === 'data:,') {
-//     return canvas.cloneNode(false) as HTMLCanvasElement
-//   }
-//   return createImage(dataURL)
-// }
-
-
-// export async function cloneVideoElement(video: HTMLVideoElement, options) {
-//   const poster = video.poster;
-//   const contentType = getMimeType(poster);
-//   const dataURL = await resourceToDataURL(poster, contentType, options);
-//   return createImage(dataURL);
-// }
-
-
-// export function cloneInputValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
-//   if (nativeNode instanceof HTMLTextAreaElement) {
-//     clonedNode.innerHTML = nativeNode.value
-//   }
-//   if (nativeNode instanceof HTMLInputElement) {
-//     clonedNode.setAttribute('value', nativeNode.value)
-//   }
-// }
-
-
-// export function cloneSelectValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
-//   if (nativeNode instanceof HTMLSelectElement) {
-//     const clonedSelect = clonedNode as any as HTMLSelectElement
-//     const selectedOption = Array.from(clonedSelect.children).find(
-//       (child) => nativeNode.value === child.getAttribute('value'),
-//     )
-
-//     if (selectedOption) {
-//       selectedOption.setAttribute('selected', '')
-//     }
-//   }
-// }
-
 
 export const isInstanceOfElement = (node, instance) => {
   if (node instanceof instance) return true;
@@ -422,9 +370,97 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
-export async function svgToDataURL(svg: SVGElement): Promise<string> {
+function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
+  let cssText = '';
+
+  if(styleList) {
+    for(let propName of styleList) {
+      let propValue = style.getPropertyValue(propName);
+      let propPriority = style.getPropertyPriority(propName);
+      cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
+    }
+  } else {
+    for (let i = 0; i<style.length; i++) {
+      let propName = style.item(i);
+      let propValue = style.getPropertyValue(propName);
+      let propPriority = style.getPropertyPriority(propName);
+      cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
+    }
+  }
+
+  if(selector) {
+    cssText = `${selector} {${cssText}}`;
+  }
+
+  return cssText;
+}
+
+
+export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, pageStyleMap): Promise<string> {
   return Promise.resolve()
-    .then(() => new XMLSerializer().serializeToString(svg))
-    .then(encodeURIComponent)
+    .then(async () => {
+
+      // TODO: optimization in svg to string by caching the queries...
+
+      /* Canvas Conversion */
+      const canvasElements = svg.getElementsByTagName('canvas');
+      const imgStringList = [];
+      for(let i=0; i< canvasElements.length; i++) {
+        const canvasElement = canvasElements[i];
+        const dataURL = canvasElement.toDataURL();
+
+        let styleList = pageStyleMap ? Array.from(pageStyleMap.keys()) : null;
+        const canvasStyle = getComputedStyle(canvasElement);
+        let canvasCSSText = buildCSSText(canvasStyle, null, styleList);
+        const imgString = `<img src="${dataURL}" alt="Canvas Element" width="${canvasElement.width}" height="${canvasElement.height}" style="display:${canvasCSSText}"/>`;
+        imgStringList.push(imgString);
+      }
+
+
+      /* Converting SVG to string */
+      let svgString = new XMLSerializer().serializeToString(svg);
+
+
+      /* Canvas Conversion */
+      for(let i=0; i< canvasElements.length; i++) {
+        const canvasElement = canvasElements[i];
+        const ionClass = canvasElement.dataset['ion_class'];
+        // Canvas element cannot have children.
+        const regex = new RegExp(`<canvas.* data-ion_class="${ionClass}[^>]*>[^<]*</canvas>`);
+        // if (!matches || matches.length !== 1) continue;
+        svgString = svgString.replace(regex, imgStringList[i]);
+      }
+
+
+      // Not in VR mode since VR doesn't render CSS in bg so this causes style constant overriding issue 
+      if (!inVRMode) {
+
+        let cssText = '';
+        for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
+          let htmlElement = document.getElementsByClassName(ionClass)[0];
+  
+          let computedStyle = getComputedStyle(htmlElement);
+          let computedStyleText = '';
+  
+          styleMap.forEach((value, propName) => {
+            let propValue = computedStyle.getPropertyValue(propName);
+            // TODO: had to force !important and not working with propPriority
+            // let propPriority = computedStyle.getPropertyPriority(propName);
+            computedStyleText = ` ${computedStyleText} ${propName}: ${propValue} !important; `;
+          });
+          
+          computedStyleText = ` .${ionClass} {${computedStyleText}} `;
+          cssText = ` ${cssText} ${computedStyleText} `;
+        }
+  
+        // TODO: better way replace in svgString
+        const regex = /<\/style><\/foreignObject>/i;
+        svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
+
+      }
+
+
+      return encodeURIComponent(svgString);
+    })
     .then((html) => `data:image/svg+xml;charset=utf-8,${html}`)
 }

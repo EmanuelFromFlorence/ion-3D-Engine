@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { MeshComponent } from '../core/components/mesh-component';
-import { GUI_COMPONENT_TYPE, getElementSize, fixElementTopLeft, get2DSizeInWorldUnit, getPixelValue } from './utils';
+import { GUI_COMPONENT_TYPE } from '../core/constants';
+import { getElementSize, fixElementTopLeft, get2DSizeInWorldUnit, getPixelValue } from './utils';
 
 
 interface GUIComponentInterface {
