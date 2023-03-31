@@ -234,7 +234,7 @@ export const appendSVGStyle = (svg, pageStyle) => {
   }
 
   const style = document.createElement('style');
-  style.id = 'asdfasdfasdf';
+  style.id = `svg-style-${getRandomInt(10, 10000)}`;
   style.textContent = pageStyle;
   foreignObject.append(style);
 
@@ -439,6 +439,8 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
         for (let [ionClass, styleMap] of pageSVGStyleMap.entries()) {
           let htmlElement = document.getElementsByClassName(ionClass)[0];
   
+          if (!htmlElement) continue; // element may be removed or non existing...
+
           let computedStyle = getComputedStyle(htmlElement);
           let computedStyleText = '';
   
