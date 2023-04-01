@@ -29,7 +29,7 @@
 
 Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
-
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Twitter%20%40ion3dengine)](https://twitter.com/ion3dengine)
 
 
 ## Introduction
