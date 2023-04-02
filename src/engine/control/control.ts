@@ -5,11 +5,36 @@ import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { TransformControls } from 'three/examples/jsm//controls/TransformControls.js';
 import { OrbitControls } from 'three/examples/jsm//controls/OrbitControls.js';
 import { createAimElement } from '../../core/utils/utils';
-import { defaultPersonHeight } from '../../core/constants';
+import { defaultPersonHeight, zIndex } from '../../core/constants';
 
 
 /* Integrated the FlyControls code with PointerLockControls */
 // https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/FlyControls.js'
+
+
+const instructionsHTMLTextSpaceControl = `
+<div id="instructions">
+    <div id="clickPlay">
+        Click To Play <i class="fa fa-play-circle-o" aria-hidden="true"></i> <br/><br/>
+    </div>
+    <div>
+        To Move Around Use Your MOUSE <i class="fa fa-mouse-pointer" aria-hidden="true"></i> and WASD <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keys!<br/>
+    </div>
+    <div className="toExitMsg">Click ESC Key To Exit  <i class="fa fa-window-close-o" aria-hidden="true"></i></div>
+    <div>
+        To Launch In VR Mode Click The Button Below Using A VR Headset 
+    </div>
+</div>
+
+<style>
+
+</style>
+
+`;
+
+
+
+
 
 export class SpaceControls {
     camera: any;
@@ -28,6 +53,7 @@ export class SpaceControls {
     rotationVector: THREE.Vector3;
     movementSpeedMultiplier: number;
     typingMode: boolean;
+    aimElement: HTMLImageElement;
 
     constructor(camera, renderer){
         if (!camera) throw new TypeError('Camera object is not defined!');
@@ -35,7 +61,7 @@ export class SpaceControls {
         this.camera = camera;
         this.renderer = renderer;
 
-        createAimElement();
+        this.aimElement = createAimElement();
 
         this.typingMode = false;
         
@@ -74,7 +100,6 @@ export class SpaceControls {
             this.lastQuaternion.copy( this.camera.quaternion );
             this.lastPosition.copy( this.camera.position );
         }
-
     }
     
     
@@ -97,29 +122,26 @@ export class SpaceControls {
 
 
     setLockEvents = () => {
-        // const blocker = document.getElementById( 'blocker' );
-        // const instructions = document.getElementById( 'instructions' );
+        const instContainer = document.createElement('div');
+        instContainer.id = 'instructions-container';
+        instContainer.innerHTML = instructionsHTMLTextSpaceControl;
+        document.body.appendChild(instContainer);
 
-        // instructions.addEventListener( 'click', () => { // converted function to arrow function so this is bound to the outer context which is Controls
-        //     this.controls.lock();
-        // } );
+        instContainer.style.zIndex = `${zIndex + 9}`;
 
-        document.body.addEventListener( 'click', () => {
+        // converted function to arrow function so this is bound to the outer context which is Controls
+        instContainer.addEventListener( 'click', () => {
             this.controls.lock();
         } );
-    
-        this.controls.addEventListener( 'lock', () => {
-            
-            // instructions.style.display = 'none';
-            // blocker.style.display = 'none';
 
+        this.controls.addEventListener( 'lock', () => {
+            instContainer.style.display = 'none';
+            this.aimElement.style.display = 'block';
         } );
     
         this.controls.addEventListener( 'unlock', () => {
-    
-            // blocker.style.display = 'block';
-            // instructions.style.display = '';
-
+            instContainer.style.display = 'flex';
+            this.aimElement.style.display = 'none';
         } );
     }
 
@@ -218,6 +240,7 @@ export class FirstPersonControls {
     sceneMeshes: any[];
     sceneMeshesSet: Set<unknown>;
     raycaster: any;
+    aimElement: HTMLImageElement;
 
 
     constructor(camera, scene){
@@ -226,7 +249,7 @@ export class FirstPersonControls {
         this.camera = camera;
         this.scene = scene;
 
-        createAimElement();
+        this.aimElement = createAimElement();
 
         this.controls = new PointerLockControls( this.camera, document.body );
 
@@ -424,39 +447,27 @@ export class FirstPersonControls {
 
 
     setLockEvents = () => {
-        // const blocker = document.getElementById( 'blocker' );
-        // const instructions = document.getElementById( 'instructions' );
+        const instContainer = document.createElement('div');
+        instContainer.id = 'instructions-container';
+        instContainer.innerHTML = instructionsHTMLTextSpaceControl;
+        document.body.appendChild(instContainer);
 
-        document.body.addEventListener( 'click', () => {
+        instContainer.style.zIndex = `${zIndex + 9}`;
+
+        // converted function to arrow function so this is bound to the outer context which is Controls
+        instContainer.addEventListener( 'click', () => {
             this.controls.lock();
-        } );
-        
-        // blocker.addEventListener( 'click', () => {
-        //     this.controls.lock();
-        // } );
-    
+        });
+
         this.controls.addEventListener( 'lock', () => {
-            // instructions.style.display = 'none';
-            // blocker.style.display = 'none';
-
-            // const social = document.getElementById( 'socialContainer' );
-            // social.style.display = 'none';
-
-            // const col = document.getElementsByClassName( 'aim' );
-            // col[0].style.display = 'block';
-
-        } );
+            instContainer.style.display = 'none';
+            this.aimElement.style.display = 'block';
+        });
     
         this.controls.addEventListener( 'unlock', () => {
-            // blocker.style.display = 'block';
-            // instructions.style.display = 'flex';
-
-            // const social = document.getElementById( 'socialContainer' );
-            // social.style.display = 'block';
-
-            // const col = document.getElementsByClassName( 'aim' );
-            // col[0].style.display = 'none';
-        } );
+            instContainer.style.display = 'flex';
+            this.aimElement.style.display = 'none';
+        });
     }
 
 

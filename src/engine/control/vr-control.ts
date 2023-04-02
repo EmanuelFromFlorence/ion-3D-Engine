@@ -307,15 +307,15 @@ export class VRControls {
                 width: 100px !important;
                 position: fixed !important;
                 left: calc(50% - 50px);
-                background-color: #999999 !important;
+                background-color: #2f97ff !important;
 
                 opacity: 0.9 !important;
-                zIndex: ${zIndex + 1} !important;
+                z-index: ${zIndex + 11} !important;
             }
             #VRButton:hover{
-                background-color: #e8e8e8 !important;
-                box-shadow: 0 0 5px #e8e8e8 !important;
-                color:#6f6f6f !important;
+                background-color: #9dbcda !important;
+                box-shadow: 0 0 5px #4a4c4f !important;
+                color:#dbe8ff !important;
                 cursor: pointer;
                 opacity: 0.8 !important;
             }
