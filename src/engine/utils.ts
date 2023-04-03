@@ -19,7 +19,7 @@ export function createEngineStats(engine) {
     };
 
     const stats = Stats();
-    stats.dom.style.zIndex = `${zIndex + 1}`;
+    stats.dom.style.zIndex = `${zIndex + 12}`;
     document.body.appendChild( stats.domElement );
     engineStats.stats = stats;
 
