@@ -590,14 +590,14 @@ export class FlyieControls {
 const instructionsHTMLTextSpaceControl = `
 <div id="instructions">
     <div id="clickPlay">
-        Click To Play <i class="fa fa-play-circle-o" aria-hidden="true"></i> <br/><br/>
+        Click To Play ▶ <br/><br/>
     </div>
     <div>
-        To Move Around Use Your MOUSE <i class="fa fa-mouse-pointer" aria-hidden="true"></i> and WASD <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keys!<br/>
+        To Move Around Use Your MOUSE 🖱 and A ← W ↑ D → S ↓ Keys ⌨<br/>
     </div>
-    <div className="toExitMsg">Click ESC Key To Exit  <i class="fa fa-window-close-o" aria-hidden="true"></i></div>
+    <div className="toExitMsg">Click ESC Key To Exit  ✖️</div>
     <div>
-        To Launch In VR Mode Click The Button Below Using A VR Headset 
+        To Launch In VR Mode Click The Button Below Using A VR Headset 🥽
     </div>
 </div>
 
