@@ -265,9 +265,6 @@ window.addEventListener('load', () => {
   scene.add( torus );
 
 
-
-
-
   
   /* Engine: */
   const canvas = document.getElementById('viewport');
@@ -338,19 +335,19 @@ window.addEventListener('load', () => {
 
 
 
-  // /* Sample Component */
-  // const rootElement = document.getElementById('sample');
-  // const guiComponent = new ION.GUIComponent({
-  //     rootElement: rootElement,
-  //     pixelRatio: 150,
-  // });
-  // guiComponent.position.set(0, 3, 0);
-  // guiComponent.rotateX(-0.07);
+  /* Sample Component */
+  const rootElement = document.getElementById('sample');
+  const guiComponent = new ION.GUIComponent({
+      rootElement: rootElement,
+      pixelRatio: 150,
+  });
+  guiComponent.position.set(0, 3, 0);
+  guiComponent.rotateX(-0.07);
 
-  // /* Entity */
-  // const guiEntity = new ION.Entity();
-  // guiEntity.addComponent(guiComponent);
-  // engine.addEntity(guiEntity);
+  /* Entity */
+  const guiEntity = new ION.Entity();
+  guiEntity.addComponent(guiComponent);
+  engine.addEntity(guiEntity);
 
   // /* System */
   // const guiSystem = new ION.GUISystem();

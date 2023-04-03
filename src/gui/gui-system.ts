@@ -115,9 +115,7 @@ export class GUISystem extends System{
             await this.initGUIComponent(guiComponent);
             await guiComponent.throttledUpdateGUIComponent(guiComponent);
 
-            
-            // console.log(guiComponent.rootElement.scrollTop);
-            
+            if (guiComponent.rootElement.hasAttribute('hidden')) guiComponent.rootElement.removeAttribute("hidden");
 
             // Moved this into updateGUIComponent...
             // // updating and rendering gui texture for a duration after not aiming to the gui components

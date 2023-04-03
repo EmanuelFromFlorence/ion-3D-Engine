@@ -103,6 +103,12 @@ export class GUIComponent extends MeshComponent{
         this.isAiming = false;
         this.lastProcess = 0;
         
+        // const hiddenAttr = document.createAttribute('hidden');
+        // this.rootElement.setAttribute('hidden', 'true');
+        this.rootElement.hidden = true;
+        console.log('Adding', this.rootElement);
+
+
         fixElementTopLeft(this.rootElement);
         this.genPlaneMesh();
 
