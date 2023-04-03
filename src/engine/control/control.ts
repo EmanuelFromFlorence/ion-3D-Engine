@@ -627,6 +627,10 @@ const instructionsHTMLTextSpaceControl = `
         flex-direction: column;
         justify-content: center;
         align-items: center;
+
+        background-color: #dfdfdfac;
+        border-radius: 20px;
+        padding: 30px;
     }
     #instructions > div {
         margin-bottom: 20px;
