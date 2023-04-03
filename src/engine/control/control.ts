@@ -618,7 +618,10 @@ const instructionsHTMLTextSpaceControl = `
         background-color: rgba(226, 232, 239, 0.301);
         font-family: "Lucida Console", "Courier New", monospace;
         color: #1f385c;
+        padding-bottom: 50px;
+        font-size: 20px;
     }
+
     #instructions {
         display: flex;
         flex-direction: column;
@@ -627,5 +630,15 @@ const instructionsHTMLTextSpaceControl = `
     }
     #instructions > div {
         margin-bottom: 20px;
+        text-align: center;
     }
+
+    @media only screen and (max-width: 800px) {
+        #instructions-container {
+            font-size: 16px;
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+    }
+
 </style>`;
