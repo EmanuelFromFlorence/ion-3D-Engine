@@ -12,30 +12,6 @@ import { defaultPersonHeight, zIndex } from '../../core/constants';
 // https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/FlyControls.js'
 
 
-const instructionsHTMLTextSpaceControl = `
-<div id="instructions">
-    <div id="clickPlay">
-        Click To Play <i class="fa fa-play-circle-o" aria-hidden="true"></i> <br/><br/>
-    </div>
-    <div>
-        To Move Around Use Your MOUSE <i class="fa fa-mouse-pointer" aria-hidden="true"></i> and WASD <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keys!<br/>
-    </div>
-    <div className="toExitMsg">Click ESC Key To Exit  <i class="fa fa-window-close-o" aria-hidden="true"></i></div>
-    <div>
-        To Launch In VR Mode Click The Button Below Using A VR Headset 
-    </div>
-</div>
-
-<style>
-
-</style>
-
-`;
-
-
-
-
-
 export class SpaceControls {
     camera: any;
     renderer: any;
@@ -137,11 +113,17 @@ export class SpaceControls {
         this.controls.addEventListener( 'lock', () => {
             instContainer.style.display = 'none';
             this.aimElement.style.display = 'block';
+
+            const vrButtonElm = document.getElementById('VRButton');
+            if (vrButtonElm) vrButtonElm.style.display = 'none';
         } );
     
         this.controls.addEventListener( 'unlock', () => {
             instContainer.style.display = 'flex';
             this.aimElement.style.display = 'none';
+
+            const vrButtonElm = document.getElementById('VRButton');
+            if (vrButtonElm) vrButtonElm.style.display = 'inline-block';
         } );
     }
 
@@ -457,17 +439,23 @@ export class FirstPersonControls {
         // converted function to arrow function so this is bound to the outer context which is Controls
         instContainer.addEventListener( 'click', () => {
             this.controls.lock();
-        });
+        } );
 
         this.controls.addEventListener( 'lock', () => {
             instContainer.style.display = 'none';
             this.aimElement.style.display = 'block';
-        });
+
+            const vrButtonElm = document.getElementById('VRButton');
+            if (vrButtonElm) vrButtonElm.style.display = 'none';
+        } );
     
         this.controls.addEventListener( 'unlock', () => {
             instContainer.style.display = 'flex';
             this.aimElement.style.display = 'none';
-        });
+
+            const vrButtonElm = document.getElementById('VRButton');
+            if (vrButtonElm) vrButtonElm.style.display = 'inline-block';
+        } );
     }
 
 
@@ -598,3 +586,46 @@ export class FlyieControls {
     }
 }
 
+
+const instructionsHTMLTextSpaceControl = `
+<div id="instructions">
+    <div id="clickPlay">
+        Click To Play <i class="fa fa-play-circle-o" aria-hidden="true"></i> <br/><br/>
+    </div>
+    <div>
+        To Move Around Use Your MOUSE <i class="fa fa-mouse-pointer" aria-hidden="true"></i> and WASD <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keys!<br/>
+    </div>
+    <div className="toExitMsg">Click ESC Key To Exit  <i class="fa fa-window-close-o" aria-hidden="true"></i></div>
+    <div>
+        To Launch In VR Mode Click The Button Below Using A VR Headset 
+    </div>
+</div>
+
+<style>
+    #instructions-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        min-height: '100%';
+        min-width: '100%';
+        margin: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background-color: rgba(226, 232, 239, 0.301);
+        font-family: "Lucida Console", "Courier New", monospace;
+        color: #1f385c;
+    }
+    #instructions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #instructions > div {
+        margin-bottom: 20px;
+    }
+</style>`;
