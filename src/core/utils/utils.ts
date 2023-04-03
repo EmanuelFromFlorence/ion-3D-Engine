@@ -19,6 +19,7 @@ export function createAimElement() {
     image.setAttribute('alt', 'x');
     image.src = aimImageURI;
     image.style.position = 'fixed';
+    image.style.display = 'none';
     image.style.margin = 'auto';
     image.style.top = '0';
     image.style.left = '0';
@@ -30,6 +31,7 @@ export function createAimElement() {
     image.style.zIndex = `${zIndex + 1}`;
 
     document.body.appendChild(image);
+    return image;
 }
 
 

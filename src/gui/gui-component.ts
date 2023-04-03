@@ -57,7 +57,7 @@ export class GUIComponent extends MeshComponent{
 
         super({compType: GUI_COMPONENT_TYPE}); // new.target.name
         
-        if (!rootElement) throw new TypeError('Invalid rootElement is passed!');
+        if (!rootElement) throw new TypeError('Invalid rootElement!');
 
         if (!htmlFilter || typeof htmlFilter !== 'function') {
             htmlFilter = (node) => {

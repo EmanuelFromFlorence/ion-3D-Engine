@@ -184,6 +184,10 @@ export class Engine{
             canvas.style.minHeight = '100%';
             canvas.style.minWidth = '100%';
             canvas.style.margin = '0';
+            canvas.style.left = '0';
+            canvas.style.right = '0';
+            canvas.style.bottom = '0';
+            canvas.style.top = '0';
             const onWindowResize = () => {
                 this.camera.aspect = window.innerWidth / window.innerHeight;
                 this.camera.updateProjectionMatrix();
