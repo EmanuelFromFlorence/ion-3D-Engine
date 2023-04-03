@@ -628,7 +628,7 @@ const instructionsHTMLTextSpaceControl = `
         justify-content: center;
         align-items: center;
 
-        background-color: #dfdfdfac;
+        background-color: #dfdfdfcb;
         border-radius: 20px;
         padding: 30px;
     }
