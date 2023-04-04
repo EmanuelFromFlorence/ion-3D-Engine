@@ -115,7 +115,6 @@ export class GUISystem extends System{
             await this.initGUIComponent(guiComponent);
             await guiComponent.throttledUpdateGUIComponent(guiComponent);
 
-            if (guiComponent.rootElement.hasAttribute('hidden')) guiComponent.rootElement.removeAttribute("hidden");
 
             // Moved this into updateGUIComponent...
             // // updating and rendering gui texture for a duration after not aiming to the gui components
@@ -142,6 +141,8 @@ export class GUISystem extends System{
     public initGUIComponent = async (guiComponent) => {
         if(guiComponent.guiSystemInitialized) return;
         guiComponent.guiSystemInitialized = true;
+
+        guiComponent.rootElement.hidden = false;
 
         guiComponent.doRender = true;
         if (!guiComponent.renderTimeout) guiComponent.renderTimeout = 5000; // user sets to infinite for constant rendering
