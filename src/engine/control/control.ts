@@ -608,18 +608,19 @@ const instructionsHTMLTextSpaceControl = `
         justify-content: center;
         align-items: center;
         position: fixed;
-        min-height: '100%';
-        min-width: '100%';
+        min-height: 100%;
+        min-width: 100%;
         margin: 0;
         left: 0;
         right: 0;
         bottom: 0;
         top: 0;
-        background-color: rgba(226, 232, 239, 0.301);
+        background-color: rgba(226, 232, 239, 0.341);
         font-family: "Lucida Console", "Courier New", monospace;
         color: #1f385c;
         padding-bottom: 50px;
-        font-size: 20px;
+        font-size: 18px;
+        font-weight: 600;
     }
 
     #instructions {
@@ -628,9 +629,12 @@ const instructionsHTMLTextSpaceControl = `
         justify-content: center;
         align-items: center;
 
+        max-width: 50%;
+
         background-color: #dfdfdfcb;
         border-radius: 20px;
         padding: 30px;
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     }
     #instructions > div {
         margin-bottom: 20px;
@@ -640,8 +644,9 @@ const instructionsHTMLTextSpaceControl = `
     @media only screen and (max-width: 800px) {
         #instructions-container {
             font-size: 16px;
-            padding-left: 5%;
-            padding-right: 5%;
+        }
+        #instructions {
+            max-width: 70%;
         }
     }
 
