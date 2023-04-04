@@ -3,6 +3,7 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import { defaultPersonHeight, zIndex } from '../../core/constants';
 import { resetCameraPosition } from '../../core/utils/utils';
+import { toggleShowInstructions } from '../utils';
 
 
 export class VRControls {
@@ -293,6 +294,8 @@ export class VRControls {
         this.vrButtonElm = VRButton.createButton( this.renderer );
         document.body.appendChild(this.vrButtonElm);
         this.vrButtonElm.style.zIndex = `${zIndex + 1}`;
+
+        this.vrButtonElm.addEventListener('click', () => toggleShowInstructions());
 
         const styleElm = document.createElement("style");
         const vrBtnCSSText = `

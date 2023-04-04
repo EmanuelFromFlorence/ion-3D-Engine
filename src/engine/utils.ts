@@ -62,3 +62,36 @@ export function positionInFront(camera, mesh, xOffset=0, yOffset=0, zOffset=-6) 
     // mesh.updateMatrixWorld(true);
     // mesh.updateWorldMatrix();
 }
+
+export function toggleShowInstructions() {
+    const instContainer = document.getElementById('instructions-container');
+    if (instContainer) {
+        const instContainerStyle = getComputedStyle(instContainer);
+        if (instContainerStyle.display === 'none') {
+            instContainer.style.display = 'flex';
+        } else if (instContainerStyle.display === 'flex') {
+            instContainer.style.display = 'none';
+        }
+    }
+    const aimElement = document.getElementById('aim-id');
+    const aimElementStyle = getComputedStyle(instContainer);
+    if (aimElement) {
+        if (aimElementStyle.display === 'none') {
+            aimElement.style.display = 'flex';
+        } else if (aimElementStyle.display === 'flex') {
+            aimElement.style.display = 'none';
+        }
+    }
+}
+
+
+export function hideVRButton() {
+    const vrButtonElm = document.getElementById('VRButton');
+    if (vrButtonElm) vrButtonElm.style.display = 'none';
+}
+
+
+export function showVRButton() {
+    const vrButtonElm = document.getElementById('VRButton');
+    if (vrButtonElm) vrButtonElm.style.display = 'inline-block';
+}
