@@ -567,7 +567,7 @@ export class GUISystem extends System{
     }
 
 
-    public sendUpEvent = (aimingHTMLElement, aimX, aimY) => {        
+    public sendUpEvent = (aimingHTMLElement, aimX, aimY) => {
 
         if (this.engine && aimingHTMLElement) { // click not captured until gui system executed
             this.upEventSent = true;
