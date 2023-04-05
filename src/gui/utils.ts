@@ -260,9 +260,9 @@ export const get2DSizeInWorldUnit = (width, height, pixelRatio): any => {
 }
 
 
-export const processHTMLNodeTree = (htmlNode) => {
+export const processHTMLNodeTree = (htmlNode, guiComponent) => {
   
-  processSingleHTMLNode(htmlNode);
+  processSingleHTMLNode(htmlNode, guiComponent);
 
   let childNodes = [];
   if (isSlotElement(htmlNode) && htmlNode.assignedNodes) {
@@ -275,12 +275,12 @@ export const processHTMLNodeTree = (htmlNode) => {
   }
 
   for (let childNode of htmlNode.childNodes) {
-    processHTMLNodeTree(childNode);
+    processHTMLNodeTree(childNode, guiComponent);
   }
 }
 
 
-export const processSingleHTMLNode = async (htmlNode) => {
+export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
 
   setIONClass(htmlNode);
 
@@ -453,14 +453,29 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
           
           computedStyleText = ` .${ionClass} {${computedStyleText}} `;
           cssText = ` ${cssText} ${computedStyleText} `;
-        }
-  
+        }  
         // TODO: better way replace in svgString
         const regex = /<\/style><\/foreignObject>/i;
         svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
-
       }
 
+
+      // THis didn't work 
+      // it only worked with putting this in html file...
+
+      
+      // const linksCSS = `a:link {
+      //   text-decoration: #0000EE underline;
+      //   color: #0000EE;
+      // }`;
+
+      // // TODO: better way replace in svgString
+      // const regex = /<\/style><\/foreignObject>/i;
+      // svgString = svgString.replace(regex, ` ${linksCSS} </style></foreignObject>`);
+
+
+
+      
 
       return encodeURIComponent(svgString);
     })

@@ -78,6 +78,12 @@ export class GUISystem extends System{
 
 
     public initUIEvents = () => {
+
+        // For links underline:
+        const style = document.createElement('style');
+        style.textContent = 'a:link { text-decoration: #0000EE underline; color: #0000EE; }';
+        document.body.prepend(style);
+
         this.pageSVGStyleMap = new Map();
         this.callbackPageSVGStyleMap = (element, newStyleMap) => {
             const ionClass = element.dataset['ion_class'];

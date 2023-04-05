@@ -320,9 +320,9 @@ window.addEventListener('load', () => {
   // guiEntity.addComponent(guiComponent);
   // engine.addEntity(guiEntity);
 
-  /* System */
-  const guiSystem = new ION.GUISystem();
-  engine.addSystem(guiSystem);
+  // /* System */
+  // const guiSystem = new ION.GUISystem();
+  // engine.addSystem(guiSystem);
 
 
 
@@ -338,49 +338,49 @@ window.addEventListener('load', () => {
   // });
 
 
-  /* Slider Component */
-  const sliderRootElement = document.getElementsByClassName('slider')[0];
-  const sliderGuiComponent = new ION.GUIComponent({
-      rootElement: sliderRootElement,
-      pixelRatio: 150,
-  });
-  sliderGuiComponent.position.set(0, 3.5, 0);
-  sliderGuiComponent.rotateX(-0.1);
-
-
-  /* Entity */
-  const guiEntity = new ION.Entity();
-  guiEntity.addComponent(sliderGuiComponent);
-  engine.addEntity(guiEntity);
-
-
-  /* Changing the Camera default position: */
-  engine.camera.position.z = 4.5;
-  engine.camera.position.y = 3.5;
-
-  /* Engine Start */
-  engine.start();
-
-
-
-
-  // /* Sample Component */
-  // const rootElement = document.getElementById('sample');
-  // const guiComponent = new ION.GUIComponent({
-  //     rootElement: rootElement,
+  // /* Slider Component */
+  // const sliderRootElement = document.getElementsByClassName('slider')[0];
+  // const sliderGuiComponent = new ION.GUIComponent({
+  //     rootElement: sliderRootElement,
   //     pixelRatio: 150,
   // });
-  // guiComponent.position.set(0, 3, 0);
-  // guiComponent.rotateX(-0.07);
+  // sliderGuiComponent.position.set(0, 3.5, 0);
+  // sliderGuiComponent.rotateX(-0.1);
+
 
   // /* Entity */
   // const guiEntity = new ION.Entity();
-  // guiEntity.addComponent(guiComponent);
+  // guiEntity.addComponent(sliderGuiComponent);
   // engine.addEntity(guiEntity);
 
-  // /* System */
-  // const guiSystem = new ION.GUISystem();
-  // engine.addSystem(guiSystem);
+
+  // /* Changing the Camera default position: */
+  // engine.camera.position.z = 4.5;
+  // engine.camera.position.y = 3.5;
+
+  // /* Engine Start */
+  // engine.start();
+
+
+
+
+  /* Sample Component */
+  const rootElement = document.getElementById('sample');
+  const guiComponent = new ION.GUIComponent({
+      rootElement: rootElement,
+      pixelRatio: 150,
+  });
+  guiComponent.position.set(0, 3, 0);
+  guiComponent.rotateX(-0.07);
+
+  /* Entity */
+  const guiEntity = new ION.Entity();
+  guiEntity.addComponent(guiComponent);
+  engine.addEntity(guiEntity);
+
+  /* System */
+  const guiSystem = new ION.GUISystem();
+  engine.addSystem(guiSystem);
 
   
   
