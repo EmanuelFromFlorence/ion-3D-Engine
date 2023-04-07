@@ -116,10 +116,9 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-
         font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
         font-size: 16px;
-        width: 420px;
+        width: 450px;
         padding: 10px;
         border: 2px solid #4b88cf;
         color: #294b71;
@@ -144,15 +143,18 @@
       }
       .myForm > fieldset {
         margin-bottom: 18px;
+        margin-left: 20px;
+        margin-right: 20px;
         padding: 15px;
       }
       .myForm > fieldset > p {
         margin-top: 4px;
         margin-bottom: 4px;
+        margin-left: 40px;
       }
 
       .form-input {
-        width: 230px;
+        width: 240px;
         margin-left: auto;
       }
       .myForm input, textarea, select {
@@ -176,13 +178,13 @@
 
       #select-input {
         margin-left: auto;
-        width: 230px;
+        width: 240px;
         padding: 7px;
         border-radius: 7px;
       }
       .select-input-wrap{
         margin-left: auto;
-        width: 230px;
+        width: 240px;
         padding: 7px;
         border-radius: 7px;
         border: 1px solid #4b88cf;
@@ -326,10 +328,15 @@
           timePicker: true,
           startDate: moment().startOf('hour'),
           endDate: moment().startOf('hour').add(32, 'hour'),
+          singleDatePicker: true,
           locale: {
             format: 'M/DD hh:mm A'
           }
         });
+        $('.daterangepicker').css('display', 'none');
+
+        const dateTimePicker = document.getElementsByClassName('daterangepicker')[0];
+        myForm.appendChild(dateTimePicker);
       });
 
 

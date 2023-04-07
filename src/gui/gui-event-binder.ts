@@ -164,7 +164,7 @@ export function bindCSSEvents(callbackPageSVGStyleMap){ // <T extends HTMLElemen
 }
 
 
-export function dispatchMouseEvent(element, event, clientX, clientY) {    
+export function dispatchMouseEvent(element, event, clientX, clientY) {
     const mouseEvent = new MouseEvent(event, {
         view: window,
         bubbles: true,

@@ -115,7 +115,8 @@ export class VRControls {
         this.scene.add( this.controllerGrip2 );
 
 
-        const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+        const vrPointerLength = this.engine.controlOptions.vrPointerLength || 10;
+        const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - vrPointerLength ) ] );
 
         const line = new THREE.Line( geometry );
         line.name = 'line';
