@@ -265,9 +265,6 @@ window.addEventListener('load', () => {
   scene.add( torus );
 
 
-
-
-
   
   /* Engine: */
   const canvas = document.getElementById('viewport');
@@ -281,8 +278,8 @@ window.addEventListener('load', () => {
         vrTeleportEnabled: true,
         vrTeleportList: [],
         framebufferScaleFactor: 2,
-        controlInstructions: true,
-    },
+        showInstructions: false,
+      },
       
       stats: true,
       statsOptions: {
@@ -323,17 +320,46 @@ window.addEventListener('load', () => {
   // guiEntity.addComponent(guiComponent);
   // engine.addEntity(guiEntity);
 
-  /* System */
-  const guiSystem = new ION.GUISystem();
-  engine.addSystem(guiSystem);
+  // /* System */
+  // const guiSystem = new ION.GUISystem();
+  // engine.addSystem(guiSystem);
 
 
 
 
+  // /* Engine: */
+  // const canvas = document.getElementById('viewport');
+  // const engine = new ION.Engine({
+  //     canvas: canvas,
+  //     fullScreen: true,
+  //     control: ION.SpaceControl,
+  //     stats: true,
+  //     vrEnabled: true,
+  // });
 
 
+  // /* Slider Component */
+  // const sliderRootElement = document.getElementsByClassName('slider')[0];
+  // const sliderGuiComponent = new ION.GUIComponent({
+  //     rootElement: sliderRootElement,
+  //     pixelRatio: 150,
+  // });
+  // sliderGuiComponent.position.set(0, 3.5, 0);
+  // sliderGuiComponent.rotateX(-0.1);
 
 
+  // /* Entity */
+  // const guiEntity = new ION.Entity();
+  // guiEntity.addComponent(sliderGuiComponent);
+  // engine.addEntity(guiEntity);
+
+
+  // /* Changing the Camera default position: */
+  // engine.camera.position.z = 4.5;
+  // engine.camera.position.y = 3.5;
+
+  // /* Engine Start */
+  // engine.start();
 
 
 
@@ -360,6 +386,25 @@ window.addEventListener('load', () => {
   
 
 
+
+
+
+  const rootElement = document.getElementsByClassName('myForm')[0];
+  const guiComponent = new ION.GUIComponent({
+      rootElement: rootElement,
+      pixelRatio: 150,
+  });
+  guiComponent.position.set(0, 3, 0);
+  guiComponent.rotateX(-0.07);
+
+  /* Entity */
+  const guiEntity = new ION.Entity();
+  guiEntity.addComponent(guiComponent);
+  engine.addEntity(guiEntity);
+
+  /* System */
+  const guiSystem = new ION.GUISystem();
+  engine.addSystem(guiSystem);
 
 
 

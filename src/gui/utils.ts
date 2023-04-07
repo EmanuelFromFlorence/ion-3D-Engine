@@ -44,6 +44,17 @@ export function isTextBox(element) {
 }
 
 
+export function isRangeInput(element) {
+  let tagName = element.tagName || '';
+  tagName = tagName.toLowerCase();
+  if (tagName !== 'input') return false;
+  let type = element.getAttribute('type') || '';
+  type = type.toLowerCase();
+  let inputTypes = ['range'];
+  return inputTypes.indexOf(type) >= 0;
+}
+
+
 export function isRadioCheckBox(element) {
   let tagName = element.tagName.toLowerCase();
   if (tagName !== 'input') return false;
@@ -260,9 +271,9 @@ export const get2DSizeInWorldUnit = (width, height, pixelRatio): any => {
 }
 
 
-export const processHTMLNodeTree = (htmlNode) => {
+export const processHTMLNodeTree = (htmlNode, guiComponent) => {
   
-  processSingleHTMLNode(htmlNode);
+  processSingleHTMLNode(htmlNode, guiComponent);
 
   let childNodes = [];
   if (isSlotElement(htmlNode) && htmlNode.assignedNodes) {
@@ -275,12 +286,12 @@ export const processHTMLNodeTree = (htmlNode) => {
   }
 
   for (let childNode of htmlNode.childNodes) {
-    processHTMLNodeTree(childNode);
+    processHTMLNodeTree(childNode, guiComponent);
   }
 }
 
 
-export const processSingleHTMLNode = async (htmlNode) => {
+export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
 
   setIONClass(htmlNode);
 
@@ -297,7 +308,6 @@ export const processSingleHTMLNode = async (htmlNode) => {
 
 
   if (isInstanceOfElement(htmlNode, HTMLInputElement)) {
-    // svg needs to have 'value' attribute
     let attrValue = htmlNode.getAttribute('value');
     if (htmlNode.value && htmlNode.value !== attrValue) {
       htmlNode.setAttribute('value', htmlNode.value);
@@ -314,7 +324,36 @@ export const processSingleHTMLNode = async (htmlNode) => {
       }
     }
 
+
+    if (isRangeInput(htmlNode) && !htmlNode.dataset['ion_range_val']) {
+      htmlNode.dataset['ion_range_val'] = '42';
+      
+
+      htmlNode.addEventListener('mousemove', (e) => {
+        const max = parseInt(e.target.getAttribute('max', 10)) || 100;
+        let offset = (e.offsetX / e.target.clientWidth) *  max;
+        // offset = Math.round(offset);
+        htmlNode.dataset['ion_range_val'] = `${offset}`;
+      });
+
+      htmlNode.addEventListener('click', (e) => {
+        const lastVal = parseFloat(htmlNode.dataset['ion_range_val']) || 72;
+        htmlNode.value = lastVal;
+        htmlNode.setAttribute('value', lastVal);
+      });
+    }
+
   }
+
+  if (isInstanceOfElement(htmlNode, HTMLTextAreaElement)) {
+    let attrValue = htmlNode.getAttribute('value');
+    if (htmlNode.value && htmlNode.value !== attrValue) {
+      htmlNode.setAttribute('value', htmlNode.value);
+      htmlNode.innerHTML = htmlNode.value;
+    }
+
+  }
+
 };
 
 
@@ -453,12 +492,10 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
           
           computedStyleText = ` .${ionClass} {${computedStyleText}} `;
           cssText = ` ${cssText} ${computedStyleText} `;
-        }
-  
+        }  
         // TODO: better way replace in svgString
         const regex = /<\/style><\/foreignObject>/i;
         svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
-
       }
 
 

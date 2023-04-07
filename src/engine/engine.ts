@@ -38,7 +38,8 @@ export class Engine{
         controlOptions = {
             vrTeleportEnabled: false, 
             vrTeleportList: [], 
-            framebufferScaleFactor: 2.0
+            framebufferScaleFactor: 2.0,
+            showInstructions: true,
         }, 
         vrEnabled = false, 
         graphicsOptions = {}, 
@@ -233,27 +234,27 @@ export class Engine{
         if (!this.scene) throw new Error('Scene must be initialized before setting control.');
         switch(control) {
             case SpaceControl:
-                this.control = new SpaceControls(this.camera, this.renderer);
+                this.control = new SpaceControls(this.camera, this.renderer, this.controlOptions, this.canvas);
                 this.control.setKeyEvents();
                 this.control.setLockEvents();
                 break;
             case FirstPersonControl:
-                this.control = new FirstPersonControls(this.camera, this.scene);
+                this.control = new FirstPersonControls(this.camera, this.scene, this.controlOptions, this.canvas);
                 this.control.setKeyEvents();
                 this.control.setLockEvents();
                 break;
             case ArcBallControl:
-                this.control = new ArcBallControls(this.camera, this.renderer, this.scene);
+                this.control = new ArcBallControls(this.camera, this.renderer, this.scene, this.controlOptions, this.canvas);
                 break;
             case FlyControl:
-                this.control = new FlyieControls(this.camera, this.renderer);
+                this.control = new FlyieControls(this.camera, this.renderer, this.controlOptions, this.canvas);
                 break;
             default:
                 if (control) {
                     this.control = control;
                     break;
                 }
-                this.control = new SpaceControls(this.camera, this.renderer);
+                this.control = new SpaceControls(this.camera, this.renderer, this.controlOptions, this.canvas);
                 break;
         };
 

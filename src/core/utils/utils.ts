@@ -25,7 +25,7 @@ export function createAimElement() {
     image.style.left = '0';
     image.style.right = '0';
     image.style.bottom = '0';
-    image.style.width = '3%';
+    image.style.width = '30px';
     image.style.alignItems = 'center';
     image.style.textAlign = 'center';
     image.style.zIndex = `${zIndex + 1}`;

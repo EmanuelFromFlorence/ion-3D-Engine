@@ -102,7 +102,9 @@ export class GUIComponent extends MeshComponent{
 
         this.isAiming = false;
         this.lastProcess = 0;
-        
+
+        this.rootElement.hidden = true;
+
         fixElementTopLeft(this.rootElement);
         this.genPlaneMesh();
 
