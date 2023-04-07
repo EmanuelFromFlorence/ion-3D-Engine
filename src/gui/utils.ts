@@ -44,6 +44,17 @@ export function isTextBox(element) {
 }
 
 
+export function isRangeInput(element) {
+  let tagName = element.tagName || '';
+  tagName = tagName.toLowerCase();
+  if (tagName !== 'input') return false;
+  let type = element.getAttribute('type') || '';
+  type = type.toLowerCase();
+  let inputTypes = ['range'];
+  return inputTypes.indexOf(type) >= 0;
+}
+
+
 export function isRadioCheckBox(element) {
   let tagName = element.tagName.toLowerCase();
   if (tagName !== 'input') return false;
@@ -297,7 +308,6 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
 
 
   if (isInstanceOfElement(htmlNode, HTMLInputElement)) {
-    // svg needs to have 'value' attribute
     let attrValue = htmlNode.getAttribute('value');
     if (htmlNode.value && htmlNode.value !== attrValue) {
       htmlNode.setAttribute('value', htmlNode.value);
@@ -314,7 +324,36 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
       }
     }
 
+
+    if (isRangeInput(htmlNode) && !htmlNode.dataset['ion_range_val']) {
+      htmlNode.dataset['ion_range_val'] = '42';
+      
+
+      htmlNode.addEventListener('mousemove', (e) => {
+        const max = parseInt(e.target.getAttribute('max', 10)) || 100;
+        let offset = (e.offsetX / e.target.clientWidth) *  max;
+        // offset = Math.round(offset);
+        htmlNode.dataset['ion_range_val'] = `${offset}`;
+      });
+
+      htmlNode.addEventListener('click', (e) => {
+        const lastVal = parseFloat(htmlNode.dataset['ion_range_val']) || 72;
+        htmlNode.value = lastVal;
+        htmlNode.setAttribute('value', lastVal);
+      });
+    }
+
   }
+
+  if (isInstanceOfElement(htmlNode, HTMLTextAreaElement)) {
+    let attrValue = htmlNode.getAttribute('value');
+    if (htmlNode.value && htmlNode.value !== attrValue) {
+      htmlNode.setAttribute('value', htmlNode.value);
+      htmlNode.innerHTML = htmlNode.value;
+    }
+
+  }
+
 };
 
 
@@ -459,23 +498,6 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
         svgString = svgString.replace(regex, `${cssText} </style></foreignObject>`);
       }
 
-
-      // THis didn't work 
-      // it only worked with putting this in html file...
-
-      
-      // const linksCSS = `a:link {
-      //   text-decoration: #0000EE underline;
-      //   color: #0000EE;
-      // }`;
-
-      // // TODO: better way replace in svgString
-      // const regex = /<\/style><\/foreignObject>/i;
-      // svgString = svgString.replace(regex, ` ${linksCSS} </style></foreignObject>`);
-
-
-
-      
 
       return encodeURIComponent(svgString);
     })

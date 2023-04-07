@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { System } from '../core/systems/system';
-import { isTextBox, buildPageStyleString, buildPageStyleMap, createGUISVGWrapper, appendSVGStyle, isInstanceOfElement, processHTMLNodeTree, svgToDataURL } from './utils';
+import { isTextBox, buildPageStyleString, buildPageStyleMap, createGUISVGWrapper, appendSVGStyle, isInstanceOfElement, processHTMLNodeTree, svgToDataURL, isRangeInput } from './utils';
 import { bindCSSEvents, dispatchMouseEvent, dispatchMouseEventRucursive } from './gui-event-binder';
 import { Engine } from '../ion-3d-engine';
 import { throttle } from '../core/utils/utils';
@@ -192,8 +192,6 @@ export class GUISystem extends System{
 
 
     public updateGUIComponent = async (guiComponent) => {
-        const elmFPS = document.getElementById('input_11');
-        if (elmFPS) elmFPS.setAttribute('value', this.engine.fps.toFixed(0));
 
         processHTMLNodeTree(guiComponent.rootElement);
 
@@ -347,6 +345,9 @@ export class GUISystem extends System{
             if(this.aimingHTMLElement && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElement, 'mouseover', this.aimX, this.aimY);
                 dispatchMouseEvent(this.aimingHTMLElement, 'pointerover', this.aimX, this.aimY);
+
+                dispatchMouseEvent(this.aimingHTMLElement, 'mousemove', this.aimX, this.aimY);
+                dispatchMouseEvent(this.aimingHTMLElement, 'pointermove', this.aimX, this.aimY);
             }
         }
 
@@ -364,6 +365,9 @@ export class GUISystem extends System{
             if(this.aimingHTMLElementVR11 && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElementVR11, 'mouseover', this.aimXVR11, this.aimYVR11);
                 dispatchMouseEvent(this.aimingHTMLElementVR11, 'pointerover', this.aimXVR11, this.aimYVR11);
+                
+                dispatchMouseEvent(this.aimingHTMLElementVR11, 'mousemove', this.aimXVR11, this.aimYVR11);
+                dispatchMouseEvent(this.aimingHTMLElementVR11, 'pointermove', this.aimXVR11, this.aimYVR11);
             }
         }
 
@@ -382,6 +386,9 @@ export class GUISystem extends System{
             if(this.aimingHTMLElementVR22 && newAimingHTMLElement instanceof HTMLElement){
                 dispatchMouseEvent(this.aimingHTMLElementVR22, 'mouseover', this.aimXVR22, this.aimYVR22);
                 dispatchMouseEvent(this.aimingHTMLElementVR22, 'pointerover', this.aimXVR22, this.aimYVR22);
+
+                dispatchMouseEvent(this.aimingHTMLElementVR22, 'mousemove', this.aimXVR22, this.aimYVR22);
+                dispatchMouseEvent(this.aimingHTMLElementVR22, 'pointermove', this.aimXVR22, this.aimYVR22);
             }
         }
     }
@@ -558,9 +565,12 @@ export class GUISystem extends System{
             dispatchMouseEvent(aimingHTMLElement, 'mousedown', aimX, aimY);
             dispatchMouseEvent(aimingHTMLElement, 'pointerdown', aimX, aimY); // TODO: should add more events such as touchend?
             dispatchMouseEvent(aimingHTMLElement, 'focus', aimX, aimY);
+            dispatchMouseEvent(aimingHTMLElement, 'focusin', aimX, aimY);
             aimingHTMLElement.focus(); // only this focuses on element
             if (this.focusedElement && !this.focusedElement.isSameNode(aimingHTMLElement)) {
                 dispatchMouseEvent(this.focusedElement, 'blur', aimX, aimY);
+                dispatchMouseEvent(this.focusedElement, 'focusout', aimX, aimY);
+                this.focusedElement.blur();
             }
 
             this.focusedElement = aimingHTMLElement;
@@ -581,7 +591,7 @@ export class GUISystem extends System{
             dispatchMouseEvent(aimingHTMLElement, 'mouseup', aimX, aimY);
             dispatchMouseEvent(aimingHTMLElement, 'pointerup', aimX, aimY); // TODO: should add more events such as touchend?
             dispatchMouseEvent(aimingHTMLElement, 'click', aimX, aimY);
-            // this.this.aimingHTMLElement.click(); // no need for this
+            // this.aimingHTMLElement.click(); // no need for this
         }
     }
 }

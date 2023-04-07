@@ -33,158 +33,401 @@
 
 
   
-  <div id="root"></div>
+  <div id="root" hidden></div>
   
 
 
 
 
-    <!-- Slider container -->
-    <div class="slider" hidden>
-      <!-- slide 1 -->
-      <div class="slide">
-      <img src="/test_image_1.jpeg" alt="Test Image 1" />
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link crossorigin="anonymous" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+  </head>
+  <body>
+
+    
+    <form class="myForm" method="post" enctype="application/x-www-form-urlencoded" action="#" hidden>
+      <h3>Sample 3D HTML Form</h3>
+
+      <div>
+        <label>🔹 Text Input</label>
+        <input class="form-input" type="text" name="text_input" placeholder="Type text..." required>
       </div>
-
-      <!-- slide 2 -->
-      <div class="slide">
-      <img src="/test_image_2.jpeg" alt="Test Image 2" />
-      </div>
-
-      <!-- slide 3 -->
-      <div class="slide">
-      <img src="/test_image_3.jpeg" alt="Test Image 3" />
-      </div>
-
-      <!-- Control buttons -->
-      <button class="btn btn-next"> > </button>
-      <button class="btn btn-prev"> < </button>
-  </div>
-
-
-  <style>
-      .slider {
-          width: 100%;
-          max-width: 720px;
-          height: 512px;
-          position: relative;
-          overflow: hidden;
-          border-radius: 15px;
-      }
-
-      .slide {
-          width: 100%;
-          max-width: 720px;
-          height: 512px;
-          position: absolute;
-          transition: all 0.5s;
-      }
-
-      .slide img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-      }
-
-      .btn {
-          position: absolute;
-          width: 40px;
-          height: 40px;
-          padding: 10px;
-          border: none;
-          border-radius: 50%;
-          z-index: 10px;
-          cursor: pointer;
-          background-color: #fff;
-          font-size: 18px;
-      }
-      .btn:active {
-          transform: scale(1.1);
-      }
-      .btn-prev {
-          top: 45%;
-          left: 2%;
-      }
-
-      .btn-next {
-          top: 45%;
-          right: 2%;
-      }
-  </style>
-
-  <script>
-      // Select all slides
-      const slides = document.querySelectorAll(".slide");
-
-      // loop through slides and set each slides translateX
-      slides.forEach((slide, indx) => {
-          slide.style.transform = `translateX(${indx * 100}%)`;
-      });
-
-      // select next slide button
-      const nextSlide = document.querySelector(".btn-next");
-
-      // current slide counter
-      let curSlide = 0;
-      // maximum number of slides
-      let maxSlide = slides.length - 1;
-
-      // add event listener and navigation functionality
-      nextSlide.addEventListener("click", function () {
-      // check if current slide is the last and reset current slide
-      if (curSlide === maxSlide) {
-          curSlide = 0;
-      } else {
-          curSlide++;
-      }
-
-      let perc = 0;
-      let intervalID = setInterval(() => {
-          perc = perc + 1;
-          if(perc > 100) {
-              clearInterval(intervalID);
-              return;
-          }
-
-          // move slide by -100%
-          slides.forEach((slide, indx) => {
-              slide.style.transform = `translateX(${perc * (indx - curSlide)}%)`;
-          });
-      }, 1);
-
-      });
-
-      // select next slide button
-      const prevSlide = document.querySelector(".btn-prev");
-
-      // add event listener and navigation functionality
-      prevSlide.addEventListener("click", function () {
-          // check if current slide is the first and reset current slide to last
-          if (curSlide === 0) {
-              curSlide = maxSlide;
-          } else {
-              curSlide--;
-          }
-          let perc = 0;
-          let intervalID = setInterval(() => {
-              perc = perc + 1;
-              if(perc > 100) {
-                  clearInterval(intervalID);
-                  return;
-              }
-              // move slide by 100%
-              slides.forEach((slide, indx) => {
-                  slide.style.transform = `translateX(${perc * (indx - curSlide)}%)`;
-              });
-          }, 1);
       
+      <div>
+        <label>🔹 Email</label>
+        <input class="form-input" type="email" name="email_input" placeholder="Type email...">
+      </div>
+      
+      <fieldset class="choice-fieldset">
+        <legend>🔹 Choice Input</legend>
+        <p><label class="choice" for="choice_1"> <input type="radio" id="choice_1" name="choice_1" required value="car"> Augmented Reality </label></p>
+        <p><label class="choice" for="choice_2"> <input type="radio" id="choice_2" name="choice_2" required value="van"> Virtual Reality </label></p>
+      </fieldset>
+      
+      <fieldset class="checkbox-fieldset">
+        <legend>🔹 Checkbox Input</legend>
+        <p><input class="checkbox-input" type="checkbox" id="checkbox_input1" name="checkbox_input1" value="checkbox todo 1"> <label for="checkbox_input1">checkbox todo 1</label></p>
+        <p><input class="checkbox-input" type="checkbox" id="checkbox_input2" name="checkbox_input2" value="checkbox todo 2"> <label for="checkbox_input2">checkbox todo 2</label></p>
+      </fieldset>
+      
+      <div>
+        <label>🔹 Datetime Input</label>
+        <input class="form-input" id="datetime-input" name="datetime_input" required>
+      </div>
+        
+      <div>
+        <label>🔹 Select Input</label>
+
+        <div class="custom-select select-input-wrap">
+          <select id="select-input" name="select_input">
+            <option value="" selected="selected">Select one...</option>
+            <option value="ion 3D Engine" >ion 3D Engine</option>
+            <option value="ThreeJS" >ThreeJS</option>
+            <option value="HTML" >HTML</option>
+            <option value="Javascript" >Javascript</option>
+          </select>
+        </div>
+      </div>
+            
+      <div>
+        <label>🔹 Range Input</label>
+        <input class="form-input" id="range-input" type="range" id="vol" name="vol" min="0" max="100" value="40">
+      </div>
+
+      <div>
+        <label class="textarea-label">🔹 TextArea Input</label>
+        <textarea class="form-input" name="textarea_input" maxlength="500" placeholder="Type in textarea..."></textarea>
+      </div>
+      
+      <div id="form-buttons">
+        <input id="reset-btn" type="reset" name="reset" value="Reset">
+        <input id="submit-btn" type="submit" value="Submit" onclick="return false;">
+      </div>
+    
+    </form>
+
+
+    <style>
+      .myForm {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+        font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        font-size: 16px;
+        width: 420px;
+        padding: 10px;
+        border: 2px solid #4b88cf;
+        color: #294b71;
+        border-radius: 15px;
+      }
+
+      .myForm * {
+        box-sizing: border-box;
+      }
+
+      .myForm > h3 {
+        color: #4b88cf;
+        margin-top: 4px;
+
+      }
+
+      .myForm > div {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-bottom: 18px;
+      }
+      .myForm > fieldset {
+        margin-bottom: 18px;
+        padding: 15px;
+      }
+      .myForm > fieldset > p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+
+      .form-input {
+        width: 230px;
+        margin-left: auto;
+      }
+      .myForm input, textarea, select {
+        padding: 7px;
+        border-radius: 7px;
+        border: 1px solid #4b88cf;
+        box-shadow: none;
+        color: #294b71;
+        font-size: 14px;
+      }
+      .myForm > div > label, legend {
+        background-color: #c3eefe;
+        padding: 5px 13px;
+        padding-left: 9px;
+        border-radius: 5px;
+      }
+
+      .textarea-label {
+        max-height: 38px;
+      }
+
+      #select-input {
+        margin-left: auto;
+        width: 230px;
+        padding: 7px;
+        border-radius: 7px;
+      }
+      .select-input-wrap{
+        margin-left: auto;
+        width: 230px;
+        padding: 7px;
+        border-radius: 7px;
+        border: 1px solid #4b88cf;
+      }
+
+      .myForm textarea {
+        height: 100px;
+      }
+      
+      #form-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin-top: 20px;
+      }
+
+      #reset-btn {
+        padding: 14px 52px;
+        border: none;
+        color: #353535;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: all 0.4s;
+        background-color: #ffc670;
+      }
+      #reset-btn:hover {
+        background: #ffe3b9;
+        cursor: pointer;
+      }
+
+      #submit-btn {
+        padding: 14px 52px;
+        border: none;
+        color: #353535;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: all 0.4s;
+        background-color: #aaffc9;
+      }
+      #submit-btn:hover {
+        background: #cfffd8;
+        cursor: pointer;
+      }
+
+
+
+
+
+      /* The container must be positioned relative: */
+      .custom-select {
+        position: relative;
+        font-size: 14px;
+        background-color: #fff;
+        
+      }
+      .custom-select select {
+        display: none; /*hide original SELECT element: */
+      }
+      .select-selected {
+      }
+
+      /* Style the arrow inside the select element: */
+      .select-selected:after {
+        position: absolute;
+        content: "";
+        top: 14px;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        border-color: #4b88cf transparent transparent transparent;
+      }
+
+      /* Point the arrow upwards when the select box is open (active): */
+      .select-selected.select-arrow-active:after {
+        border-color: transparent transparent #4b88cf transparent;
+        top: 7px;
+      }
+
+      /* style the items (options), including the selected item: */
+      .select-items div {
+        background-color: #fff;
+        padding: 8px 16px;
+        border: 1px solid transparent;
+        border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      /* Style items (options): */
+      .select-items {
+        position: absolute;
+        /* background-color: #9bcaff; */
+        border: 1px solid #4b88cf;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+      }
+
+      /* Hide the items when the select box is closed: */
+      .select-hide {
+        display: none;
+      }
+
+      .select-items div:hover, .same-as-selected {
+        background-color: #a7d0ff;
+      }
+
+
+    </style>
+
+
+    <script>
+
+
+
+      const myForm = document.getElementsByClassName('myForm')[0];
+
+      myForm.addEventListener('mouseup', (event) => {
+        Array.from(document.getElementsByClassName('form-input')).forEach((item) => item.style.backgroundColor = '#fff');
       });
-  </script>
+
+      Array.from(document.getElementsByClassName('form-input')).forEach((elm) => {
+        elm.addEventListener('click', (event) => {
+          event.target.style.backgroundColor = '#d4ffe4';
+        });
+      });
+
+
+      
+
+
+      /* datetime-input */
+      $(function() {
+        $('#datetime-input').daterangepicker({
+          timePicker: true,
+          startDate: moment().startOf('hour'),
+          endDate: moment().startOf('hour').add(32, 'hour'),
+          locale: {
+            format: 'M/DD hh:mm A'
+          }
+        });
+      });
+
+
+
+      /* HTML Select element */
+      var x, i, j, l, ll, selElmnt, a, b, c;
+      /* Look for any elements with the class "custom-select": */
+      x = document.getElementsByClassName("custom-select");
+      l = x.length;
+      for (i = 0; i < l; i++) {
+        selElmnt = x[i].getElementsByTagName("select")[0];
+        ll = selElmnt.length;
+        /* For each element, create a new DIV that will act as the selected item: */
+        a = document.createElement("DIV");
+        a.setAttribute("class", "select-selected");
+        a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+        x[i].appendChild(a);
+        /* For each element, create a new DIV that will contain the option list: */
+        b = document.createElement("DIV");
+        b.setAttribute("class", "select-items select-hide");
+        for (j = 1; j < ll; j++) {
+          /* For each option in the original select element,
+          create a new DIV that will act as an option item: */
+          c = document.createElement("DIV");
+          c.innerHTML = selElmnt.options[j].innerHTML;
+          c.addEventListener("click", function(e) {
+              /* When an item is clicked, update the original select box,
+              and the selected item: */
+              var y, i, k, s, h, sl, yl;
+              s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+              sl = s.length;
+              h = this.parentNode.previousSibling;
+              for (i = 0; i < sl; i++) {
+                if (s.options[i].innerHTML == this.innerHTML) {
+                  s.selectedIndex = i;
+                  h.innerHTML = this.innerHTML;
+                  y = this.parentNode.getElementsByClassName("same-as-selected");
+                  yl = y.length;
+                  for (k = 0; k < yl; k++) {
+                    y[k].removeAttribute("class");
+                  }
+                  this.setAttribute("class", "same-as-selected");
+                  break;
+                }
+              }
+              h.click();
+          });
+          b.appendChild(c);
+        }
+        x[i].appendChild(b);
+
+        document.getElementsByClassName('select-input-wrap')[0].addEventListener("click", function(e) {
+          /* When the select box is clicked, close any other select boxes,
+          and open/close the current select box: */
+          e.stopPropagation();
+          closeAllSelect(a);
+          a.nextSibling.classList.toggle("select-hide");
+          a.classList.toggle("select-arrow-active");
+        });        
+      }
+
+      function closeAllSelect(elmnt) {
+        /* A function that will close all select boxes in the document,
+        except the current select box: */
+        var x, y, i, xl, yl, arrNo = [];
+        x = document.getElementsByClassName("select-items");
+        y = document.getElementsByClassName("select-selected");
+        xl = x.length;
+        yl = y.length;
+        for (i = 0; i < yl; i++) {
+          if (elmnt == y[i]) {
+            arrNo.push(i)
+          } else {
+            y[i].classList.remove("select-arrow-active");
+          }
+        }
+        for (i = 0; i < xl; i++) {
+          if (arrNo.indexOf(i)) {
+            x[i].classList.add("select-hide");
+          }
+        }
+      }
+
+      /* If the user clicks anywhere outside the select box,
+      then close all select boxes: */
+      myForm.addEventListener("click", closeAllSelect);
+
+
+
+    </script>
 
 
 
 
 
+
+
+<!-- 
   <div id='sample' style="width: 400px; height: 250px;" hidden>
     <h2>The Sample HTML</h2>
     <p>This is how I appear if you use <a id="llilnkei" href="https://github.com/samrun0/ion-3D-Engine" target="_blank">ion Engine</a>!</p>
@@ -221,14 +464,14 @@
       .bbbutton:hover {
         background-color: rgb(255, 146, 146);
       }
+
     </style>
-  </div>
+  </div> -->
 
   
 
 
-  <div id ="container" style="border: 1px solid red;">
-    <!-- <div id ="animate"></div> -->
+  <!-- <div id ="container" style="border: 1px solid red;">
     <h2>Push Button</h2>
     
     <a id="link_test" href="https://www.w3schools.com">W3schools.com</a><br><br>
@@ -268,31 +511,24 @@
         </select>
         <br><br>
 
-
-        <!-- <input type="submit" name="submit" value="Submit"> -->
         <input id="btn_1" type="reset" name="reset" value="Reset">
-        <!-- <button name="click">Click Me</button> -->
-
         <input id="submit_btn" type="submit" value="Submit">
     </form>
 
-  </div>
+  </div> -->
   
 
 
 
-  <style>
+  <!-- <style>
     #container {
       min-width: 250px;
       min-height: 720px;
       padding: 20px;
       position: relative;
       background: #8bb8ff;
-      /* background: black; */
-      /* opacity: 1; */
     }
 
-    
     #btn_1 {
       background-color: rgb(227, 227, 227);
       border: 2px solid #4CAF50;
@@ -309,7 +545,6 @@
     #btn_1:hover {
       background-color: rgb(76, 175, 80) !important; /* Green */
       color: blue;
-      /* border: 1px solid #4CAF50; */
     }
     
     #link_test:hover {
@@ -318,195 +553,7 @@
     #link_test:active {
       background-color: rgb(195, 146, 146);
     }
-
-    /* #animate {
-      width: 50px;
-      height: 50px;
-      position: absolute;
-      background-color: red;
-    } */
-  </style>
-
-
-
-
-
-
-  <div class="main">
-    <div class="list">
-      <div class="list-item">
-        <input type="checkbox">
-        <span class="list-item-content">⭐ Buy some Pasta</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>
-      <div class="list-item">
-        <input type="checkbox">
-        <span class="list-item-content">⭐ Bread</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>
-      <div class="list-item">
-        <input type="checkbox">
-        <span class="list-item-content">⭐ Coffee</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>
-      <div class="list-item">
-        <input type="checkbox" checked>
-        <span class="list-item-content">⭐ This is the way</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>
-      <div class="list-item">
-        <input type="checkbox">
-        <span class="list-item-content">⭐ Try ion Engine</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>
-    </div>
-    
-    <form class="form" onsubmit="addListItem(event)">
-      <input id="todo" type="text" class="keyboard-input" placeholder="Add item">
-      <button class="submit-btn">+</button>
-    </form>
-  </div>
-
-
-  <script>
-    function removeListItem(event) {
-      event.target.parentElement.remove();
-    }
-
-    function addListItem(event) {
-      event.preventDefault();
-      const val = document.getElementById('todo').value;
-      document.getElementById('todo').setAttribute('value', '');
-      document.getElementById('todo').value = '';
-      if (!val) return;
-
-      const listItems = document.getElementsByClassName('list-item');
-      if (listItems.length > 4) {
-        listItems[0].remove();
-      }
-
-      const listItemText = `<div class="list-item">
-        <input type="checkbox">
-        <span class="list-item-content">⭐ ${val}</span>
-        <p class="remove-icon" onclick="removeListItem(event)">x</p>
-      </div>`;
-      document.getElementsByClassName('list')[0].insertAdjacentHTML( 'beforeend', listItemText );
-    }
-  </script>
-
-
-
-  <style>
-
-    .main {
-      font-family: Arial, Helvetica, sans-serif;
-      padding: 25px;
-      width: 720px;
-      height: 720px;
-      /* background-color: #ccc; */
-    }
-
-    .list {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    .list-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: space-between;
-      background: #fffffff2;
-      box-shadow: 0 2px 2px rgba(0,0,0,.15);
-      color: #49403a;
-      font-size: 16px;
-      margin: 0 auto 6px;
-      padding-left: 25px;
-      width: 90%;
-    }
-
-    .list-item:hover {
-      padding-top: 6px;
-      padding-bottom: 6px;
-      box-shadow: 0 5px 5px rgba(0,0,0,.15);
-    }
-
-    .list-item input{
-      width: 20px;
-      height: 20px;
-    }
-
-    .list-item-content{
-      overflow: hidden;
-      padding-left: 19px;
-      padding-bottom: 5px;
-      flex-basis: 80%;
-      text-align: left;
-    }
-
-    .remove-icon {
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-top: 14px;
-      padding-bottom: 14px;
-      margin-right: 20px;
-      font-size: 23px;
-      background-color: #94bfce;
-      border-radius: 50%;
-      color: #6b2f31;
-    }
-
-    .remove-icon:hover {
-      color: #cf575b;
-      background-color: #f4e0d4;
-    }
-
-    
-    .form{
-      margin-top: 20px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: nowrap;
-      justify-content: center;
-      
-      color: #49403a;
-      font-size: 16px;
-      max-width: 90%;
-    }
-
-    .form input{
-      background: rgba(228,228,228,.95);
-      border: none;
-      box-shadow: 0 2px 2px rgba(0,0,0,.15);
-      color: #473e39;
-      font-size: 16px;
-      height: 60px;
-      margin-left: 9%;
-      padding: 0 20px;
-      width: 60%;
-    }
-
-    .submit-btn{
-      background: rgba(129, 188, 116, 0.95);
-      border: none;
-      border-radius: 0;
-      box-shadow: 0 2px 2px rgba(0,0,0,.15);
-      color: #fff;
-      font-family: 'Arvo', serif;
-      font-size: 22px;
-      height: 60px;
-      width: 60px;
-    }
-
-    .submit-btn:hover {
-      background: rgba(111, 180, 248, 0.95);
-    } 
-
-  </style>
-
+  </style> -->
 
 
 

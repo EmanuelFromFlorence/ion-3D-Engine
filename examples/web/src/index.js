@@ -278,8 +278,8 @@ window.addEventListener('load', () => {
         vrTeleportEnabled: true,
         vrTeleportList: [],
         framebufferScaleFactor: 2,
-        controlInstructions: true,
-    },
+        showInstructions: false,
+      },
       
       stats: true,
       statsOptions: {
@@ -364,8 +364,32 @@ window.addEventListener('load', () => {
 
 
 
-  /* Sample Component */
-  const rootElement = document.getElementById('sample');
+  // /* Sample Component */
+  // const rootElement = document.getElementById('sample');
+  // const guiComponent = new ION.GUIComponent({
+  //     rootElement: rootElement,
+  //     pixelRatio: 150,
+  // });
+  // guiComponent.position.set(0, 3, 0);
+  // guiComponent.rotateX(-0.07);
+
+  // /* Entity */
+  // const guiEntity = new ION.Entity();
+  // guiEntity.addComponent(guiComponent);
+  // engine.addEntity(guiEntity);
+
+  // /* System */
+  // const guiSystem = new ION.GUISystem();
+  // engine.addSystem(guiSystem);
+
+  
+  
+
+
+
+
+
+  const rootElement = document.getElementsByClassName('myForm')[0];
   const guiComponent = new ION.GUIComponent({
       rootElement: rootElement,
       pixelRatio: 150,
@@ -381,11 +405,6 @@ window.addEventListener('load', () => {
   /* System */
   const guiSystem = new ION.GUISystem();
   engine.addSystem(guiSystem);
-
-  
-  
-
-
 
 
 

@@ -30,12 +30,16 @@ export class SpaceControls {
     movementSpeedMultiplier: number;
     typingMode: boolean;
     aimElement: HTMLImageElement;
+    controlOptions: any;
+    canvas: any;
 
-    constructor(camera, renderer){
+    constructor(camera, renderer, controlOptions, canvas){
         if (!camera) throw new TypeError('Camera object is not defined!');
         if (!renderer) throw new TypeError('Renderer object is not defined!');
         this.camera = camera;
         this.renderer = renderer;
+        this.controlOptions = controlOptions;
+        this.canvas = canvas;
 
         this.aimElement = createAimElement();
 
@@ -61,7 +65,7 @@ export class SpaceControls {
     }
 
 
-	updateControl = ( delta ) => {        
+	updateControl = ( delta ) => {
         const moveMult = delta * this.movementSpeed;
         const rotMult = delta * this.rollSpeed;
 
@@ -98,20 +102,30 @@ export class SpaceControls {
 
 
     setLockEvents = () => {
-        const instContainer = document.createElement('div');
-        instContainer.id = 'instructions-container';
-        instContainer.innerHTML = instructionsHTMLTextSpaceControl;
-        document.body.appendChild(instContainer);
+        let instContainer;
+        if (this.controlOptions.showInstructions) {
+            instContainer = document.createElement('div');
+            instContainer.id = 'instructions-container';
+            instContainer.innerHTML = instructionsHTMLTextSpaceControl;
+            document.body.appendChild(instContainer);
+    
+            instContainer.style.zIndex = `${zIndex + 9}`;
+    
+            // converted function to arrow function so this is bound to the outer context which is Controls
+            instContainer.addEventListener( 'click', () => {
+                this.controls.lock();
+            } );
+        } else {
+            this.canvas.addEventListener( 'click', () => {
+                this.controls.lock();
+            } );
+        }
 
-        instContainer.style.zIndex = `${zIndex + 9}`;
-
-        // converted function to arrow function so this is bound to the outer context which is Controls
-        instContainer.addEventListener( 'click', () => {
-            this.controls.lock();
-        } );
 
         this.controls.addEventListener( 'lock', () => {
-            instContainer.style.display = 'none';
+            this.typingMode = false;
+
+            if (this.controlOptions.showInstructions) instContainer.style.display = 'none';
             this.aimElement.style.display = 'block';
 
             const vrButtonElm = document.getElementById('VRButton');
@@ -119,7 +133,9 @@ export class SpaceControls {
         } );
     
         this.controls.addEventListener( 'unlock', () => {
-            instContainer.style.display = 'flex';
+            this.typingMode = false;
+
+            if (this.controlOptions.showInstructions) instContainer.style.display = 'flex';
             this.aimElement.style.display = 'none';
 
             const vrButtonElm = document.getElementById('VRButton');
@@ -223,15 +239,22 @@ export class FirstPersonControls {
     sceneMeshesSet: Set<unknown>;
     raycaster: any;
     aimElement: HTMLImageElement;
+    typingMode: boolean;
+    controlOptions: any;
+    canvas: any;
 
 
-    constructor(camera, scene){
+    constructor(camera, scene, controlOptions, canvas){
         if (!camera) throw new TypeError('Camera object is not defined in FirstPersonControls!');
         if (!scene) throw new TypeError('Scene object is not defined in FirstPersonControls!');
         this.camera = camera;
         this.scene = scene;
+        this.controlOptions = controlOptions;
+        this.canvas = canvas;
 
         this.aimElement = createAimElement();
+
+        this.typingMode = false;
 
         this.controls = new PointerLockControls( this.camera, document.body );
 
@@ -442,6 +465,8 @@ export class FirstPersonControls {
         } );
 
         this.controls.addEventListener( 'lock', () => {
+            this.typingMode = false;
+
             instContainer.style.display = 'none';
             this.aimElement.style.display = 'block';
 
@@ -450,6 +475,8 @@ export class FirstPersonControls {
         } );
     
         this.controls.addEventListener( 'unlock', () => {
+            this.typingMode = false;
+
             instContainer.style.display = 'flex';
             this.aimElement.style.display = 'none';
 
@@ -518,13 +545,17 @@ export class ArcBallControls {
     camera: any;
     scene: any;
     controls: any;
+    controlOptions: any;
+    canvas: any;
 
-    constructor(camera, renderer, scene){
+    constructor(camera, renderer, scene, controlOptions, canvas){
         if (!camera) throw new TypeError('Camera object is not defined in ArcBallControls!');
         if (!renderer) throw new TypeError('Renderer object is not defined in ArcBallControls!');
         if (!scene) throw new TypeError('Scene object is not defined in ArcBallControls!');
         this.camera = camera;
         this.scene = scene;
+        this.controlOptions = controlOptions;
+        this.canvas = canvas;
         
         this.controls = new ArcballControls( camera, renderer.domElement, scene );
 
@@ -564,11 +595,15 @@ export class FlyieControls {
     camera: any;
     scene: any;
     controls: any;
+    controlOptions: any;
+    canvas: any;
 
-    constructor(camera, renderer){
+    constructor(camera, renderer, controlOptions, canvas){
         if (!camera) throw new TypeError('Camera object is not defined in FlyieControls!');
         if (!renderer) throw new TypeError('Renderer object is not defined in FlyieControls!');
         this.camera = camera;
+        this.controlOptions = controlOptions;
+        this.canvas = canvas;
         
         this.controls = new FlyControls( camera, renderer.domElement );
 
@@ -631,7 +666,7 @@ const instructionsHTMLTextSpaceControl = `
 
         max-width: 50%;
 
-        background-color: #dfdfdfcb;
+        background-color: #dfdfdfff;
         border-radius: 20px;
         padding: 30px;
         box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
