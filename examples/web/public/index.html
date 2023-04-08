@@ -19,6 +19,14 @@
 
     <link crossorigin="anonymous" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link crossorigin="anonymous" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
   </head>
   
   <body>
@@ -40,16 +48,10 @@
 
 
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link crossorigin="anonymous" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
-  </head>
-  <body>
+ 
 
     
-    <form class="myForm" method="post" enctype="application/x-www-form-urlencoded" action="#" hidden>
+    <form class="myForm" method="post" enctype="application/x-www-form-urlencoded" action="#" hidden style="visibility: hidden">
       <h3>Sample 3D HTML Form</h3>
 
       <div>
@@ -240,12 +242,14 @@
         position: relative;
         font-size: 14px;
         background-color: #fff;
+        padding: 0px 5px !important;
         
       }
       .custom-select select {
         display: none; /*hide original SELECT element: */
       }
       .select-selected {
+        padding: 9px 2px;
       }
 
       /* Style the arrow inside the select element: */
@@ -269,7 +273,7 @@
       /* style the items (options), including the selected item: */
       .select-items div {
         background-color: #fff;
-        padding: 8px 16px;
+        padding: 9px 16px;
         border: 1px solid transparent;
         border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
         cursor: pointer;
@@ -317,9 +321,6 @@
           event.target.style.backgroundColor = '#d4ffe4';
         });
       });
-
-
-      
 
 
       /* datetime-input */
@@ -388,13 +389,13 @@
         }
         x[i].appendChild(b);
 
-        document.getElementsByClassName('select-input-wrap')[0].addEventListener("click", function(e) {
+        a.addEventListener("click", function(e) {
           /* When the select box is clicked, close any other select boxes,
           and open/close the current select box: */
           e.stopPropagation();
-          closeAllSelect(a);
-          a.nextSibling.classList.toggle("select-hide");
-          a.classList.toggle("select-arrow-active");
+          closeAllSelect(this);
+          this.nextSibling.classList.toggle("select-hide");
+          this.classList.toggle("select-arrow-active");
         });        
       }
 
