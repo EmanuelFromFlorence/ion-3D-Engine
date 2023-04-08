@@ -149,6 +149,7 @@ export class GUISystem extends System{
         guiComponent.guiSystemInitialized = true;
 
         guiComponent.rootElement.hidden = false;
+        if(guiComponent.rootElement.style.visibility === 'hidden') guiComponent.rootElement.style.visibility = 'initial';
 
         guiComponent.doRender = true;
         if (!guiComponent.renderTimeout) guiComponent.renderTimeout = 5000; // user sets to infinite for constant rendering

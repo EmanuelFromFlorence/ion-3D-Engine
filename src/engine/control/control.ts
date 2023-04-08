@@ -267,7 +267,7 @@ export class FirstPersonControls {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
 
-        this.personHeight = defaultPersonHeight;
+        this.personHeight = this.controlOptions.personHeight || 3;
         this.speed = 0.2;
         this.boundaryLimit = 2.5;
 
@@ -625,12 +625,13 @@ export class FlyieControls {
 const instructionsHTMLTextSpaceControl = `
 <div id="instructions">
     <div id="clickPlay">
-        Click To Play ▶ <br/><br/>
+        Click To Start ▶ <br/><br/>
     </div>
     <div>
-        To Move Around Use Your MOUSE 🖱 and A ← W ↑ D → S ↓ Keys ⌨<br/>
+        To Move Around Use Your MOUSE 🖱 and Keys ⌨<br/>
+        A ← W ↑ D → S ↓
     </div>
-    <div className="toExitMsg">Click ESC Key To Exit  ✖️</div>
+    <div className="toExitMsg">Click ESC Key To Exit ✖️</div>
     <div>
         To Launch In VR Mode Click The Button Below Using A VR Headset 🥽
     </div>
@@ -650,11 +651,11 @@ const instructionsHTMLTextSpaceControl = `
         right: 0;
         bottom: 0;
         top: 0;
-        background-color: rgba(226, 232, 239, 0.341);
+        background-color: #ffffff57;
         font-family: "Lucida Console", "Courier New", monospace;
         color: #1f385c;
         padding-bottom: 50px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
     }
 
@@ -663,13 +664,11 @@ const instructionsHTMLTextSpaceControl = `
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
         max-width: 50%;
-
-        background-color: #dfdfdfff;
+        background-color: #e8f4fdff;
         border-radius: 20px;
         padding: 30px;
-        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 2px 2px 2px 1px #aac4d795;
     }
     #instructions > div {
         margin-bottom: 20px;
@@ -678,7 +677,7 @@ const instructionsHTMLTextSpaceControl = `
 
     @media only screen and (max-width: 800px) {
         #instructions-container {
-            font-size: 16px;
+            font-size: 15px;
         }
         #instructions {
             max-width: 70%;

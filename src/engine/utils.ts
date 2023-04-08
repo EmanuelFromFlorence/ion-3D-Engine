@@ -40,7 +40,7 @@ export function createEngineStats(engine) {
         
         engineStats.statsEntity = statsEntity;
     }
-    
+
     return engineStats;
 }
 
