@@ -26,9 +26,10 @@ export class VRControls {
     openseaLinkElm: any;
     discordLinkElm: any;
     engine: any;
-
     controller1Connected: boolean;
     controller2Connected: boolean;
+    personHeight: number;
+    vrPointerLength: any;
 
     
     constructor(engine, scene, camera, renderer){
@@ -36,6 +37,9 @@ export class VRControls {
         this.scene = scene;
         this.camera = camera;
         this.renderer = renderer;
+
+        this.personHeight = this.engine.controlOptions.personHeight || 3;
+        this.vrPointerLength = this.engine.controlOptions.vrPointerLength || 15;
 
         this.vrTeleIntersectPoint = null;
         
@@ -114,17 +118,13 @@ export class VRControls {
         this.controllerGrip2.add( controllerModelFactory.createControllerModel( this.controllerGrip2 ) );
         this.scene.add( this.controllerGrip2 );
 
-
-        const vrPointerLength = this.engine.controlOptions.vrPointerLength || 10;
-        const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - vrPointerLength ) ] );
-
-        const line = new THREE.Line( geometry );
-        line.name = 'line';
-        line.scale.z = 5;
-
-        this.controller1.add( line.clone() );
-        this.controller2.add( line.clone() );
-
+        // Not necessary...
+        // const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - this.vrPointerLength ) ] );
+        // const line = new THREE.Line( geometry );
+        // line.name = 'line';
+        // line.scale.z = 5;
+        // this.controller1.add( line.clone() );
+        // this.controller2.add( line.clone() );
 
         const raycasterOrigin = new THREE.Vector3(0, 0, 0);
         const raycasterDirection = new THREE.Vector3(0, - 2, 0);
@@ -180,7 +180,7 @@ export class VRControls {
             
             // this.renderer.xr.setReferenceSpace( teleportSpaceOffset );
 
-            this.setVRCameraPosition(this.vrTeleIntersectPoint, defaultPersonHeight);
+            this.setVRCameraPosition(this.vrTeleIntersectPoint, this.personHeight);
         }
     }
 
@@ -219,9 +219,9 @@ export class VRControls {
     
             case 'tracked-pointer':
                 geometry = new THREE.BufferGeometry();
-                geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
+                geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - this.vrPointerLength ], 3 ) );
                 geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
-                material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
+                material = new THREE.LineBasicMaterial( { color: '#aad3ff' } ); // vertexColors: true, blending: THREE.AdditiveBlending
                 return new THREE.Line( geometry, material );
     
             case 'gaze':

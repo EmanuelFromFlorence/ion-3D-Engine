@@ -156,10 +156,10 @@ window.addEventListener('load', () => {
 
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color( 0xa0a0a0 );
-  scene.fog = new THREE.Fog( 0xa0a0a0, 10, 200 );
+  scene.background = new THREE.Color( '#a3a3a3' );
+  scene.fog = new THREE.Fog( '#a3a3a3', 10, 200 );
 
-  const ground = new THREE.Mesh( new THREE.PlaneGeometry( 400, 400 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+  const ground = new THREE.Mesh( new THREE.PlaneGeometry( 400, 400 ), new THREE.MeshPhongMaterial( { color: '#b3b3b3', depthWrite: false } ) );
   ground.rotation.x = - Math.PI / 2;
   ground.position.y = 0;
   ground.receiveShadow = true;
@@ -276,12 +276,13 @@ window.addEventListener('load', () => {
 
       controlOptions: {
         vrTeleportEnabled: true,
-        vrTeleportList: [],
+        vrTeleportList: [ground],
         framebufferScaleFactor: 2,
         showInstructions: false,
+        personHeight: 5,
       },
       
-      stats: true,
+      stats: false,
       statsOptions: {
         stats3D: true,
       },
@@ -295,13 +296,13 @@ window.addEventListener('load', () => {
   });
 
 
-  const statsComponent = engine.engineStats.statsEntity.getComponent(ION.GUI_COMPONENT_TYPE);
+  // const statsComponent = engine.engineStats.statsEntity.getComponent(ION.GUI_COMPONENT_TYPE);
 
-  engine.setRuntimeCallback(() => {
-    ION.positionInFront(engine.camera, statsComponent, -2.2, 2.2, -6);
-  });
+  // engine.setRuntimeCallback(() => {
+  //   ION.positionInFront(engine.camera, statsComponent, -2.2, 2.2, -6);
+  // });
 
-  engine.camera.position.set(0, 5, 5);
+  engine.camera.position.set(0, 4, 7);
 
 
   // /* Laptop Component */
@@ -392,9 +393,9 @@ window.addEventListener('load', () => {
   const rootElement = document.getElementsByClassName('myForm')[0];
   const guiComponent = new ION.GUIComponent({
       rootElement: rootElement,
-      pixelRatio: 150,
+      pixelRatio: 120,
   });
-  guiComponent.position.set(0, 3, 0);
+  guiComponent.position.set(0, 4, 0);
   guiComponent.rotateX(-0.07);
 
   /* Entity */

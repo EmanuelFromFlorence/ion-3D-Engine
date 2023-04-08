@@ -267,7 +267,7 @@ export class FirstPersonControls {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
 
-        this.personHeight = defaultPersonHeight;
+        this.personHeight = this.controlOptions.personHeight || 3;
         this.speed = 0.2;
         this.boundaryLimit = 2.5;
 
