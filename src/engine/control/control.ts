@@ -653,9 +653,9 @@ const instructionsHTMLTextSpaceControl = `
         top: 0;
         background-color: #ffffff57;
         font-family: "Lucida Console", "Courier New", monospace;
-        color: #1f385c;
+        color: #ddebff;
         padding-bottom: 50px;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
     }
 
@@ -664,11 +664,11 @@ const instructionsHTMLTextSpaceControl = `
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        max-width: 50%;
-        background-color: #e8f4fdff;
-        border-radius: 20px;
+        max-width: 45%;
+        background-color: #303037;
+        border: 1px solid #5addc7;
+        border-radius: 8px;
         padding: 30px;
-        box-shadow: 2px 2px 2px 1px #aac4d795;
     }
     #instructions > div {
         margin-bottom: 20px;
@@ -677,7 +677,7 @@ const instructionsHTMLTextSpaceControl = `
 
     @media only screen and (max-width: 800px) {
         #instructions-container {
-            font-size: 15px;
+            font-size: 14px;
         }
         #instructions {
             max-width: 70%;

@@ -278,7 +278,7 @@ window.addEventListener('load', () => {
         vrTeleportEnabled: true,
         vrTeleportList: [ground],
         framebufferScaleFactor: 2,
-        showInstructions: false,
+        showInstructions: true,
         personHeight: 5,
       },
       
