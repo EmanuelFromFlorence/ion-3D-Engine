@@ -7,7 +7,7 @@ import { GUIComponent } from "../gui/gui-component";
 
 
 export function updateEngineStats(engine) {
-    if (!engine.engineStats.stats) return;
+    if (!engine.engineStats.stats) return;    
     engine.engineStats.stats.update();
 }
 

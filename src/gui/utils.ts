@@ -409,11 +409,13 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
-function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
+function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList, ignoreList) {
   let cssText = '';
+  ignoreList = ignoreList || [];
 
   if(styleList) {
     for(let propName of styleList) {
+      if (ignoreList.includes(propName)) continue;
       let propValue = style.getPropertyValue(propName);
       let propPriority = style.getPropertyPriority(propName);
       cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
@@ -421,6 +423,7 @@ function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
   } else {
     for (let i = 0; i<style.length; i++) {
       let propName = style.item(i);
+      if (ignoreList.includes(propName)) continue;
       let propValue = style.getPropertyValue(propName);
       let propPriority = style.getPropertyPriority(propName);
       cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
@@ -450,7 +453,9 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
 
         let styleList = pageStyleMap ? Array.from(pageStyleMap.keys()) : null;
         const canvasStyle = getComputedStyle(canvasElement);
-        let canvasCSSText = buildCSSText(canvasStyle, null, styleList);
+        // jquery script tag added and because of 'font' stats canvas was not being rendered so ignore:
+        const canvasCSSIgnoreList = ['font'];
+        let canvasCSSText = buildCSSText(canvasStyle, null, styleList, canvasCSSIgnoreList);
         const imgString = `<img src="${dataURL}" alt="Canvas Element" width="${canvasElement.width}" height="${canvasElement.height}" style="display:${canvasCSSText}"/>`;
         imgStringList.push(imgString);
       }

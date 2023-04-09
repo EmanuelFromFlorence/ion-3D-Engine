@@ -282,7 +282,7 @@ window.addEventListener('load', () => {
         personHeight: 5,
       },
       
-      stats: false,
+      stats: true,
       statsOptions: {
         stats3D: true,
       },
