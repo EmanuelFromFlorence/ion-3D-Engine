@@ -46,7 +46,7 @@ This library is powered by [Three.js](https://threejs.org/). As a result, the Sc
 
 <div align="center">
 	<a href="https://samrun0.github.io/gui-examples/gui-html-form.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-html-form.gif" width="35%" ></a>
-	<a href="https://samrun0.github.io/gui-examples/gui-keyboard.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-keyboard.gif" width="35%"></a>
+	<a href="https://samrun0.github.io/gui-examples/gui-canvas.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-canvas.gif" width="35%"></a>
 	<a href="https://samrun0.github.io/gui-examples/gui-slider.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-slider.gif" width="35%"></a>
 	<a href="https://samrun0.github.io/gui-examples/reactjs/build/index.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/reactjs.gif" width="35%"></a>
 </div>
