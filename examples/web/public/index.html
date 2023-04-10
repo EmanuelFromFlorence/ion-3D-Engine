@@ -17,7 +17,7 @@
     <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
     <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
 
-    <link crossorigin="anonymous" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <link crossorigin="anonymous" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 
 
 
@@ -40,654 +40,269 @@
   <canvas id="viewport"></canvas>
 
 
-  
   <div id="root" hidden></div>
   
 
-
-
-
-
- 
-
-    
-    <form class="myForm" method="post" enctype="application/x-www-form-urlencoded" action="#" hidden style="visibility: hidden">
-      <h3>Sample 3D HTML Form</h3>
-
-      <div>
-        <label>🔹 Text Input</label>
-        <input class="form-input" type="text" name="text_input" placeholder="Type text..." required>
+    <div class="links-container" data-ion-z-index-offset="12" style="visibility: hidden; user-select: none;">
+      <div class="link-item" onclick="window.open('https://twitter.com/ion3dengine', '_blank');">
+          <div class="link-svg-logo"> <svg class="twitter-logo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg> </div>
+          <div>@ion3dengine</div>
       </div>
-      
-      <div>
-        <label>🔹 Email</label>
-        <input class="form-input" type="email" name="email_input" placeholder="Type email...">
+      <div class="link-item" onclick="window.open('https://github.com/samrun0/ion-3D-Engine', '_blank');">
+          <div class="link-svg-logo"><svg class="github-logo" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" id="github"><path d="M10.07031,20.50291a1.00008,1.00008,0,0,0-1.18115-.9834c-1.30908.24024-2.96191.27637-3.40137-.958a5.70754,5.70754,0,0,0-1.83691-2.415,1.20073,1.20073,0,0,1-.1665-.10938,1,1,0,0,0-.93067-.64551H2.54883a.99965.99965,0,0,0-1,.99512c-.00391.81543.811,1.33789,1.1416,1.51465a4.4408,4.4408,0,0,1,.92383,1.35937c.36426,1.02344,1.42285,2.57617,4.46582,2.376.001.03516.00195.06836.00244.09863l.00439.26758a1,1,0,0,0,2,0l-.00488-.31836C10.07715,21.4951,10.07031,21.22068,10.07031,20.50291Zm10.667-15.126c.03174-.125.063-.26367.09034-.41992a6.27792,6.27792,0,0,0-.40821-3.293,1.002,1.002,0,0,0-.61572-.58007c-.356-.12012-1.67041-.35645-4.18408,1.25a13.86918,13.86918,0,0,0-6.354,0C6.76221.751,5.45459.9658,5.10205,1.07908a.99744.99744,0,0,0-.63135.584,6.3003,6.3003,0,0,0-.40332,3.35644c.02442.12793.05078.2461.07813.35449A6.26928,6.26928,0,0,0,2.89014,9.20311a8.42168,8.42168,0,0,0,.04248.92187c.334,4.60254,3.334,5.98438,5.42431,6.459-.04345.125-.083.25878-.11816.40039a1.00023,1.00023,0,0,0,1.94238.47851,1.6784,1.6784,0,0,1,.46778-.87793.99947.99947,0,0,0-.5459-1.74512c-3.4541-.39453-4.95362-1.80175-5.1792-4.89843a6.61076,6.61076,0,0,1-.03369-.73828,4.25769,4.25769,0,0,1,.91943-2.71289,3.022,3.022,0,0,1,.1958-.23145.99988.99988,0,0,0,.188-1.02441,3.3876,3.3876,0,0,1-.15527-.55567A4.09356,4.09356,0,0,1,6.1167,3.06346a7.54263,7.54263,0,0,1,2.415,1.17968,1.00877,1.00877,0,0,0,.82764.13282,11.77716,11.77716,0,0,1,6.17285.001,1.00549,1.00549,0,0,0,.83056-.13769,7.572,7.572,0,0,1,2.40528-1.19043,4.03977,4.03977,0,0,1,.0874,1.57812,3.205,3.205,0,0,1-.16895.60743.9999.9999,0,0,0,.188,1.02441c.07715.08691.1543.18066.22363.26855A4.12186,4.12186,0,0,1,20,9.20311a7.03888,7.03888,0,0,1-.0376.77734c-.22021,3.05566-1.72558,4.46387-5.1958,4.85937a1,1,0,0,0-.54541,1.7461,1.63079,1.63079,0,0,1,.46631.9082,3.06079,3.06079,0,0,1,.09229.81934v2.334C14.77,21.2949,14.77,21.78025,14.77,22.00291a1,1,0,1,0,2,0c0-.2168,0-.69238.00977-1.33984V18.31346a4.8815,4.8815,0,0,0-.15479-1.31153,4.25638,4.25638,0,0,0-.11621-.416,6.51258,6.51258,0,0,0,5.44531-6.42383A8.69677,8.69677,0,0,0,22,9.20311,6.13062,6.13062,0,0,0,20.7373,5.37693Z"></path></svg></div>
+          <div>Github</div>
       </div>
-      
-      <fieldset class="choice-fieldset">
-        <legend>🔹 Choice Input</legend>
-        <p><label class="choice" for="choice_1"> <input type="radio" id="choice_1" name="choice_1" required value="car"> Augmented Reality </label></p>
-        <p><label class="choice" for="choice_2"> <input type="radio" id="choice_2" name="choice_2" required value="van"> Virtual Reality </label></p>
-      </fieldset>
-      
-      <fieldset class="checkbox-fieldset">
-        <legend>🔹 Checkbox Input</legend>
-        <p><input class="checkbox-input" type="checkbox" id="checkbox_input1" name="checkbox_input1" value="checkbox todo 1"> <label for="checkbox_input1">checkbox todo 1</label></p>
-        <p><input class="checkbox-input" type="checkbox" id="checkbox_input2" name="checkbox_input2" value="checkbox todo 2"> <label for="checkbox_input2">checkbox todo 2</label></p>
-      </fieldset>
-      
-      <div>
-        <label>🔹 Datetime Input</label>
-        <input class="form-input" id="datetime-input" name="datetime_input" required>
-      </div>
-        
-      <div>
-        <label>🔹 Select Input</label>
-
-        <div class="custom-select select-input-wrap">
-          <select id="select-input" name="select_input">
-            <option value="" selected="selected">Select one...</option>
-            <option value="ion 3D Engine" >ion 3D Engine</option>
-            <option value="ThreeJS" >ThreeJS</option>
-            <option value="HTML" >HTML</option>
-            <option value="Javascript" >Javascript</option>
-          </select>
-        </div>
-      </div>
-            
-      <div>
-        <label>🔹 Range Input</label>
-        <input class="form-input" id="range-input" type="range" id="vol" name="vol" min="0" max="100" value="40">
-      </div>
-
-      <div>
-        <label class="textarea-label">🔹 TextArea Input</label>
-        <textarea class="form-input" name="textarea_input" maxlength="500" placeholder="Type in textarea..."></textarea>
-      </div>
-      
-      <div id="form-buttons">
-        <input id="reset-btn" type="reset" name="reset" value="Reset">
-        <input id="submit-btn" type="submit" value="Submit" onclick="return false;">
-      </div>
-    
-    </form>
-
-
-    <style>
-      .myForm {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-        font-size: 16px;
-        width: 450px;
-        padding: 10px;
-        border: 2px solid #4b88cf;
-        color: #294b71;
-        border-radius: 15px;
-      }
-
-      .myForm * {
-        box-sizing: border-box;
-      }
-
-      .myForm > h3 {
-        color: #4b88cf;
-        margin-top: 4px;
-
-      }
-
-      .myForm > div {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        margin-bottom: 18px;
-      }
-      .myForm > fieldset {
-        margin-bottom: 18px;
-        margin-left: 20px;
-        margin-right: 20px;
-        padding: 15px;
-      }
-      .myForm > fieldset > p {
-        margin-top: 4px;
-        margin-bottom: 4px;
-        margin-left: 40px;
-      }
-
-      .form-input {
-        width: 240px;
-        margin-left: auto;
-      }
-      .myForm input, textarea, select {
-        padding: 7px;
-        border-radius: 7px;
-        border: 1px solid #4b88cf;
-        box-shadow: none;
-        color: #294b71;
-        font-size: 14px;
-      }
-      .myForm > div > label, legend {
-        background-color: #c3eefe;
-        padding: 5px 13px;
-        padding-left: 9px;
-        border-radius: 5px;
-      }
-
-      .textarea-label {
-        max-height: 38px;
-      }
-
-      #select-input {
-        margin-left: auto;
-        width: 240px;
-        padding: 7px;
-        border-radius: 7px;
-      }
-      .select-input-wrap{
-        margin-left: auto;
-        width: 240px;
-        padding: 7px;
-        border-radius: 7px;
-        border: 1px solid #4b88cf;
-      }
-
-      .myForm textarea {
-        height: 100px;
-      }
-      
-      #form-buttons {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        margin-top: 20px;
-      }
-
-      #reset-btn {
-        padding: 14px 52px;
-        border: none;
-        color: #353535;
-        text-decoration: none;
-        font-weight: bold;
-        border-radius: 5px;
-        transition: all 0.4s;
-        background-color: #ffc670;
-      }
-      #reset-btn:hover {
-        background: #ffe3b9;
-        cursor: pointer;
-      }
-
-      #submit-btn {
-        padding: 14px 52px;
-        border: none;
-        color: #353535;
-        text-decoration: none;
-        font-weight: bold;
-        border-radius: 5px;
-        transition: all 0.4s;
-        background-color: #aaffc9;
-      }
-      #submit-btn:hover {
-        background: #cfffd8;
-        cursor: pointer;
-      }
+    </div>
+    <script>window.addEventListener('load', () => document.getElementsByClassName('links-container')[0].style.visibility = 'visible')</script>
+    <style>.links-container{display: flex; flex-direction: row; justify-content: space-evenly; align-items: center; font-family: "Lucida Console", "Courier New", monospace; min-width: 280px; position: fixed; right: 8px; z-index: 100014; color: #ddebff; font-size: 13px; transition: all 0.3s;} .link-item {display: flex; flex-direction: row; justify-content: center; align-items: center; background-color: #303037; border-radius: 4px; border: 1px solid #5addc7; margin-top: 14px; padding: 3px 5px 3px 5px; transition: all 0.3s; cursor: pointer;} .link-item:hover  {padding: 6px 7px 6px 7px; font-size: 15px; text-decoration: underline; background-color: #446175;} .link-svg-logo{padding: 4px 4px 0px 4px; margin-right: 5px; border-radius: 4px; border: 1px solid #5addc7; transition: all 0.3s;} .github-logo {width: 14px; height: 14px; fill: #5addc7;} .twitter-logo {width: 14px; height: 14px; fill: #5addc7;}</style>
 
 
 
+  <div id="canvas-container">
+		<canvas id='canvas'></canvas>
+  </div>
+
+  <div id="toolbar">
+    <div id="colors"></div>
+    <div id="clear">Clear</div>
+    <div id="rad">
+      Brush Size: &nbsp; <span id="radval">3</span>
+    </div>
+    <div>
+      <input id="range-input" type="range" id="vol" name="vol" min="0" max="10" value="3">
+    </div>
+  </div>
 
 
-      /* The container must be positioned relative: */
-      .custom-select {
-        position: relative;
-        font-size: 14px;
-        background-color: #fff;
-        padding: 0px 5px !important;
-        
-      }
-      .custom-select select {
-        display: none; /*hide original SELECT element: */
-      }
-      .select-selected {
-        padding: 9px 2px;
-      }
-
-      /* Style the arrow inside the select element: */
-      .select-selected:after {
-        position: absolute;
-        content: "";
-        top: 14px;
-        right: 10px;
-        width: 0;
-        height: 0;
-        border: 6px solid transparent;
-        border-color: #4b88cf transparent transparent transparent;
-      }
-
-      /* Point the arrow upwards when the select box is open (active): */
-      .select-selected.select-arrow-active:after {
-        border-color: transparent transparent #4b88cf transparent;
-        top: 7px;
-      }
-
-      /* style the items (options), including the selected item: */
-      .select-items div {
-        background-color: #fff;
-        padding: 9px 16px;
-        border: 1px solid transparent;
-        border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      /* Style items (options): */
-      .select-items {
-        position: absolute;
-        /* background-color: #9bcaff; */
-        border: 1px solid #4b88cf;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 99;
-      }
-
-      /* Hide the items when the select box is closed: */
-      .select-hide {
-        display: none;
-      }
-
-      .select-items div:hover, .same-as-selected {
-        background-color: #a7d0ff;
-      }
-
-
-    </style>
-
-
-    <script>
-
-
-
-      const myForm = document.getElementsByClassName('myForm')[0];
-
-      myForm.addEventListener('mouseup', (event) => {
-        Array.from(document.getElementsByClassName('form-input')).forEach((item) => item.style.backgroundColor = '#fff');
-      });
-
-      Array.from(document.getElementsByClassName('form-input')).forEach((elm) => {
-        elm.addEventListener('click', (event) => {
-          event.target.style.backgroundColor = '#d4ffe4';
-        });
-      });
-
-
-      /* datetime-input */
-      $(function() {
-        $('#datetime-input').daterangepicker({
-          timePicker: true,
-          startDate: moment().startOf('hour'),
-          endDate: moment().startOf('hour').add(32, 'hour'),
-          singleDatePicker: true,
-          locale: {
-            format: 'M/DD hh:mm A'
-          }
-        });
-        $('.daterangepicker').css('display', 'none');
-
-        const dateTimePicker = document.getElementsByClassName('daterangepicker')[0];
-        myForm.appendChild(dateTimePicker);
-      });
-
-
-
-      /* HTML Select element */
-      var x, i, j, l, ll, selElmnt, a, b, c;
-      /* Look for any elements with the class "custom-select": */
-      x = document.getElementsByClassName("custom-select");
-      l = x.length;
-      for (i = 0; i < l; i++) {
-        selElmnt = x[i].getElementsByTagName("select")[0];
-        ll = selElmnt.length;
-        /* For each element, create a new DIV that will act as the selected item: */
-        a = document.createElement("DIV");
-        a.setAttribute("class", "select-selected");
-        a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-        x[i].appendChild(a);
-        /* For each element, create a new DIV that will contain the option list: */
-        b = document.createElement("DIV");
-        b.setAttribute("class", "select-items select-hide");
-        for (j = 1; j < ll; j++) {
-          /* For each option in the original select element,
-          create a new DIV that will act as an option item: */
-          c = document.createElement("DIV");
-          c.innerHTML = selElmnt.options[j].innerHTML;
-          c.addEventListener("click", function(e) {
-              /* When an item is clicked, update the original select box,
-              and the selected item: */
-              var y, i, k, s, h, sl, yl;
-              s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-              sl = s.length;
-              h = this.parentNode.previousSibling;
-              for (i = 0; i < sl; i++) {
-                if (s.options[i].innerHTML == this.innerHTML) {
-                  s.selectedIndex = i;
-                  h.innerHTML = this.innerHTML;
-                  y = this.parentNode.getElementsByClassName("same-as-selected");
-                  yl = y.length;
-                  for (k = 0; k < yl; k++) {
-                    y[k].removeAttribute("class");
-                  }
-                  this.setAttribute("class", "same-as-selected");
-                  break;
-                }
-              }
-              h.click();
-          });
-          b.appendChild(c);
-        }
-        x[i].appendChild(b);
-
-        a.addEventListener("click", function(e) {
-          /* When the select box is clicked, close any other select boxes,
-          and open/close the current select box: */
-          e.stopPropagation();
-          closeAllSelect(this);
-          this.nextSibling.classList.toggle("select-hide");
-          this.classList.toggle("select-arrow-active");
-        });        
-      }
-
-      function closeAllSelect(elmnt) {
-        /* A function that will close all select boxes in the document,
-        except the current select box: */
-        var x, y, i, xl, yl, arrNo = [];
-        x = document.getElementsByClassName("select-items");
-        y = document.getElementsByClassName("select-selected");
-        xl = x.length;
-        yl = y.length;
-        for (i = 0; i < yl; i++) {
-          if (elmnt == y[i]) {
-            arrNo.push(i)
-          } else {
-            y[i].classList.remove("select-arrow-active");
-          }
-        }
-        for (i = 0; i < xl; i++) {
-          if (arrNo.indexOf(i)) {
-            x[i].classList.add("select-hide");
-          }
-        }
-      }
-
-      /* If the user clicks anywhere outside the select box,
-      then close all select boxes: */
-      myForm.addEventListener("click", closeAllSelect);
-
-    </script>
-
-
-
-
-
-
-
-<!-- 
-  <div id='sample' style="width: 400px; height: 250px;" hidden>
-    <h2>The Sample HTML</h2>
-    <p>This is how I appear if you use <a id="llilnkei" href="https://github.com/samrun0/ion-3D-Engine" target="_blank">ion Engine</a>!</p>
-    <button class="bbbutton button1" style="background-color: #008CBA; margin-left: 100px;">Start</button>
-    <button class="bbbutton button2" style="background-color: #4CAF50; margin-left: 25px;">Engine</button>
-
-    <style>
-      #sample {
-        font-family: HelveticaNeue-Light;
-        background-color: rgba(23, 23, 23, 0.749);
-        border-radius: 10%;
-        color: white;
-      }
-      #sample h2 {
-        margin: 30px;
-        color: rgb(135, 235, 255);
-      }
-      #sample p {
-        margin: 30px;
-      }
-      .bbbutton {
-        border: none;
-        color: white;
-        padding: 10px 22px;
-        text-align: center;
-        text-decoration: none;
-        /* display: inline-block; */
-        align-self: center;
-        font-size: 14px;
-        margin-top: 30px;
-        border-radius: 5px;
-        transition: all 0.9s;
-      }
-      .bbbutton:hover {
-        background-color: rgb(255, 146, 146);
-      }
-
-    </style>
+  <!-- <label for="color-input" id="color-label" style="background-color: red"></label>
+  <input type="checkbox" id="color-input" checked></input> -->
+  
+  <!-- <div id="color-picker">
+    <canvas id="color-block" height="150" width="150"></canvas>
+    <canvas id="color-strip" height="150" width="30"></canvas>
   </div> -->
 
-  
-
-
-  <!-- <div id ="container" style="border: 1px solid red;">
-    <h2>Push Button</h2>
-    
-    <a id="link_test" href="https://www.w3schools.com">W3schools.com</a><br><br>
-
-    <form>
-        Username: <input id="input_11" type="text" name="name" 
-            placeholder="Enter Username" size="20">
-        <br><br>
-  
-        Password: <input type="password" 
-            name="password" size="20"><br><br>
-        
-        
-        <input type="radio" id="html" name="fav_language" value="HTML">
-        <label for="fav_language"> HTML</label><br><br>
-
-        <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
-        <label for="vehicle1"> vehicle1</label><br><br>
-
-        <label for="birthday">Birthday:</label>
-        <input type="date" id="birthday" name="birthday"><br><br>
-
-        <input type="image" src="" alt="Submit" width="48" height="48"><br><br>
-
-
-        <input type="range" id="vol" name="vol" min="0" max="50"><br><br>
-
-        <input type="time" id="appt" name="appt"><br><br>
-
-
-        <label for="cars">Choose a car:</label>
-        <select name="cars" id="cars" multiple>
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="opel">Opel</option>
-          <option value="audi">Audi</option>
-        </select>
-        <br><br>
-
-        <input id="btn_1" type="reset" name="reset" value="Reset">
-        <input id="submit_btn" type="submit" value="Submit">
-    </form>
-
-  </div> -->
-  
 
 
 
-  <!-- <style>
-    #container {
-      min-width: 250px;
-      min-height: 720px;
-      padding: 20px;
-      position: relative;
-      background: #8bb8ff;
-    }
-
-    #btn_1 {
-      background-color: rgb(227, 227, 227);
-      border: 2px solid #4CAF50;
-      color: black;
-      padding: 16px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      transition-duration: 0.4s;
-      cursor: pointer;
-    }
-    #btn_1:hover {
-      background-color: rgb(76, 175, 80) !important; /* Green */
-      color: blue;
-    }
-    
-    #link_test:hover {
-      background-color: #4CAF50;
-    }
-    #link_test:active {
-      background-color: rgb(195, 146, 146);
-    }
-  </style> -->
-
-
-
-
-
-
-
-
-
-
-
-<style>
-/* 
-  .keyboard-input {
-      width: 800px;
-      height: 90px;
-      padding: 15px;
-      padding-left: 23px;
-      font-size: 21px;
-      border: none;
+  <style>
+    *{
       box-sizing: border-box;
-      background: #2f2f2f;
-      color: white;
-  } */
+      -moz-box-sizing: border-box;
+    }
 
-  /**
-  * hg-theme-default theme
-  */
-  .simple-keyboard.hg-theme-ios {
-      width: 750px;
-      margin: auto;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-row .hg-button {
-      flex-grow: 1;
-      cursor: pointer;
-      max-width: initial;
-  }
-  .simple-keyboard.hg-theme-ios .hg-row {
+    #canvas-container {
       display: flex;
-  }
-  .simple-keyboard.hg-theme-ios .hg-row:not(:last-child) {
-      margin-bottom: 5px;
-  }
-  .simple-keyboard.hg-theme-ios .hg-row .hg-button:not(:last-child) {
-      margin-right: 5px;
-  }
-  .simple-keyboard.hg-theme-ios .hg-row:nth-child(2) {
-      margin-left: 18px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default {
-      background-color: rgba(103, 103, 103, 0.8);
-      padding: 5px;
-      border-radius: 5px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default.hg-layout-custom {
-      background-color: #e5e5e5;
-      padding: 5px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button {
-      border-radius: 5px;
-      box-sizing: border-box;
-      padding: 0;
-      background: white;
-      border-bottom: 1px solid #686868;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
+      flex-direction: row;
       justify-content: center;
-      box-shadow: none;
-      font-weight: 400;
-      font-size: 20px;
-      max-width: 60px;
-      min-width: 60px;
-      height: 60px;
-      min-height: 60px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button:active,
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button:focus {
-      background: #e4e4e4;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button.hg-functionBtn {
-      background-color: #adb5bb;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button.hg-button-space,
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button.hg-button-shift,
-  .simple-keyboard.hg-theme-ios.hg-theme-default
-      .hg-button.hg-button-shiftactivated {
-      background-color: #ffffff;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button-space {
-      max-width: 448px;
-      min-width: 448px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button-enter {
-      max-width: 110px;
-      min-width: 110px;
-  }
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button-altright,
-  .simple-keyboard.hg-theme-ios.hg-theme-default .hg-button-back {
-      min-width: 80px;
-      max-width: 80px;
-  }
+      width: 400px;
+      height: 400px;
+    }
 
+    #canvas{
+      width: 400px;
+      height: 400px;
+      border: 1px solid #c69061;
+      background-color: #fff;
+    }
 
-  /**
-  * Custom keybaord design:
-  */
-  .customKeyboardBtnClass {
-      background-color: #2f2f2f !important;
+    #toolbar{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 130px;
+      height: 350px;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      background: #756653;
       color: white;
-      font-weight: 100 !important;
-  }
+      border-radius: 10px;
+      font: 13px "Fira Sans", sans-serif;
+      transition: all 0.3s;
+      border: 5px solid #b7a280;
+    }
+    #toolbar > div {
+      margin-bottom: 15px;
+    }
+    .radcontrol{
+      width: 30px;
+      height: 30px;
+      background: #4f4f4f;
+      display: inline-block;
+      text-align: center;
+      padding: 5px;
+    }
 
-  .customKeyboardBtnClass:hover {
-      background-color: #171717 !important;
-      transition-duration: all 600ms;
-  }
+    #rad{
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 8px !important;
+      border: 1px solid #ccc;
+      padding: 5px;
+      border-radius: 5px;
+    }
 
-  .customKeyboardBtnClass1{
-      background-color: #2f2f2f !important;
-      color: white;
-  }
-  .customKeyboardBtnClass1:hover {
-      background-color: #171717 !important;
-      transition-duration: all 600ms;
-  }
+    #colors{
+      margin-top: 10px;
+      padding: 5px;
+    }
+    .swatch{
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      box-shadow: inset 0px 1px 0px rgba(255 , 255 , 255 , 0.5), 0px 2px 2px rgba(0 , 0 , 0 , 0.5);
+      display: inline-block;
+      margin-left: 10px;
+      transition: all 0.3s;
+    }
+    .swatch.active{
+      border: 2px solid white;
+      box-shadow: inset 0px 1px 2px rgba(0,0,0,0.5);
+    }
+    .swatch:hover{
+      border: 3px solid #fff;
+      box-shadow: inset 0px 1px 0px #cccccc80, 0px 2px 2px #cccccc80;
+    }
+    #clear{
+      /* height: 30px; */
+      padding: 10px;
+      background: #645a50cb;
+      border-radius: 8px;
+      transition: all 0.3s;
+      border: 1px solid #ccc;
+      margin-bottom: 25px !important;
+      box-shadow: inset 0px 1px 0px rgba(255 , 255 , 255 , 0.5), 0px 2px 2px rgba(0 , 0 , 0 , 0.5);
+    }
+    #clear:hover{
+      background: #818181;
+      cursor: pointer;
+    }
 
-</style>
+    #range-input{
+      width: 100%;
+    }
+
+  </style>
+
+
+
+<script>
+  window.addEventListener('load', () => {
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    var radius = 3;
+    var dragging = false;
+
+    canvas.width = '400';
+    canvas.height = '400';
+
+    var CleanBtn = document.getElementById('clear');
+
+    context.lineWidth = radius*2;
+
+    var putPoint = function(e){
+      if(dragging == true){
+        context.lineCap = 'square';
+        context.lineTo(e.clientX, e.clientY);
+        context.stroke();
+        context.beginPath();
+        // context.arc(0, 0, radius, 0, 2*Math.PI/2^2*5);
+        context.fill();
+        context.beginPath();
+        context.moveTo(e.clientX, e.clientY);
+      }
+    }
+
+    var engage = function(e){
+      dragging = true;
+      putPoint(e);
+    }
+
+    var disengage = function(){
+      dragging = false;
+      context.beginPath();
+    }
+
+    var CleanCanvas = function(){
+      context.fillStyle = 'white';
+      context.fillRect(0,0, window.innerWidth, window.innerWidth);
+      setSwatch({target: document.getElementsByClassName("swatch")[0]});
+    }
+
+    CleanBtn.addEventListener('click', CleanCanvas);
+    canvas.addEventListener('mousedown', engage);
+    canvas.addEventListener('mouseout', disengage);
+    canvas.addEventListener('mousemove', putPoint);
+    canvas.addEventListener('mouseup', disengage);
+
+    var setRadius = function(newRadius){
+      if(newRadius<minRad){
+        newRadius = minRad;
+      }else if(newRadius>maxRad){
+        newRadius = maxRad;
+      }
+      radius = newRadius;
+      context.lineWidth = radius*2;
+
+      radSpan.innerHTML = radius;
+    }
+
+    var minRad = 0.5,
+      maxRad = 100,
+      interval = 5,
+      defaultRad = 3,
+      radSpan = document.getElementById('radval'),
+      rangeInput = document.getElementById('range-input');
+    
+    rangeInput.addEventListener('input', function(e){
+      console.log('RADIUS from range: ', e.target.value);
+      setRadius(e.target.value);
+    });
+
+    
+    setRadius(defaultRad);
+    
+    var colors = ['grey', 'black', 'white', 'red', '#bd9042', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+
+    for(var i=0, n=colors.length; i<n; i++){
+      var swatch = document.createElement('div');
+      swatch.className = "swatch";
+      swatch.style.backgroundColor = colors[i];
+      swatch.addEventListener('click', setSwatch);
+      document.getElementById('colors').appendChild(swatch);
+    }
+
+    function setColor(color){
+      context.fillStyle = color;
+      context.strokeStyle = color;
+      var active = document.getElementsByClassName("active")[0];
+      if(active){
+        active.className = "swatch";
+      }
+    }
+
+    function setSwatch(e){
+      var swatch = e.target;
+      setColor(swatch.style.backgroundColor);
+      swatch.className += " active";
+    }
+
+    setSwatch({target: document.getElementsByClassName("swatch")[0]});
+
+
+  });
+
+
+
+
+</script>
+
+
 
 
 
