@@ -465,24 +465,27 @@ export class GUISystem extends System{
 
     // A elementsFromPoint shim: https://gist.github.com/oslego/7265412
     public getAimingElement = (x, y, meshesToIntersect, aimingGuiComponent) => {
+        // should ignore all elements but not any rootElement childrens so added: !elm.dataset['ion_class']
+        const elms = document.elementsFromPoint(x, y) || [];    
+        elms.forEach((elm, i) => { if (elm.style && !elm.dataset['ion_class']) elm.style.setProperty('pointer-events', 'none', 'important'); });
+
         let aimingElm = null;
         this.engine.canvas.style.setProperty('pointer-events', 'none', 'important');
 
         // Skipping the canvas div wrapper in VR Mode:
-        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) {
-            this.engine.canvas.parentElement.style.setProperty('pointer-events', 'none', 'important');
-        }
+        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) this.engine.canvas.parentElement.style.setProperty('pointer-events', 'none', 'important');
 
-        meshesToIntersect.forEach((mesh) => {
-            mesh.rootElement.style.setProperty('pointer-events', 'none', 'important');
-        });
-
+        meshesToIntersect.forEach((mesh) => { mesh.rootElement.style.setProperty('pointer-events', 'none', 'important'); });
+        
         aimingGuiComponent.rootElement.style.setProperty('pointer-events', 'initial', 'important');
         aimingElm = document.elementFromPoint(x, y);
+
         this.engine.canvas.style.setProperty('pointer-events', 'initial', 'important');
-        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) {
-            this.engine.canvas.parentElement.style.setProperty('pointer-events', 'initial', 'important');
-        }
+        if (this.engine.vrEnabled && this.engine.renderer.xr.isPresenting) this.engine.canvas.parentElement.style.setProperty('pointer-events', 'initial', 'important');
+
+        meshesToIntersect.forEach((mesh) => { mesh.rootElement.style.setProperty('pointer-events', 'initial', 'important'); });
+        elms.forEach((elm, i) => { if (elm.style && !elm.dataset['ion_class']) elm.style.setProperty('pointer-events', 'initial', 'important'); });
+
         return aimingElm;
     }
 

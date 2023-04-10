@@ -301,7 +301,7 @@ export class VRControls {
         const styleElm = document.createElement("style");
         const vrBtnCSSText = `
             #VRButton{
-                border: 1px solid #e8e8e8 !important;
+                border: 1px solid #5addc7 !important;
                 text-decoration: none;
                 font-family: "Lucida Console", "Courier New", monospace !important;
                 color:#e8e8e8 !important;
@@ -311,13 +311,13 @@ export class VRControls {
                 width: 100px !important;
                 position: fixed !important;
                 left: calc(50% - 50px);
-                background-color: #1d3e5f !important;
-
+                background-color: #303037 !important;
                 opacity: 0.9 !important;
                 z-index: ${zIndex + 11} !important;
             }
             #VRButton:hover{
-                background-color: #6798c9 !important;
+                background-color: #737383 !important;
+                border: 1px solid #f14d86 !important;
                 box-shadow: 0 0 5px #4a4c4f !important;
                 color:#dbe8ff !important;
                 cursor: pointer;

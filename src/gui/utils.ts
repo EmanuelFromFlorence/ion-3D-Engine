@@ -311,6 +311,7 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
     let attrValue = htmlNode.getAttribute('value');
     if (htmlNode.value && htmlNode.value !== attrValue) {
       htmlNode.setAttribute('value', htmlNode.value);
+      sendInputChangeEvents(htmlNode);
     }
     
     if (htmlNode.type === 'checkbox' || htmlNode.type === 'radio') {
@@ -318,9 +319,11 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
       const checked = htmlNode.getAttribute('checked');
       if (checked !== 'checked' && htmlNode.checked) {
         htmlNode.setAttribute('checked', 'checked');
+        sendInputChangeEvents(htmlNode);
       }
       if (checked === 'checked' && !htmlNode.checked) {
         htmlNode.removeAttribute('checked');
+        sendInputChangeEvents(htmlNode);
       }
     }
 
@@ -330,7 +333,8 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
       
 
       htmlNode.addEventListener('mousemove', (e) => {
-        const max = parseInt(e.target.getAttribute('max', 10)) || 100;
+        // TODO: range input step attribute
+        const max = parseFloat(e.target.getAttribute('max', 10)) || 100;
         let offset = (e.offsetX / e.target.clientWidth) *  max;
         // offset = Math.round(offset);
         htmlNode.dataset['ion_range_val'] = `${offset}`;
@@ -340,6 +344,7 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
         const lastVal = parseFloat(htmlNode.dataset['ion_range_val']) || 72;
         htmlNode.value = lastVal;
         htmlNode.setAttribute('value', lastVal);
+        sendInputChangeEvents(htmlNode);
       });
     }
 
@@ -350,11 +355,20 @@ export const processSingleHTMLNode = async (htmlNode, guiComponent) => {
     if (htmlNode.value && htmlNode.value !== attrValue) {
       htmlNode.setAttribute('value', htmlNode.value);
       htmlNode.innerHTML = htmlNode.value;
+      sendInputChangeEvents(htmlNode);
     }
 
   }
 
 };
+
+
+export function sendInputChangeEvents(htmlNode) {
+  const inputEvent = new Event('input', { bubbles: true, cancelable: true, });
+  const changeEvent = new Event('change', { bubbles: true, cancelable: true, });
+  htmlNode.dispatchEvent(inputEvent);
+  htmlNode.dispatchEvent(changeEvent);
+}
 
 
 export const setIONClass = (htmlNode) => {
@@ -409,11 +423,13 @@ export const isInstanceOfElement = (node, instance) => {
 }
 
 
-function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
+function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList, ignoreList) {
   let cssText = '';
+  ignoreList = ignoreList || [];
 
   if(styleList) {
     for(let propName of styleList) {
+      if (ignoreList.includes(propName)) continue;
       let propValue = style.getPropertyValue(propName);
       let propPriority = style.getPropertyPriority(propName);
       cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
@@ -421,6 +437,7 @@ function buildCSSText(style: CSSStyleDeclaration, selector: string, styleList) {
   } else {
     for (let i = 0; i<style.length; i++) {
       let propName = style.item(i);
+      if (ignoreList.includes(propName)) continue;
       let propValue = style.getPropertyValue(propName);
       let propPriority = style.getPropertyPriority(propName);
       cssText = `${cssText} ${propName}:${propValue}${propPriority}; `;
@@ -450,7 +467,9 @@ export async function svgToDataURL(svg: SVGElement, pageSVGStyleMap, inVRMode, p
 
         let styleList = pageStyleMap ? Array.from(pageStyleMap.keys()) : null;
         const canvasStyle = getComputedStyle(canvasElement);
-        let canvasCSSText = buildCSSText(canvasStyle, null, styleList);
+        // jquery script tag added and because of 'font' stats canvas was not being rendered so ignore:
+        const canvasCSSIgnoreList = ['font'];
+        let canvasCSSText = buildCSSText(canvasStyle, null, styleList, canvasCSSIgnoreList);
         const imgString = `<img src="${dataURL}" alt="Canvas Element" width="${canvasElement.width}" height="${canvasElement.height}" style="display:${canvasCSSText}"/>`;
         imgStringList.push(imgString);
       }
