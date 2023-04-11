@@ -10,7 +10,7 @@
 
 <div align="center">
 
-[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Twitter%20%40ion3dengine)](https://twitter.com/ion3dengine)
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Twitter%20%40ion3dengine)](https://twitter.com/ion3dengine) 
 
 </div>
 
@@ -35,7 +35,7 @@
 
 Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki) for the full documentation!
 
-
+🔗 [Home Page](https://samrun0.github.io/ion-3d-engine.html)
 
 
 ## Introduction
