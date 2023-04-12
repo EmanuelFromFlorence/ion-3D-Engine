@@ -137,6 +137,7 @@ There are only a few steps to setup the engine and render HTML in a 3D scene:
 
 ```js
 /* Engine */
+const canvas = document.getElementById('viewport');
 const engine = new ION.Engine({
     canvas: canvas,
     fullScreen: true,
