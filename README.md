@@ -37,6 +37,8 @@ Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki)
 
 🔗 [Home Page](https://samrun0.github.io/ion-3d-engine.html)
 
+❓ *If you need any help create a new issue here:* [issues](https://github.com/samrun0/ion-3D-Engine/issues)
+
 
 ## Introduction
 
