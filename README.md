@@ -42,9 +42,9 @@ Please visit ion 3D Engine [wiki](https://github.com/samrun0/ion-3D-Engine/wiki)
 
 ## Introduction
 
-A simple and easy to use library to create 3D user interfaces that is also capable to be lauched in VR headsets. 
+A simple and easy to use library to create 3D user interfaces for 3D websites and web-based VR applications. 
 
-This library is powered by [Three.js](https://threejs.org/). As a result, the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
+This library is powered by [Three.js](https://threejs.org/) and the Scene Hierarchy, Meshes (components here), and Materials are all Three.js objects and the [API](https://github.com/samrun0/ion-3D-Engine/wiki/API-Reference) is consistent with Three.js API. Your components can also be integrated into your existing Three.js scene.
 
 <div align="center">
 	<a href="https://samrun0.github.io/gui-examples/gui-html-form.html"><img alt="Example Demo" target="_blank" src="https://samrun0.github.io/resources/examples-preview/gui-html-form.gif" width="35%" ></a>
